@@ -42,8 +42,24 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 dialog label{display:block;font-size:13px;color:var(--mu);margin-bottom:4px}
 dialog h3{margin-top:0}
 dialog .rw{justify-content:flex-end;margin-top:8px}
-#toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:9px 14px;border-radius:8px;opacity:0;pointer-events:none;max-width:90vw;z-index:30}
-#toast.show{opacity:1}
+#toast{position:fixed;left:50%;bottom:76px;transform:translate(-50%,8px);transition:opacity .2s,transform .2s;background:var(--tx);color:var(--bg);padding:9px 14px;border-radius:8px;opacity:0;pointer-events:none;max-width:90vw;z-index:30}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#bar{position:fixed;top:0;left:0;right:0;height:3px;z-index:40;opacity:0;transition:opacity .2s;overflow:hidden;pointer-events:none}
+#bar::after{content:"";position:absolute;top:0;bottom:0;width:35%;background:var(--ac);animation:slide 1s ease-in-out infinite}
+body.busy #bar{opacity:1}
+@keyframes slide{from{left:-35%}to{left:100%}}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+main.fx{animation:up .25s ease both}
+.auth .box{animation:up .3s ease both}
+button{transition:background-color .15s,transform .1s,opacity .15s}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.6;cursor:wait}
+.menu[open]>div{animation:pop .15s ease both;transform-origin:top right}
+dialog[open]{animation:pop .18s ease both}
+dialog[open]::backdrop{animation:fade .18s ease both}
+@media(prefers-reduced-motion:reduce){*,::before,::after{animation:none!important;transition:none!important}}
 @media(max-width:799px){
 .wrap{display:block;padding:12px 12px 80px}
 nav{position:fixed;left:0;right:0;bottom:0;flex-direction:row;background:var(--card);border-top:1px solid var(--bd);padding:6px;z-index:5}
@@ -54,11 +70,12 @@ nav button{flex:1;text-align:center}
 <body>
 <div id="app"></div>
 <div id="toast" role="status"></div>
+<div id="bar"></div>
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
-var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
+var API = '';
 
-var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category'};
+var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category', ld: {}, fx: 0};
 var DT = {category: 'Категории', material: 'Материалы', vartype: 'Типы вариаций', source: 'Источники заказов',
   payment: 'Способы оплаты', delivery: 'Способы доставки', discount_reason: 'Причины скидок',
   writeoff_reason: 'Причины списания', return_reason: 'Причины возврата'};
@@ -77,7 +94,13 @@ function toast(m) {
   toast.t = setTimeout(function () { t.className = ''; }, 3200);
 }
 
+var BUSY = 0;
 async function call(a, d) {
+  BUSY++; document.body.classList.add('busy');
+  try { return await call0(a, d); }
+  finally { if (--BUSY === 0) document.body.classList.remove('busy'); }
+}
+async function call0(a, d) {
   var r, j;
   try {
     r = await fetch(url(), {method: 'POST', body: JSON.stringify({action: a, token: S.tk, data: d || {}})});
@@ -101,8 +124,8 @@ async function init() {
 
 async function load() {
   try {
-    if (S.page === 'sellers') S.sellers = (await call('sellers.list')).items;
-    if (S.page === 'settings') S.dict = (await call('dict.list')).items;
+    if (S.page === 'sellers') { S.sellers = (await call('sellers.list')).items; S.ld.sellers = 1; }
+    if (S.page === 'settings') { S.dict = (await call('dict.list')).items; S.ld.dict = 1; }
   } catch (e) { toast(e.message); if (!S.me) return init(); }
   render();
 }
@@ -116,6 +139,8 @@ function menu(items, id) {
 }
 
 function page() {
+  if (S.page === 'sellers' && !S.ld.sellers) return '<h2>Продавцы</h2><p class="mu">Загрузка…</p>';
+  if (S.page === 'settings' && !S.ld.dict) return '<h2>Настройки</h2><p class="mu">Загрузка…</p>';
   if (S.page === 'sellers') {
     return '<div class="rw"><h2>Продавцы</h2><button class="pri" data-a="addSeller">Добавить</button></div>' +
       S.sellers.map(function (s) {
@@ -159,9 +184,10 @@ function render() {
     h = '<div class="top"><b>Склад</b><details class="menu"><summary>' + esc(S.me.name) + ' ▾</summary><div><button data-a="myPw">Сменить пароль</button><button data-a="logout">Выйти</button></div></details></div>' +
       '<div class="wrap"><nav>' + NAV.map(function (n) {
         return '<button class="' + (S.page === n[0] ? 'on' : '') + '" data-a="nav" data-p="' + n[0] + '">' + n[1] + '</button>';
-      }).join('') + '</nav><main>' + page() + '</main></div>';
+      }).join('') + '</nav><main' + (S.fx ? ' class="fx"' : '') + '>' + page() + '</main></div>';
   } else { h = ''; }
   document.getElementById('app').innerHTML = h;
+  S.fx = 0;
 }
 
 function ask(title, fields, okLabel, cb) {
@@ -174,7 +200,10 @@ function ask(title, fields, okLabel, cb) {
   f.addEventListener('submit', function (e) {
     e.preventDefault();
     var vals = fields.map(function (_, i) { return f.elements['f' + i].value; });
-    cb(vals).then(function () { d.close(); }).catch(function (err) { d.querySelector('.er').textContent = err.message; });
+    var btn = f.querySelector('.pri'); btn.disabled = true;
+    cb(vals).then(function () { d.close(); }).catch(function (err) {
+      btn.disabled = false; d.querySelector('.er').textContent = err.message;
+    });
   });
   d.addEventListener('close', function () { d.remove(); });
   document.body.appendChild(d);
@@ -185,6 +214,7 @@ function ask(title, fields, okLabel, cb) {
 function seller(id) { return S.sellers.filter(function (s) { return s.id === id; })[0]; }
 function ditem(id) { return S.dict.filter(function (s) { return s.id === id; })[0]; }
 function dictDone(j) { S.dict = j.items; render(); }
+function sellersDone(j) { S.sellers = j.items; render(); }
 
 var A = {
   saveApi: function () {
@@ -197,16 +227,17 @@ var A = {
   login: function () {
     var g = function (i) { var e = document.getElementById(i); return e ? e.value.trim() : ''; };
     var d = {login: g('lg'), password: document.getElementById('pw').value, name: g('nm')};
+    var lb = document.querySelector('.pri[data-a="login"]'); lb.disabled = true;
     call(S.first ? 'firstSeller' : 'login', d).then(function (j) {
       S.tk = j.token; localStorage.setItem('tk', j.token); S.me = j.me; S.view = 'app'; S.page = 'home'; render();
-    }).catch(function (e) { document.getElementById('er').textContent = e.message; });
+    }).catch(function (e) { lb.disabled = false; document.getElementById('er').textContent = e.message; });
   },
   logout: function () {
     call('logout').catch(function () {}).then(function () {
       S.tk = ''; S.me = null; localStorage.removeItem('tk'); init();
     });
   },
-  nav: function (d) { S.page = d.p; render(); load(); },
+  nav: function (d) { S.page = d.p; S.fx = 1; render(); load(); },
   myPw: function () {
     ask('Сменить пароль', [{l: 'Новый пароль', t: 'password'}], 'Сохранить', function (v) {
       return call('sellers.password', {id: S.me.id, password: v[0]}).then(function () { toast('Пароль изменен'); });
@@ -214,13 +245,13 @@ var A = {
   },
   addSeller: function () {
     ask('Новый продавец', [{l: 'Имя'}, {l: 'Логин'}, {l: 'Пароль', t: 'password'}], 'Добавить', function (v) {
-      return call('sellers.add', {name: v[0], login: v[1], password: v[2]}).then(load);
+      return call('sellers.add', {name: v[0], login: v[1], password: v[2]}).then(sellersDone);
     });
   },
   renSeller: function (d) {
     var s = seller(d.id);
     ask('Имя продавца', [{l: 'Имя', v: s.name}], 'Сохранить', function (v) {
-      return call('sellers.update', {id: s.id, name: v[0]}).then(load);
+      return call('sellers.update', {id: s.id, name: v[0]}).then(sellersDone);
     });
   },
   pwSeller: function (d) {
@@ -231,7 +262,7 @@ var A = {
   },
   togSeller: function (d) {
     var s = seller(d.id);
-    call('sellers.update', {id: s.id, active: !s.active}).then(load).catch(function (e) { toast(e.message); });
+    call('sellers.update', {id: s.id, active: !s.active}).then(sellersDone).catch(function (e) { toast(e.message); });
   },
   dt: function (d) { S.dt = d.k; render(); },
   addDict: function () {
