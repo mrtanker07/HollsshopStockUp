@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Склад</title>
 <style>
-:root{--bg:#f3f4f5;--card:#fff;--tx:#1b2024;--mu:#5f6872;--bd:#d9dde1;--ac:#0e6b5c;--acbg:#dff0ec;--dg:#b3261e;--on:#fff;--ach:#0a5649}
-@media(prefers-color-scheme:dark){:root{--bg:#16191b;--card:#1f2326;--tx:#e9ecee;--mu:#9aa3ab;--bd:#343a3f;--ac:#5fc4b0;--acbg:#1d3a35;--dg:#f2958f;--on:#0b1512;--ach:#86d9c8}}
+:root{--bg:#f3f4f5;--card:#fff;--tx:#1b2024;--mu:#5f6872;--bd:#d9dde1;--ac:#0e6b5c;--acbg:#dff0ec;--dg:#b3261e;--on:#fff;--ach:#0a5649;--wb:#fdf0d3;--wt:#7a5200;--db:#fbe3e1;--dt:#b3261e}
+@media(prefers-color-scheme:dark){:root{--bg:#16191b;--card:#1f2326;--tx:#e9ecee;--mu:#9aa3ab;--bd:#343a3f;--ac:#5fc4b0;--acbg:#1d3a35;--dg:#f2958f;--on:#0b1512;--ach:#86d9c8;--wb:#3d3216;--wt:#f0c96a;--db:#4a2220;--dt:#f2958f}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 h1{font-size:22px;margin:0 0 12px}h2{font-size:20px;margin:0}h3{font-size:16px;margin:16px 0 8px}
 .mu{color:var(--mu);font-size:13px}
-input{width:100%;font:inherit;font-size:16px;padding:10px 12px;margin:0 0 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)}
+input,select{width:100%;font:inherit;font-size:16px;padding:10px 12px;margin:0 0 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)}
 button{font:inherit;cursor:pointer;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);padding:9px 14px}
-button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 .pri{background:var(--ac);color:var(--on);border-color:var(--ac)}
 .ghost{background:none}
 .auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
@@ -37,8 +37,13 @@ nav button.on{background:var(--acbg);color:var(--ac);font-weight:600}
 .menu summary::-webkit-details-marker{display:none}
 .menu>div{position:absolute;right:0;top:100%;margin-top:4px;min-width:170px;z-index:10;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:4px;display:flex;flex-direction:column}
 .menu>div button{text-align:left;border:none;background:none}
-dialog{border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);padding:18px;width:min(92vw,360px)}
+dialog{max-height:90vh;overflow:auto;border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);padding:18px;width:min(92vw,360px)}
 dialog::backdrop{background:rgba(0,0,0,.45)}
+.tg.y{background:var(--wb);color:var(--wt)}
+.tg.d{background:var(--db);color:var(--dt)}
+.vs{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.er:empty{display:none}
+label.mu{display:block;margin:0 0 3px}
 dialog label{display:block;font-size:13px;color:var(--mu);margin-bottom:4px}
 dialog h3{margin-top:0}
 dialog .rw{justify-content:flex-end;margin-top:8px}
@@ -67,7 +72,7 @@ dialog[open]::backdrop{animation:fade .18s ease both}
 @media(max-width:799px){
 .wrap{display:block;padding:12px 12px 80px}
 nav{position:fixed;left:0;right:0;bottom:0;flex-direction:row;background:var(--card);border-top:1px solid var(--bd);padding:6px;z-index:5}
-nav button{flex:1;text-align:center}
+nav button{flex:1;text-align:center;padding:9px 2px;font-size:13px}
 }
 </style>
 </head>
@@ -78,11 +83,11 @@ nav button{flex:1;text-align:center}
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
-var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category', ld: {}, fx: 0};
+var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category', ld: {}, fx: 0, products: [], moves: [], st: 'receipt', q: '', arc: 0, pre: '', pv: ''};
 var DT = {category: 'Категории', material: 'Материалы', vartype: 'Типы вариаций', source: 'Источники заказов',
   payment: 'Способы оплаты', delivery: 'Способы доставки', discount_reason: 'Причины скидок',
   writeoff_reason: 'Причины списания', return_reason: 'Причины возврата'};
-var NAV = [['home', 'Главная'], ['sellers', 'Продавцы'], ['settings', 'Настройки']];
+var NAV = [['home', 'Главная'], ['products', 'Товары'], ['stock', 'Склад'], ['sellers', 'Продавцы'], ['settings', 'Настройки']];
 
 function url() { return API || localStorage.getItem('api') || ''; }
 function esc(s) {
@@ -123,6 +128,10 @@ async function load() {
   try {
     if (S.page === 'sellers') { S.sellers = (await call('sellers.list')).items; S.ld.sellers = 1; }
     if (S.page === 'settings') { S.dict = (await call('dict.list')).items; S.ld.dict = 1; }
+    if (S.page === 'products' || S.page === 'stock') {
+      var pj = await call('products.list'); S.products = pj.items; S.dict = pj.dict; S.ld.products = 1; S.ld.dict = 1;
+    }
+    if (S.page === 'stock' && S.st === 'history') { S.moves = (await call('moves.list')).items; S.ld.moves = 1; }
   } catch (e) { toast(e.message); if (!S.me) return init(); }
   render();
 }
@@ -136,6 +145,8 @@ function menu(items, id) {
 }
 
 function page() {
+  if (S.page === 'products') return S.ld.products ? productsPage() : '<h2>Товары</h2><p class="mu">Загрузка…</p>';
+  if (S.page === 'stock') return S.ld.products ? stockPage() : '<h2>Склад</h2><p class="mu">Загрузка…</p>';
   if (S.page === 'sellers' && !S.ld.sellers) return '<h2>Продавцы</h2><p class="mu">Загрузка…</p>';
   if (S.page === 'settings' && !S.ld.dict) return '<h2>Настройки</h2><p class="mu">Загрузка…</p>';
   if (S.page === 'sellers') {
@@ -166,6 +177,82 @@ function page() {
   return '<h2>Главная</h2><div class="cd"><p style="margin:0">Основа готова: вход, продавцы и справочники. Товары, склад и заказы появятся на следующих этапах.</p></div>';
 }
 
+function avail(v) { return v.stock - v.reserve; }
+function vcls(v) { var a = avail(v); return a <= 0 ? 'd' : a === 1 ? 'y' : ''; }
+function prod(id) { return S.products.filter(function (p) { return p.id === id; })[0]; }
+function dn(t, cur) {
+  var a = S.dict.filter(function (x) { return x.type === t && !x.archived; }).map(function (x) { return x.name; });
+  if (cur && a.indexOf(cur) < 0) a.unshift(cur);
+  return a;
+}
+function opts(a, sel) {
+  return a.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (o[0] === sel ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('');
+}
+function varOpts(pid) {
+  var p = prod(pid);
+  return p ? opts(p.vars.filter(function (v) { return !v.archived; }).map(function (v) {
+    return [v.id, (v.value === 'Без вариации' ? 'Без вариации' : v.vartype + ' ' + v.value) + ' (на складе ' + v.stock + ')'];
+  }), S.pv) : '';
+}
+
+function plist() {
+  var q = S.q.trim().toLowerCase();
+  var items = S.products.filter(function (p) {
+    return !!p.archived === !!S.arc && (!q || (p.name + ' ' + p.sku).toLowerCase().indexOf(q) >= 0);
+  });
+  if (!items.length) return '<p class="mu">' + (S.products.length ? 'Ничего не найдено.' : 'Товаров пока нет. Нажмите «Новый товар».') + '</p>';
+  return items.map(function (p) {
+    var vs = p.vars.filter(function (v) { return !v.archived; });
+    var total = vs.reduce(function (s, v) { return s + avail(v); }, 0);
+    return '<div class="cd"><div class="rw"><div><b>' + esc(p.name) + '</b><div class="mu">' + esc([p.sku, p.category, p.material].filter(Boolean).join(' · ')) + '</div></div>' +
+      '<div class="rw g8"><span class="mu">доступно ' + total + '</span>' +
+      menu(p.archived ? [['resP', 'Восстановить']] : [['stockIn', 'Принять товар'], ['editP', 'Редактировать'], ['addV', 'Добавить вариации'], ['arcP', 'В архив']], p.id) +
+      '</div></div><div class="vs">' + vs.map(function (v) {
+        return '<span class="tg ' + vcls(v) + '">' + (v.value === 'Без вариации' ? 'всего' : esc(v.value)) + ': ' + avail(v) + '</span>';
+      }).join('') + '</div><div class="mu" style="margin-top:6px">закупка ' + p.cost + ' · цена ' + p.price + ' грн</div></div>';
+  }).join('');
+}
+
+function productsPage() {
+  return '<div class="rw"><h2>Товары</h2><button class="pri" data-a="newP">Новый товар</button></div>' +
+    '<input id="q" placeholder="Поиск по названию или артикулу" value="' + esc(S.q) + '" style="margin-top:10px">' +
+    '<div class="chips" style="margin-top:0"><button class="' + (S.arc ? '' : 'on') + '" data-a="arc" data-v="0">Активные</button><button class="' + (S.arc ? 'on' : '') + '" data-a="arc" data-v="1">Архив</button></div>' +
+    '<div id="plist">' + plist() + '</div>';
+}
+
+function stockForm() {
+  var ps = S.products.filter(function (p) { return !p.archived; });
+  if (!ps.length) return '<p class="mu">Сначала добавьте товар в разделе «Товары».</p>';
+  var pid = S.pre && ps.some(function (p) { return p.id === S.pre; }) ? S.pre : ps[0].id;
+  var p0 = prod(pid), k = S.st;
+  var reasons = dn('writeoff_reason').map(function (x) { return [x, x]; });
+  var today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  return '<div class="cd"><label class="mu">Товар</label><select id="sp">' + opts(ps.map(function (p) { return [p.id, p.name]; }), pid) + '</select>' +
+    '<label class="mu">Вариация</label><select id="sv">' + varOpts(pid) + '</select>' +
+    '<label class="mu">' + (k === 'adjust' ? 'Фактическое количество' : 'Количество') + '</label><input id="sq" type="number" inputmode="numeric" min="0" step="1">' +
+    (k === 'receipt' ? '<label class="mu">Закупочная цена, грн</label><input id="sc" type="number" inputmode="decimal" step="any" value="' + p0.cost + '"><label class="mu">Дата прихода</label><input id="sd" type="date" value="' + today + '">' : '') +
+    (k === 'writeoff' ? '<label class="mu">Причина</label><select id="sr">' + opts(reasons) + '</select>' : '') +
+    (k === 'adjust' ? '<label class="mu">Закупочная цена, если остаток вырастет (необязательно)</label><input id="sc" type="number" inputmode="decimal" step="any" placeholder="' + p0.cost + '">' : '') +
+    '<label class="mu">' + (k === 'adjust' ? 'Причина (обязательно)' : 'Комментарий') + '</label><input id="sm" autocomplete="off">' +
+    '<p class="er" id="se"></p><button class="pri" data-a="stockGo">' + ({receipt: 'Принять на склад', writeoff: 'Списать', adjust: 'Применить'})[k] + '</button></div>';
+}
+
+function stockPage() {
+  var tabs = [['receipt', 'Приход'], ['writeoff', 'Списание'], ['adjust', 'Корректировка'], ['history', 'История']];
+  var h = '<h2>Склад</h2><div class="chips">' + tabs.map(function (t) {
+    return '<button class="' + (S.st === t[0] ? 'on' : '') + '" data-a="st" data-k="' + t[0] + '">' + t[1] + '</button>';
+  }).join('') + '</div>';
+  if (S.st !== 'history') return h + stockForm();
+  if (!S.ld.moves) return h + '<p class="mu">Загрузка…</p>';
+  var T = {receipt: 'Приход', writeoff: 'Списание', adjust: 'Корректировка'};
+  return h + (S.moves.length ? S.moves.map(function (m) {
+    var priced = m.type === 'receipt' || (m.type === 'adjust' && m.qty > 0);
+    return '<div class="cd"><div class="rw"><b>' + esc(m.label) + '</b><span class="tg ' + (m.qty < 0 ? 'd' : '') + '">' + T[m.type] + ' ' + (m.qty > 0 ? '+' : '') + m.qty + '</span></div>' +
+      '<div class="mu">' + new Date(m.time).toLocaleString('ru') + ' · ' + esc(m.seller) + (priced ? ' · по ' + m.cost + ' грн' : '') +
+      (m.reason ? ' · ' + esc(m.reason) : '') + (m.comment ? ' · ' + esc(m.comment) : '') + '</div></div>';
+  }).join('') : '<p class="mu">Движений пока нет.</p>');
+}
+
 function render() {
   var h;
   if (S.view === 'setup') {
@@ -190,7 +277,9 @@ function render() {
 function ask(title, fields, okLabel, cb) {
   var d = document.createElement('dialog');
   d.innerHTML = '<form method="dialog"><h3>' + esc(title) + '</h3>' + fields.map(function (f, i) {
-    return '<label>' + esc(f.l) + '</label><input name="f' + i + '" type="' + (f.t || 'text') + '" value="' + esc(f.v || '') + '" autocomplete="off">';
+    return '<label>' + esc(f.l) + '</label>' + (f.o
+      ? '<select name="f' + i + '">' + opts(f.o.map(function (x) { return [x, x]; }), f.v) + '</select>'
+      : '<input name="f' + i + '" type="' + (f.t || 'text') + '"' + (f.t === 'number' ? ' step="any" inputmode="decimal"' : '') + ' value="' + esc(f.v == null ? '' : f.v) + '" autocomplete="off">');
   }).join('') + '<p class="er"></p><div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">' + esc(okLabel) + '</button></div></form>';
   var f = d.querySelector('form');
   d.querySelector('[data-c]').onclick = function () { d.close(); };
@@ -211,6 +300,7 @@ function ask(title, fields, okLabel, cb) {
 function seller(id) { return S.sellers.filter(function (s) { return s.id === id; })[0]; }
 function ditem(id) { return S.dict.filter(function (s) { return s.id === id; })[0]; }
 function dictDone(j) { S.dict = j.items; render(); }
+function productsDone(j) { S.products = j.items; S.dict = j.dict; render(); }
 function sellersDone(j) { S.sellers = j.items; render(); }
 
 var A = {
@@ -261,6 +351,46 @@ var A = {
     var s = seller(d.id);
     call('sellers.update', {id: s.id, active: !s.active}).then(sellersDone).catch(function (e) { toast(e.message); });
   },
+  arc: function (d) { S.arc = +d.v; render(); },
+  st: function (d) { S.st = d.k; render(); load(); },
+  stockIn: function (d) { S.pre = d.id; S.pv = ''; S.st = 'receipt'; S.page = 'stock'; S.fx = 1; render(); load(); },
+  newP: function () {
+    ask('Новый товар', [{l: 'Название'}, {l: 'Артикул (необязательно)'}, {l: 'Категория', o: dn('category')}, {l: 'Материал', o: dn('material')},
+      {l: 'Закупочная цена, грн', t: 'number'}, {l: 'Цена продажи, грн', t: 'number'},
+      {l: 'Тип вариации', o: dn('vartype').concat(['Без вариаций'])}, {l: 'Значения через запятую (например 16, 17, 18)'}], 'Создать', function (v) {
+      return call('products.save', {name: v[0], sku: v[1], category: v[2], material: v[3], cost: v[4], price: v[5],
+        vartype: v[6] === 'Без вариаций' ? '' : v[6], values: v[7]}).then(productsDone);
+    });
+  },
+  editP: function (d) {
+    var p = prod(d.id);
+    ask('Редактировать товар', [{l: 'Название', v: p.name}, {l: 'Артикул', v: p.sku}, {l: 'Категория', o: dn('category', p.category), v: p.category},
+      {l: 'Материал', o: dn('material', p.material), v: p.material}, {l: 'Закупочная цена, грн', t: 'number', v: p.cost},
+      {l: 'Цена продажи, грн', t: 'number', v: p.price}], 'Сохранить', function (v) {
+      return call('products.save', {id: p.id, name: v[0], sku: v[1], category: v[2], material: v[3], cost: v[4], price: v[5]}).then(productsDone);
+    });
+  },
+  addV: function (d) {
+    var p = prod(d.id);
+    var cur = (p.vars.filter(function (v) { return v.vartype; })[0] || {}).vartype || '';
+    ask('Добавить вариации: ' + p.name, [{l: 'Тип вариации', o: dn('vartype', cur), v: cur}, {l: 'Значения через запятую'}], 'Добавить', function (v) {
+      return call('vars.add', {productId: p.id, vartype: v[0], values: v[1]}).then(productsDone);
+    });
+  },
+  arcP: function (d) { call('products.archive', {id: d.id}).then(productsDone).catch(function (e) { toast(e.message); }); },
+  resP: function (d) { call('products.restore', {id: d.id}).then(productsDone).catch(function (e) { toast(e.message); }); },
+  stockGo: function () {
+    var g = function (i) { var e = document.getElementById(i); return e ? e.value : ''; };
+    var m = {receipt: 'stock.receipt', writeoff: 'stock.writeoff', adjust: 'stock.adjust'}[S.st];
+    var d = {varId: g('sv'), comment: g('sm')};
+    if (S.st === 'receipt') { d.qty = g('sq'); d.cost = g('sc'); d.date = g('sd'); }
+    if (S.st === 'writeoff') { d.qty = g('sq'); d.reason = g('sr'); }
+    if (S.st === 'adjust') { d.counted = g('sq'); d.cost = g('sc'); }
+    var b = document.querySelector('.pri[data-a="stockGo"]'); b.disabled = true;
+    call(m, d).then(function (j) {
+      S.products = j.items; S.pv = d.varId; toast('Готово'); render();
+    }).catch(function (e) { b.disabled = false; document.getElementById('se').textContent = e.message; });
+  },
   dt: function (d) { S.dt = d.k; render(); },
   addDict: function () {
     ask('Добавить: ' + DT[S.dt], [{l: 'Название'}], 'Добавить', function (v) {
@@ -286,6 +416,17 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Enter' && /^(pw|lg|nm|api)$/.test(e.target.id)) {
     var b = document.querySelector('.pri[data-a]'); if (b) b.click();
   }
+});
+
+document.addEventListener('change', function (e) {
+  if (e.target.id !== 'sp') return;
+  S.pre = e.target.value; S.pv = '';
+  document.getElementById('sv').innerHTML = varOpts(S.pre);
+  var c = document.getElementById('sc'), p = prod(S.pre);
+  if (c) { if (S.st === 'receipt') c.value = p.cost; else c.placeholder = p.cost; }
+});
+document.addEventListener('input', function (e) {
+  if (e.target.id === 'q') { S.q = e.target.value; document.getElementById('plist').innerHTML = plist(); }
 });
 
 init();
