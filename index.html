@@ -153,7 +153,7 @@ var DT = {category: 'Категории', material: 'Материалы', vartyp
   writeoff_reason: 'Причины списания', return_reason: 'Причины возврата'};
 var NAV = [['home', 'Главная'], ['products', 'Товары'], ['docs', 'Документы'], ['sellers', 'Продавцы'], ['settings', 'Настройки']];
 
-function url() { return API || localStorage.getItem('api') || ''; }
+function url() { return localStorage.getItem('api') || API || ''; }
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
     return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c];
@@ -185,11 +185,13 @@ async function call0(a, d) {
 
 async function init() {
   if (!url()) { S.view = 'setup'; return render(); }
+  S.stale = false;
   try {
     var j;
     if (S.tk) { try { j = await call('me'); S.me = j.me; } catch (e) { S.me = null; } }
     if (!S.me) { j = await call('status'); S.first = !j.hasSellers; }
-    if (!j || j.ver !== NEED) {
+    if (!S.noVer && (!j || j.ver !== NEED)) {
+      S.stale = true;
       var sv = j && j.ver ? j.ver : 'нет номера (старый скрипт)';
       throw new Error(j && j.ver > NEED
         ? 'Страница устарела: скрипт версии ' + sv + ', а страница ждет версию ' + NEED + '. Загрузите свежий index.html на хостинг и откройте страницу с Ctrl+F5.'
@@ -418,9 +420,9 @@ function view(title, html) {
 function render() {
   var h;
   if (S.view === 'setup') {
-    h = box('Подключение', '<p class="mu">Вставьте ссылку на скрипт (она заканчивается на /exec).</p><input id="api" placeholder="https://script.google.com/macros/s/…/exec"><button class="pri" data-a="saveApi">Сохранить</button>');
+    h = box('Подключение', '<p class="mu">Вставьте ссылку на скрипт (она заканчивается на /exec). Ссылка сохранится в этом браузере и заменит ссылку из файла.</p><input id="api" placeholder="https://script.google.com/macros/s/…/exec" value="' + esc(url()) + '"><button class="pri" data-a="saveApi">Сохранить</button>' + (url() ? '<button class="ghost" data-a="retry">Назад</button>' : ''));
   } else if (S.view === 'err') {
-    h = box('Не удалось подключиться', '<p>' + esc(S.err) + '</p><button class="pri" data-a="retry">Повторить</button><button class="ghost" data-a="resetApi">Изменить ссылку</button><p class="mu" style="margin:12px 0 0"><a href="' + esc(url()) + '?check=1" target="_blank" rel="noopener">Проверить скрипт (откроется в новой вкладке)</a></p>');
+    h = box('Не удалось подключиться', '<p>' + esc(S.err) + '</p><button class="pri" data-a="retry">Повторить</button>' + (S.stale ? '<button class="ghost" data-a="ignoreVer">Всё равно открыть</button>' : '') + '<button class="ghost" data-a="resetApi">Изменить ссылку</button><p class="mu" style="margin:12px 0 0"><a href="' + esc(url()) + '?check=1" target="_blank" rel="noopener">Проверить скрипт (откроется в новой вкладке)</a></p>');
   } else if (S.view === 'login') {
     h = box(S.first ? 'Первый запуск' : 'Вход',
       (S.first ? '<p class="mu">Создайте первого продавца. Он сможет добавить остальных.</p><input id="nm" placeholder="Имя">' : '') +
@@ -472,7 +474,8 @@ var A = {
     localStorage.setItem('api', v); init();
   },
   retry: function () { init(); },
-  resetApi: function () { localStorage.removeItem('api'); S.view = 'setup'; render(); },
+  resetApi: function () { S.view = 'setup'; render(); },
+  ignoreVer: function () { S.noVer = true; init(); },
   login: function () {
     var g = function (i) { var e = document.getElementById(i); return e ? e.value.trim() : ''; };
     var d = {login: g('lg'), password: document.getElementById('pw').value, name: g('nm')};
