@@ -190,7 +190,10 @@ async function init() {
     if (S.tk) { try { j = await call('me'); S.me = j.me; } catch (e) { S.me = null; } }
     if (!S.me) { j = await call('status'); S.first = !j.hasSellers; }
     if (!j || j.ver !== NEED) {
-      throw new Error('Версия скрипта устарела. В Apps Script вставьте новый Code.gs и создайте НОВУЮ версию развертывания (Развернуть → Управление развертываниями → карандаш → Версия: Новая версия → Развернуть).');
+      var sv = j && j.ver ? j.ver : 'нет номера (старый скрипт)';
+      throw new Error(j && j.ver > NEED
+        ? 'Страница устарела: скрипт версии ' + sv + ', а страница ждет версию ' + NEED + '. Загрузите свежий index.html на хостинг и откройте страницу с Ctrl+F5.'
+        : 'Скрипт устарел: страница ждет версию ' + NEED + ', а скрипт отвечает: ' + sv + '. В Apps Script вставьте новый Code.gs и создайте НОВУЮ версию развертывания (Развернуть → Управление развертываниями → карандаш → Версия: Новая версия → Развернуть).');
     }
     S.view = S.me ? 'app' : 'login';
   } catch (e) { S.view = 'err'; S.err = e.message; }
