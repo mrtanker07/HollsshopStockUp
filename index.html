@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Склад</title>
 <style>
-:root{--bg:#f3f4f5;--card:#fff;--tx:#1b2024;--mu:#5f6872;--bd:#d9dde1;--ac:#0e6b5c;--acbg:#dff0ec;--dg:#b3261e;--on:#fff;--ach:#0a5649;--wb:#fdf0d3;--wt:#7a5200;--db:#fbe3e1;--dt:#b3261e;--gb:#d8f1df;--gt:#14632f}
-@media(prefers-color-scheme:dark){:root{--bg:#16191b;--card:#1f2326;--tx:#e9ecee;--mu:#9aa3ab;--bd:#343a3f;--ac:#5fc4b0;--acbg:#1d3a35;--dg:#f2958f;--on:#0b1512;--ach:#86d9c8;--wb:#3d3216;--wt:#f0c96a;--db:#4a2220;--dt:#f2958f;--gb:#1b3a28;--gt:#8fdcab}}
+:root{--bg:#f3f4f5;--card:#fff;--tx:#1b2024;--mu:#5f6872;--bd:#d9dde1;--ac:#0e6b5c;--acbg:#dff0ec;--dg:#b3261e;--on:#fff;--ach:#0a5649;--wb:#fdf0d3;--wt:#7a5200;--db:#fbe3e1;--dt:#b3261e;--gb:#d8f1df;--gt:#14632f;--bs:#b4bbc2;--mm:#8a929a}
+@media(prefers-color-scheme:dark){:root{--bg:#16191b;--card:#1f2326;--tx:#e9ecee;--mu:#9aa3ab;--bd:#343a3f;--ac:#5fc4b0;--acbg:#1d3a35;--dg:#f2958f;--on:#0b1512;--ach:#86d9c8;--wb:#3d3216;--wt:#f0c96a;--db:#4a2220;--dt:#f2958f;--gb:#1b3a28;--gt:#8fdcab;--bs:#555e66;--mm:#7b858e}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 h1{font-size:22px;margin:0 0 12px}h2{font-size:20px;margin:0}h3{font-size:16px;margin:16px 0 8px}
@@ -56,6 +56,52 @@ dialog.wide{width:min(94vw,560px)}
 .lb{border:1px solid var(--bd);border-radius:10px;padding:10px;margin-bottom:8px}
 .lb select,.lb input{margin-bottom:8px}
 .two{display:flex;gap:8px}.two>*{flex:1;min-width:0}
+.pc{background:var(--card);border:.5px solid var(--bd);border-radius:12px;padding:12px 14px;margin-top:8px}
+.pc-head{display:flex;align-items:center;gap:14px}
+.pc-photo{width:64px;height:64px;border-radius:8px;border:.5px solid var(--bd);flex:none;background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--mm)}
+.pc-photo svg{width:24px;height:24px}
+.pc-main{flex:1;min-width:0}
+.pc-name{font-size:16px;font-weight:500;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-meta{font-size:12px;font-weight:400;color:var(--mu);margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-price{font-size:16px;font-weight:500;white-space:nowrap}
+.pc .menu summary{width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center}
+.pc .menu summary svg{width:18px;height:18px}
+.qty{display:inline-flex;align-items:baseline;justify-content:center;gap:3px;box-sizing:border-box;min-width:56px;padding:3px 10px;border:1px solid var(--bs);border-radius:8px;font-size:18px;font-weight:500;color:var(--tx);white-space:nowrap;background:transparent}
+.qty small{font-size:13px;font-weight:400;color:var(--mu)}
+.bdg{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:4px 10px;border-radius:8px;white-space:nowrap}
+.bdg svg{width:16px;height:16px;flex:none}
+.bdg.ok{background:var(--gb);color:var(--gt)}
+.bdg.low{background:var(--wb);color:var(--wt)}
+.bdg.no{background:var(--db);color:var(--dt)}
+.stock-row{display:grid;grid-template-columns:auto auto;grid-template-areas:"q p" "q b";column-gap:14px;row-gap:6px;align-items:center}
+.stock-row .pc-price{grid-area:p;justify-self:end}
+.stock-row .qty{grid-area:q}
+.stock-row .bdg{grid-area:b;justify-self:end}
+.pc-vars{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:12px;padding-top:12px;border-top:.5px solid var(--bd)}
+.pc-var{border:.5px solid var(--bd);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.pc-vrow{display:flex;justify-content:space-between;align-items:center;gap:8px;align-self:stretch}
+.vl{font-size:12px;color:var(--mu);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vl b{font-size:14px;font-weight:500;color:var(--tx)}
+@media(max-width:640px){
+.pc{padding:10px 12px}
+.pc-head{gap:10px}
+.pc-photo{width:44px;height:44px}
+.pc-photo svg{width:20px;height:20px}
+.pc-name,.pc-price{font-size:15px;line-height:1.3}
+.pc .menu summary{width:28px;height:28px;border:0}
+.pc.single .pc-head{flex-wrap:wrap}
+.pc.single .menu{order:2}
+.pc.single .stock-row{order:3;flex:0 0 100%;grid-template-columns:minmax(0,1fr) 60px 120px;grid-template-areas:none;column-gap:8px;margin-top:8px;padding-top:8px;border-top:.5px solid var(--bd)}
+.pc.single .stock-row>*{grid-area:auto;justify-self:auto}
+.qty{width:60px;min-width:0;padding:2px 6px;font-size:16px}
+.qty small{font-size:12px}
+.qty.qs{font-size:13px}
+.bdg{width:120px;justify-content:center;box-sizing:border-box;font-size:12px;padding:4px 6px;border-radius:6px;gap:4px}
+.bdg svg{width:14px;height:14px}
+.pc-vars{display:block;border-top:0;padding-top:0;margin-top:8px}
+.pc-var{display:grid;grid-template-columns:minmax(0,1fr) 60px 120px;column-gap:8px;align-items:center;border:0;border-top:.5px solid var(--bd);border-radius:0;padding:7px 0}
+.pc-vrow{display:contents}
+}
 .tg.y{background:var(--wb);color:var(--wt)}
 .tg.d{background:var(--db);color:var(--dt)}
 .vs{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
@@ -98,9 +144,10 @@ nav button{flex:1;text-align:center;padding:9px 2px;font-size:13px}
 <div id="toast" role="status"></div>
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
+var NEED = 3; // ожидаемая версия скрипта
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
-var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category', ld: {}, fx: 0, products: [], docs: [], df: '', q: '', arc: 0};
+var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category', ld: {}, fx: 0, products: [], docs: [], df: '', q: '', arc: 0, sort: localStorage.getItem('sort') || 'name'};
 var DT = {category: 'Категории', material: 'Материалы', vartype: 'Типы вариаций', source: 'Источники заказов',
   payment: 'Способы оплаты', delivery: 'Способы доставки', discount_reason: 'Причины скидок',
   writeoff_reason: 'Причины списания', return_reason: 'Причины возврата'};
@@ -139,8 +186,12 @@ async function call0(a, d) {
 async function init() {
   if (!url()) { S.view = 'setup'; return render(); }
   try {
-    if (S.tk) { try { S.me = (await call('me')).me; } catch (e) { S.me = null; } }
-    if (!S.me) S.first = !(await call('status')).hasSellers;
+    var j;
+    if (S.tk) { try { j = await call('me'); S.me = j.me; } catch (e) { S.me = null; } }
+    if (!S.me) { j = await call('status'); S.first = !j.hasSellers; }
+    if (!j || j.ver !== NEED) {
+      throw new Error('Версия скрипта устарела. В Apps Script вставьте новый Code.gs и создайте НОВУЮ версию развертывания (Развернуть → Управление развертываниями → карандаш → Версия: Новая версия → Развернуть).');
+    }
     S.view = S.me ? 'app' : 'login';
   } catch (e) { S.view = 'err'; S.err = e.message; }
   render();
@@ -164,8 +215,8 @@ async function load() {
 
 function box(title, body) { return '<div class="auth"><div class="box"><h1>' + title + '</h1>' + body + '</div></div>'; }
 
-function menu(items, id) {
-  return '<details class="menu"><summary aria-label="Опции">⋯</summary><div>' + items.map(function (i) {
+function menu(items, id, icon) {
+  return '<details class="menu"><summary aria-label="Опции">' + (icon || '⋯') + '</summary><div>' + items.map(function (i) {
     return '<button data-a="' + i[0] + '" data-id="' + esc(id) + '">' + i[1] + '</button>';
   }).join('') + '</div></details>';
 }
@@ -219,28 +270,73 @@ function opts(a, sel) {
 function money(n) { return Number(n).toLocaleString('ru', {maximumFractionDigits: 2}) + ' грн'; }
 function fdt(s) { return new Date(s).toLocaleString('ru', {dateStyle: 'short', timeStyle: 'short'}); }
 
+var IC = {
+  photo: '<path d="M15 8h.01"/><path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"/><path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"/><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"/>',
+  dots: '<path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>',
+  'circle-check': '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M9 12l2 2l4 -4"/>',
+  'circle-x': '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M10 10l4 4m0 -4l-4 4"/>',
+  'alert-triangle': '<path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"/><path d="M12 16h.01"/>'
+};
+function ico(n) {
+  return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[n] + '</svg>';
+}
+function status(q, min) {
+  if (q === 0) return ['no', 'circle-x', 'Нет в наличии'];
+  if (min != null && !isNaN(min) && q > 0 && q <= min) return ['low', 'alert-triangle', 'Заканчивается'];
+  return ['ok', 'circle-check', 'В наличии'];
+}
+function badge(q, min) { var s = status(q, min); return '<span class="bdg ' + s[0] + '">' + ico(s[1]) + s[2] + '</span>'; }
+function qtyBox(q) { return '<span class="qty' + (q >= 1000 ? ' qs' : '') + '">' + q + ' <small>шт</small></span>'; }
+function vlabel(v) {
+  return v.value === 'Без вариации' ? '<b>Без вариации</b>' : (v.vartype ? esc(v.vartype) + ' ' : '') + '<b>' + esc(v.value) + '</b>';
+}
+function prank(p) {
+  var vs = p.vars.filter(function (v) { return !v.archived; });
+  if (!vs.length) return 0;
+  return Math.min.apply(null, vs.map(function (v) { return {no: 0, low: 1, ok: 2}[status(v.stock, p.min)[0]]; }));
+}
+function sortItems(items) {
+  var s = S.sort, nm = function (a, b) { return a.name.localeCompare(b.name, 'ru'); };
+  return items.slice().sort(function (a, b) {
+    if (s === 'name') return nm(a, b);
+    if (s === 'name-d') return nm(b, a);
+    var d = prank(a) - prank(b);
+    if (s === 'st-d') d = -d;
+    return d || nm(a, b);
+  });
+}
+
+function cardHtml(p) {
+  var vs = p.vars.filter(function (v) { return !v.archived; });
+  var single = !vs.length || (vs.length === 1 && vs[0].value === 'Без вариации');
+  var meta = [p.category, p.material, p.sku ? '#' + p.sku : ''].filter(Boolean).join(' · ');
+  var mn = p.archived ? [['resP', 'Восстановить']] : [['editP', 'Редактировать'], ['addV', 'Добавить вариации'], ['arcP', 'В архив']];
+  var head = '<div class="pc-photo">' + ico('photo') + '</div><div class="pc-main"><p class="pc-name" title="' + esc(p.name) + '">' + esc(p.name) + '</p>' +
+    (meta ? '<p class="pc-meta">' + esc(meta) + '</p>' : '') + '</div>';
+  var m = menu(mn, p.id, ico('dots')), price = '<span class="pc-price">' + money(p.price) + '</span>';
+  if (single) {
+    var q = vs.length ? vs[0].stock : 0;
+    return '<div class="pc single"><div class="pc-head">' + head + '<div class="stock-row">' + price + qtyBox(q) + badge(q, p.min) + '</div>' + m + '</div></div>';
+  }
+  return '<div class="pc"><div class="pc-head">' + head + price + m + '</div><div class="pc-vars">' + vs.map(function (v) {
+    return '<div class="pc-var"><div class="pc-vrow"><span class="vl">' + vlabel(v) + '</span>' + qtyBox(v.stock) + '</div>' + badge(v.stock, p.min) + '</div>';
+  }).join('') + '</div></div>';
+}
+
 function plist() {
   var q = S.q.trim().toLowerCase();
   var items = S.products.filter(function (p) {
     return !!p.archived === !!S.arc && (!q || (p.name + ' ' + p.sku).toLowerCase().indexOf(q) >= 0);
   });
   if (!items.length) return '<p class="mu">' + (S.products.length ? 'Ничего не найдено.' : 'Товаров пока нет. Нажмите «Новый товар».') + '</p>';
-  return items.map(function (p) {
-    var vs = p.vars.filter(function (v) { return !v.archived; });
-    return '<div class="cd"><div class="rw"><div><b>' + esc(p.name) + '</b><div class="mu">' +
-      esc([p.sku, p.category, p.material, 'мин. остаток ' + p.min].filter(Boolean).join(' · ')) + '</div></div>' +
-      '<div class="rw g8"><span class="pr">' + money(p.price) + '</span>' +
-      menu(p.archived ? [['resP', 'Восстановить']] : [['editP', 'Редактировать'], ['addV', 'Добавить вариации'], ['arcP', 'В архив']], p.id) +
-      '</div></div><div class="vgrid">' + vs.map(function (v) {
-        return '<div class="vt ' + vcls(v, p) + '"><span class="mu">' + (v.value === 'Без вариации' ? 'Всего' : esc((v.vartype ? v.vartype + ' ' : '') + v.value)) +
-          '</span><b>Доступно: ' + avail(v) + ' шт</b></div>';
-      }).join('') + '</div></div>';
-  }).join('');
+  return sortItems(items).map(cardHtml).join('');
 }
 
 function productsPage() {
+  var so = [['name', 'По названию: А → Я'], ['name-d', 'По названию: Я → А'], ['st', 'По статусу: сначала нет в наличии'], ['st-d', 'По статусу: сначала в наличии']];
   return '<div class="rw"><h2>Товары</h2><button class="pri" data-a="newP">Новый товар</button></div>' +
     '<input id="q" placeholder="Введите название или артикул для поиска" value="' + esc(S.q) + '" style="margin-top:10px">' +
+    '<select id="srt" aria-label="Сортировка">' + opts(so, S.sort) + '</select>' +
     '<div class="chips" style="margin-top:0"><button class="' + (S.arc ? '' : 'on') + '" data-a="arc" data-v="0">Активные</button><button class="' + (S.arc ? 'on' : '') + '" data-a="arc" data-v="1">Архив</button></div>' +
     '<div id="plist">' + plist() + '</div>';
 }
@@ -321,7 +417,7 @@ function render() {
   if (S.view === 'setup') {
     h = box('Подключение', '<p class="mu">Вставьте ссылку на скрипт (она заканчивается на /exec).</p><input id="api" placeholder="https://script.google.com/macros/s/…/exec"><button class="pri" data-a="saveApi">Сохранить</button>');
   } else if (S.view === 'err') {
-    h = box('Нет связи', '<p>' + esc(S.err) + '</p><button class="pri" data-a="retry">Повторить</button><button class="ghost" data-a="resetApi">Изменить ссылку</button>');
+    h = box('Не удалось подключиться', '<p>' + esc(S.err) + '</p><button class="pri" data-a="retry">Повторить</button><button class="ghost" data-a="resetApi">Изменить ссылку</button>');
   } else if (S.view === 'login') {
     h = box(S.first ? 'Первый запуск' : 'Вход',
       (S.first ? '<p class="mu">Создайте первого продавца. Он сможет добавить остальных.</p><input id="nm" placeholder="Имя">' : '') +
@@ -418,7 +514,7 @@ var A = {
   newP: function () {
     ask('Новый товар', [{l: 'Название', p: 'Введите название'}, {l: 'Артикул (необязательно)', p: 'Введите артикул'},
       {l: 'Категория', o: dn('category')}, {l: 'Материал', o: dn('material')},
-      {l: 'Цена продажи, грн', t: 'number', p: 'Введите цену'}, {l: 'Минимальный остаток (ниже него подсветка)', t: 'number', p: 'Введите число, по умолчанию 1'},
+      {l: 'Цена продажи, грн', t: 'number', p: 'Введите цену'}, {l: 'Минимальный остаток (необязательно)', t: 'number', p: 'Введите число'},
       {l: 'Тип вариации', o: dn('vartype')}, {l: 'Значения вариаций', p: 'Например: 16, 17, 18'}], 'Создать', function (v) {
       return call('products.save', {name: v[0], sku: v[1], category: v[2], material: v[3], price: v[4], min: v[5],
         vartype: v[6], values: v[7]}).then(productsDone);
@@ -429,7 +525,7 @@ var A = {
     ask('Редактировать товар', [{l: 'Название', v: p.name, p: 'Введите название'}, {l: 'Артикул', v: p.sku, p: 'Введите артикул'},
       {l: 'Категория', o: dn('category', p.category), v: p.category}, {l: 'Материал', o: dn('material', p.material), v: p.material},
       {l: 'Цена продажи, грн', t: 'number', v: p.price, p: 'Введите цену'},
-      {l: 'Минимальный остаток (ниже него подсветка)', t: 'number', v: p.min, p: 'Введите число'}], 'Сохранить', function (v) {
+      {l: 'Минимальный остаток (необязательно)', t: 'number', v: p.min, p: 'Введите число'}], 'Сохранить', function (v) {
       return call('products.save', {id: p.id, name: v[0], sku: v[1], category: v[2], material: v[3], price: v[4], min: v[5]}).then(productsDone);
     });
   },
@@ -501,6 +597,11 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
+document.addEventListener('change', function (e) {
+  if (e.target.id !== 'srt') return;
+  S.sort = e.target.value; localStorage.setItem('sort', S.sort);
+  document.getElementById('plist').innerHTML = plist();
+});
 document.addEventListener('input', dSync);
 document.addEventListener('change', dSync);
 document.addEventListener('input', function (e) {
