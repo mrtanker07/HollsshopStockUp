@@ -144,7 +144,7 @@ nav button{flex:1;text-align:center;padding:9px 2px;font-size:13px}
 <div id="toast" role="status"></div>
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
-var NEED = 3; // ожидаемая версия скрипта
+var NEED = 4; // ожидаемая версия скрипта
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
 var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category', ld: {}, fx: 0, products: [], docs: [], df: '', q: '', arc: 0, sort: localStorage.getItem('sort') || 'name'};
@@ -417,7 +417,7 @@ function render() {
   if (S.view === 'setup') {
     h = box('Подключение', '<p class="mu">Вставьте ссылку на скрипт (она заканчивается на /exec).</p><input id="api" placeholder="https://script.google.com/macros/s/…/exec"><button class="pri" data-a="saveApi">Сохранить</button>');
   } else if (S.view === 'err') {
-    h = box('Не удалось подключиться', '<p>' + esc(S.err) + '</p><button class="pri" data-a="retry">Повторить</button><button class="ghost" data-a="resetApi">Изменить ссылку</button>');
+    h = box('Не удалось подключиться', '<p>' + esc(S.err) + '</p><button class="pri" data-a="retry">Повторить</button><button class="ghost" data-a="resetApi">Изменить ссылку</button><p class="mu" style="margin:12px 0 0"><a href="' + esc(url()) + '?check=1" target="_blank" rel="noopener">Проверить скрипт (откроется в новой вкладке)</a></p>');
   } else if (S.view === 'login') {
     h = box(S.first ? 'Первый запуск' : 'Вход',
       (S.first ? '<p class="mu">Создайте первого продавца. Он сможет добавить остальных.</p><input id="nm" placeholder="Имя">' : '') +
