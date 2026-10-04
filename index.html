@@ -2,12 +2,13 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hoolshop StockUp</title>
 <style>
 :root{--bg:#f3f4f5;--card:#fff;--tx:#1b2024;--mu:#5f6872;--bd:#d9dde1;--ac:#0e6b5c;--acbg:#dff0ec;--dg:#b3261e;--on:#fff;--ach:#0a5649;--wb:#fdf0d3;--wt:#7a5200;--db:#fbe3e1;--dt:#b3261e;--gb:#d8f1df;--gt:#14632f;--bs:#b4bbc2;--mm:#8a929a}
 @media(prefers-color-scheme:dark){:root{--bg:#16191b;--card:#1f2326;--tx:#e9ecee;--mu:#9aa3ab;--bd:#343a3f;--ac:#5fc4b0;--acbg:#1d3a35;--dg:#f2958f;--on:#0b1512;--ach:#86d9c8;--wb:#3d3216;--wt:#f0c96a;--db:#4a2220;--dt:#f2958f;--gb:#1b3a28;--gt:#8fdcab;--bs:#555e66;--mm:#7b858e}}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 h1{font-size:22px;margin:0 0 12px}h2{font-size:20px;margin:0}h3{font-size:16px;margin:16px 0 8px}
 .mu{color:var(--mu);font-size:13px}
@@ -20,12 +21,14 @@ button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visi
 .box{width:100%;max-width:360px;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:20px}
 .box button{width:100%;margin-top:6px}
 .er{color:var(--dg);min-height:1.2em;margin:0 0 6px;font-size:14px}
+.er:empty{display:none}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--bd)}
 .sess{font-size:12px;color:var(--mu);white-space:nowrap}
-.wrap{display:grid;grid-template-columns:170px minmax(0,1fr);gap:16px;max-width:1000px;margin:0 auto;padding:14px}
+.wrap{display:grid;grid-template-columns:190px minmax(0,1fr);gap:20px;max-width:1500px;margin:0 auto;padding:16px 20px}
 nav{display:flex;flex-direction:column;gap:4px}
 nav button{text-align:left;border-color:transparent;background:none}
 nav button.on{background:var(--acbg);color:var(--ac);font-weight:600}
+nav .mb,.more{display:none}
 .rw{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .g8{gap:8px}
 .cd{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-top:8px}
@@ -34,28 +37,25 @@ nav button.on{background:var(--acbg);color:var(--ac);font-weight:600}
 .chips button{border-radius:16px;padding:5px 12px;font-size:14px}
 .chips button.on{background:var(--acbg);color:var(--ac);border-color:transparent}
 .chips .rt{margin-left:auto}
+.cats{margin-top:6px}
 .menu{position:relative}
 .menu summary{list-style:none;cursor:pointer;padding:4px 10px;border-radius:8px;border:1px solid var(--bd);user-select:none}
 .menu summary::-webkit-details-marker{display:none}
 .menu>div{position:absolute;right:0;top:100%;margin-top:4px;min-width:170px;z-index:10;background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:4px;display:flex;flex-direction:column}
 .menu>div button{text-align:left;border:none;background:none}
 .menu>div button.dg{color:var(--dg)}
-dialog{max-height:90vh;overflow:auto;border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);padding:18px;width:min(92vw,360px)}
+dialog{max-height:92vh;overflow:auto;border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);padding:18px;width:min(92vw,380px)}
 dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog.md{width:min(94vw,700px)}
+dialog.wide{width:min(94vw,600px)}
+dialog.xl{width:min(96vw,1180px)}
 .ld{pointer-events:none}
 .ld::after{content:"";display:inline-block;width:12px;height:12px;margin-left:8px;vertical-align:-2px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
-.vt{border-radius:10px;padding:8px 10px;background:var(--bg)}
-.vt b{display:block;font-size:18px;line-height:1.25;margin-top:2px}
-.vt .mu{color:inherit;opacity:.8}
-.vt.g{background:var(--gb);color:var(--gt)}
-.vt.y{background:var(--wb);color:var(--wt)}
-.vt.d{background:var(--db);color:var(--dt)}
-.pr{font-size:18px;font-weight:600;white-space:nowrap}
+#gl{position:fixed;top:60px;right:16px;z-index:60;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:5px 12px 5px 10px;font-size:13px;color:var(--mu);box-shadow:0 4px 14px rgba(0,0,0,.14)}
+#gl i{width:14px;height:14px;border:2px solid var(--ac);border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
 .menu summary.pri{padding:9px 14px;border-color:var(--ac)}
 .menu summary.pri:hover{background:var(--ach);border-color:var(--ach)}
-dialog.wide{width:min(94vw,560px)}
 .lb{border:1px solid var(--bd);border-radius:10px;padding:10px;margin-bottom:8px}
 .lb select,.lb input{margin-bottom:8px}
 .two{display:flex;gap:8px}.two>*{flex:1;min-width:0}
@@ -69,6 +69,7 @@ dialog.wide{width:min(94vw,560px)}
 .pc-name{font-size:16px;font-weight:500;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pc-meta{font-size:12px;font-weight:400;color:var(--mu);margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pc-price{font-size:16px;font-weight:500;white-space:nowrap}
+.pc-price.mu{font-size:13px;font-weight:400;white-space:normal}
 .pc .menu summary{width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center}
 .pc .menu summary svg{width:18px;height:18px}
 .qty{display:inline-flex;align-items:baseline;justify-content:center;gap:3px;box-sizing:border-box;min-width:56px;padding:3px 10px;border:1px solid var(--bs);border-radius:8px;font-size:18px;font-weight:500;color:var(--tx);white-space:nowrap;background:transparent}
@@ -82,42 +83,20 @@ dialog.wide{width:min(94vw,560px)}
 .stock-row .pc-price{grid-area:p;justify-self:end}
 .stock-row .qty{grid-area:q}
 .stock-row .bdg{grid-area:b;justify-self:end}
-.pc-vars{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-top:12px;padding-top:12px;border-top:.5px solid var(--bd)}
+.pc-vars{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:12px;padding-top:12px;border-top:.5px solid var(--bd)}
 .pc-var{border:.5px solid var(--bd);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .pc-vrow{display:flex;justify-content:space-between;align-items:center;gap:8px;align-self:stretch}
 .vl{font-size:12px;color:var(--mu);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .vl b{font-size:14px;font-weight:500;color:var(--tx)}
-@media(max-width:640px){
-.pc{padding:10px 12px}
-.pc-head{gap:10px}
-.pc-photo{width:44px;height:44px}
-.pc-photo svg{width:20px;height:20px}
-.pc-name,.pc-price{font-size:15px;line-height:1.3}
-.pc .menu summary{width:28px;height:28px;border:0}
-.pc.single .pc-head{flex-wrap:wrap}
-.pc.single .menu{order:2}
-.pc.single .stock-row{order:3;flex:0 0 100%;grid-template-columns:minmax(0,1fr) 60px 120px;grid-template-areas:none;column-gap:8px;margin-top:8px;padding-top:8px;border-top:.5px solid var(--bd)}
-.pc.single .stock-row>*{grid-area:auto;justify-self:auto}
-.qty{width:60px;min-width:0;padding:2px 6px;font-size:16px}
-.qty small{font-size:12px}
-.qty.qs{font-size:13px}
-.bdg{width:120px;justify-content:center;box-sizing:border-box;font-size:12px;padding:4px 6px;border-radius:6px;gap:4px}
-.bdg svg{width:14px;height:14px}
-.pc-vars{display:block;border-top:0;padding-top:0;margin-top:8px}
-.pc-var{display:grid;grid-template-columns:minmax(0,1fr) 60px 120px;column-gap:8px;align-items:center;border:0;border-top:.5px solid var(--bd);border-radius:0;padding:7px 0}
-.pc-vrow{display:contents}
-}
 .tg.y{background:var(--wb);color:var(--wt)}
 .tg.d{background:var(--db);color:var(--dt)}
-.vs{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
-.er:empty{display:none}
 label.mu{display:block;margin:0 0 3px}
 dialog label{display:block;font-size:13px;color:var(--mu);margin-bottom:4px}
 dialog h3{margin-top:0}
 dialog .rw{justify-content:flex-end;margin-top:8px}
-dialog .rw.dh{justify-content:space-between;margin-top:0;margin-bottom:8px}
+dialog .rw.dh{justify-content:space-between;margin-top:0;margin-bottom:10px;align-items:flex-start}
 dialog .rw.dh h3{margin:0}
-#toast{position:fixed;left:50%;bottom:76px;transform:translate(-50%,8px);transition:opacity .2s,transform .2s;background:var(--tx);color:var(--bg);padding:9px 14px;border-radius:8px;opacity:0;pointer-events:none;max-width:90vw;z-index:30}
+#toast{position:fixed;left:50%;bottom:76px;transform:translate(-50%,8px);transition:opacity .2s,transform .2s;background:var(--tx);color:var(--bg);padding:9px 14px;border-radius:8px;opacity:0;pointer-events:none;max-width:90vw;z-index:70}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
@@ -139,52 +118,158 @@ button:not(:disabled):hover{background:var(--acbg);border-color:var(--ac)}
 dialog[open]{animation:pop .18s ease both}
 dialog[open]::backdrop{animation:fade .18s ease both}
 @media(prefers-reduced-motion:reduce){*,::before,::after{animation:none!important;transition:none!important}}
-@media(max-width:799px){
-.wrap{display:block;padding:12px 12px 80px}
-nav{position:fixed;left:0;right:0;bottom:0;flex-direction:row;background:var(--card);border-top:1px solid var(--bd);padding:6px;z-index:5}
-nav button{flex:1;text-align:center;padding:9px 2px;font-size:13px}
-}
-/* красные кнопки удаления, желтая кнопка изменения, подсветка незаполненных полей */
+/* красные кнопки, зеленая кнопка, желтая кнопка, подсветка полей */
 button.dg{color:var(--dg);border-color:var(--dg)}
 .dgb{background:var(--dg);color:var(--on);border-color:var(--dg)}
+.okb{background:var(--gb);color:var(--gt);border-color:var(--gt)}
 .warn{background:var(--wb);color:var(--wt);border-color:var(--wt)}
 .bad{border-color:var(--dg)!important;box-shadow:0 0 0 1px var(--dg)}
 @media(hover:hover){
 .dg:not(:disabled):hover{background:var(--db);border-color:var(--dg)}
 .dgb:not(:disabled):hover{background:var(--dg);border-color:var(--dg);opacity:.9}
+.okb:not(:disabled):hover{background:var(--gb);border-color:var(--gt);filter:brightness(.96)}
 .warn:not(:disabled):hover{background:var(--wb);border-color:var(--wt);filter:brightness(.96)}
 }
-/* накладная */
-.sug{border:1px solid var(--bd);border-radius:8px;margin:-4px 0 10px;overflow:hidden}
+.ic{width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;flex:none}
+.ic svg{width:18px;height:18px}
+/* форма товара */
+.fg{display:grid;grid-template-columns:1fr 1fr;column-gap:12px}
+.fg .sp{grid-column:1/-1}
+.fd{min-width:0}
+.fd .mu{margin:-4px 0 10px}
+/* накладная: ряд ввода */
+.hd{max-width:440px}
+.er1{display:flex;gap:10px;align-items:flex-end}
+.er1 input,.er1 select{margin-bottom:0}
+.f{min-width:0}
+.f:empty{display:none}
+.f.nm{flex:1 1 auto}
+.f.vr{flex:0 0 220px}
+.f.qy{flex:0 0 120px}
+.f.pz{flex:0 0 150px}
+.f.bt{flex:none}
+.sgw{position:relative}
+.sug{position:absolute;left:0;right:0;top:100%;margin-top:3px;z-index:20;background:var(--card);border:1px solid var(--bd);border-radius:8px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.18);max-height:340px;overflow-y:auto}
 .sug button{display:block;width:100%;text-align:left;border:0;border-bottom:.5px solid var(--bd);border-radius:0;background:none}
 .sug button:last-child{border-bottom:0}
 .sug .mu{margin-left:8px}
 .ln{display:flex;align-items:center;gap:10px;border:1px solid var(--bd);border-radius:10px;padding:7px 10px;margin-bottom:6px}
 .ln-main{flex:1;min-width:0}
 .ln-name{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ic{width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;flex:none}
-.ic svg{width:18px;height:18px}
-.tot{font-weight:600;font-size:16px;margin:10px 0 0}
+.ln-n{flex:0 0 100px;text-align:right;white-space:nowrap}
+.ln-n.s{flex-basis:130px;font-weight:600}
+.tot{font-weight:600;font-size:16px;margin:10px 0 0;text-align:right}
+.pl{display:flex;align-items:center;gap:10px;border:1px solid var(--bd);border-radius:10px;padding:8px 10px;margin-bottom:6px}
+.pl-n{flex:1;min-width:0}
+.pl input{width:200px;margin:0;flex:none}
+.rcbox{position:relative;margin-bottom:10px}
+.sel{width:100%;text-align:left;font-size:16px;padding:10px 12px;color:var(--mu)}
+/* вариации */
 .vrow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
 .vrow input{margin:0;flex:1;min-width:0}
-.vrow input:disabled{opacity:.55}
-.vrow button{flex:none}
-.doc{padding:9px 12px;cursor:pointer}
+.vrow.off input{text-decoration:line-through;opacity:.5}
+/* документы */
+.dr{display:grid;grid-template-columns:150px minmax(0,1.3fr) 130px minmax(0,1fr) minmax(0,1.6fr) 46px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:6px 6px 6px 0}
+.dr.hd0{background:none;border:0;margin-top:12px;padding-top:0;padding-bottom:0}
+.dr.hd0 .dc{font-size:12px;color:var(--mu)}
+.dc{padding:2px 12px;border-left:1px solid var(--bd);min-width:0;overflow:hidden;text-overflow:ellipsis}
+.dr.hd0 .dc{border-left-color:transparent}
+.dc:first-child{border-left:0}
+.dn b{display:block}
+.dn small{display:block;color:var(--mu);font-size:11px}
+.dm{font-weight:600;white-space:nowrap}
+.dk{color:var(--mu)}
+.de{justify-self:end}
+.tbw{overflow-x:auto;margin:6px 0}
+.tb{width:100%;border-collapse:collapse}
+.tb th,.tb td{padding:8px 10px;border-bottom:1px solid var(--bd);text-align:left}
+.tb th{font-size:12px;color:var(--mu);font-weight:500}
+.tb .r{text-align:right;white-space:nowrap}
+.dmeta{display:flex;flex-wrap:wrap;gap:4px 18px;color:var(--mu);font-size:13px;margin:0 0 8px}
+.cmt{margin:10px 0 0;color:var(--mu)}
+/* инфо */
+.kv{display:flex;justify-content:space-between;gap:16px;padding:6px 0;border-bottom:.5px solid var(--bd)}
+.kv:last-child{border-bottom:0}
+.kv>span:last-child{text-align:right;word-break:break-all;min-width:0}
+.cd h3{margin-top:0}
+.cd ul{margin:6px 0 0;padding-left:20px}
+.mo,.mf{display:none}
+@media(max-width:799px){
+.wrap{display:block;padding:12px 12px 120px}
+nav{position:fixed;left:0;right:0;bottom:0;flex-direction:row;background:var(--card);border-top:1px solid var(--bd);padding:8px 8px calc(8px + env(safe-area-inset-bottom));gap:6px;z-index:5}
+nav button{flex:1;text-align:center;padding:15px 4px;min-height:54px;font-size:15px;border-radius:12px}
+nav .xt{display:none}
+nav .mb{display:block;font-size:22px;line-height:1;flex:0 0 64px}
+.more{display:flex;flex-direction:column;position:fixed;left:8px;right:8px;bottom:88px;z-index:6;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:6px;box-shadow:0 8px 28px rgba(0,0,0,.22)}
+.more button{border:0;background:none;text-align:left;padding:16px 14px;font-size:16px;border-radius:10px}
+.more button.on{background:var(--acbg);color:var(--ac);font-weight:600}
+#toast{bottom:100px}
+.mo{display:inline-block}
+.mf{display:block}
+.fl-d,.do{display:none!important}
+.mf button{width:100%;margin:0 0 4px}
+.cats{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+.cats button{flex:none}
+.pc{padding:10px 12px}
+.pc-head{gap:10px}
+.pc-photo{width:44px;height:44px}
+.pc-photo svg{width:20px;height:20px}
+.pc-name,.pc-price{font-size:15px;line-height:1.3}
+.pc .menu summary{width:28px;height:28px;border:0}
+.pc.single .pc-head{flex-wrap:wrap}
+.pc.single .menu{order:2}
+.pc.single .stock-row{order:3;flex:0 0 100%;grid-template-columns:minmax(0,1fr) 60px 120px;grid-template-areas:none;column-gap:8px;margin-top:8px;padding-top:8px;border-top:.5px solid var(--bd)}
+.pc.single .stock-row>*{grid-area:auto;justify-self:auto}
+.qty{width:60px;min-width:0;padding:2px 6px;font-size:16px}
+.qty small{font-size:12px}
+.qty.qs{font-size:13px}
+.bdg{width:120px;justify-content:center;box-sizing:border-box;font-size:12px;padding:4px 6px;border-radius:6px;gap:4px}
+.bdg svg{width:14px;height:14px}
+.pc-vars{display:block;border-top:0;padding-top:0;margin-top:8px}
+.pc-var{display:grid;grid-template-columns:minmax(0,1fr) 60px 120px;column-gap:8px;align-items:center;border:0;border-top:.5px solid var(--bd);border-radius:0;padding:7px 0}
+.pc-vrow{display:contents}
+.fg{display:block}
+.er1{flex-wrap:wrap}
+.f.nm,.f.vr{flex:1 1 100%}
+.f.qy,.f.pz{flex:1 1 0}
+.f.bt{flex:1 1 100%}
+.f.bt button{width:100%}
+.ln{flex-wrap:wrap;gap:4px 10px}
+.ln-main{flex:1 1 100%}
+.ln-n,.ln-n.s{flex:1 1 auto;text-align:left}
+.ln .ic{margin-left:auto;position:absolute;right:0}
+.ln{position:relative;padding-right:46px}
+.pl{flex-wrap:wrap}
+.pl-n{flex:1 1 100%}
+.pl input{flex:1;width:auto}
+.dr{grid-template-columns:auto minmax(0,1fr) auto 44px;grid-template-areas:"n s m e" "u u k k";row-gap:4px;padding:8px 6px 8px 0}
+.dr.hd0{display:none}
+.dr .dn{grid-area:n}.dr .ds{grid-area:s}.dr .dm{grid-area:m}.dr .du{grid-area:u}.dr .dk{grid-area:k}.dr .de{grid-area:e}
+.dr .du,.dr .dk{border-left:0;padding-top:0;font-size:13px}
+.dr .du{color:var(--mu)}
+.hd{max-width:none}
+}
+@media(max-width:380px){.sess{display:none}}
 </style>
 </head>
 <body>
 <div id="app"></div>
+<div id="gl" hidden><i></i><span>Загрузка…</span></div>
 <div id="toast" role="status"></div>
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
-var NEED = 5; // ожидаемая версия скрипта
+var NEED = 6; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
+var BUILD = '2026-10-04';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
-var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category', ld: {}, fx: 0, products: [], docs: [], df: 'receipt', q: '', tab: 'act', sort: localStorage.getItem('sort') || 'name'};
+var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category',
+  ld: {}, fx: 0, products: [], docs: [], df: 'receipt', q: '', tab: 'all', cat: '', more: false, busy: 0, info: null,
+  sort: localStorage.getItem('sort') || 'name'};
 var DT = {category: 'Категории', material: 'Материалы', vartype: 'Типы вариаций', supplier: 'Поставщики', source: 'Источники заказов',
   payment: 'Способы оплаты', delivery: 'Способы доставки', discount_reason: 'Причины скидок',
   writeoff_reason: 'Причины списания', return_reason: 'Причины возврата'};
-var NAV = [['home', 'Главная'], ['products', 'Склад'], ['docs', 'Документы'], ['sellers', 'Продавцы'], ['settings', 'Справочники']];
+// третий элемент: 1 = на телефоне прячется за кнопку «⋯»
+var NAV = [['home', 'Главная'], ['products', 'Склад'], ['docs', 'Документы'], ['settings', 'Справочники', 1], ['sellers', 'Пользователи', 1], ['info', 'Инфо', 1]];
 
 function url() { return API || localStorage.getItem('api') || ''; }
 function esc(s) {
@@ -198,12 +283,19 @@ function toast(m) {
   clearTimeout(toast.t);
   toast.t = setTimeout(function () { t.className = ''; }, 3200);
 }
+// индикатор загрузки сверху справа: горит, пока идет хотя бы один запрос
+function busy(n) {
+  S.busy = Math.max(0, S.busy + n);
+  var g = document.getElementById('gl');
+  if (g) g.hidden = !S.busy;
+}
 
 async function call(a, d) {
   var el = S.btn; S.btn = null;
   if (el) el.classList.add('ld');
+  busy(1);
   try { return await call0(a, d); }
-  finally { if (el) el.classList.remove('ld'); }
+  finally { busy(-1); if (el) el.classList.remove('ld'); }
 }
 async function call0(a, d) {
   var r, j;
@@ -238,6 +330,7 @@ async function load() {
   try {
     if (S.page === 'sellers') { S.sellers = (await call('sellers.list')).items; S.ld.sellers = 1; }
     if (S.page === 'settings') { S.dict = (await call('dict.list')).items; S.ld.dict = 1; }
+    if (S.page === 'info') { S.info = await call('info'); S.ld.info = 1; }
     if (S.page === 'products') {
       var pj = await call('products.list'); S.products = pj.items; S.dict = pj.dict; S.ld.products = 1; S.ld.dict = 1;
     }
@@ -261,10 +354,11 @@ function menu(items, id, icon) {
 function page() {
   if (S.page === 'products') return S.ld.products ? productsPage() : '<h2>Склад</h2><p class="mu">Загрузка…</p>';
   if (S.page === 'docs') return S.ld.docs ? docsPage() : '<h2>Документы</h2><p class="mu">Загрузка…</p>';
-  if (S.page === 'sellers' && !S.ld.sellers) return '<h2>Продавцы</h2><p class="mu">Загрузка…</p>';
+  if (S.page === 'info') return S.ld.info ? infoPage() : '<h2>Инфо</h2><p class="mu">Загрузка…</p>';
+  if (S.page === 'sellers' && !S.ld.sellers) return '<h2>Пользователи</h2><p class="mu">Загрузка…</p>';
   if (S.page === 'settings' && !S.ld.dict) return '<h2>Справочники</h2><p class="mu">Загрузка…</p>';
   if (S.page === 'sellers') {
-    return '<div class="rw"><h2>Продавцы</h2><button class="pri" data-a="addSeller">Добавить</button></div>' +
+    return '<div class="rw"><h2>Пользователи</h2><button class="pri" data-a="addSeller">Добавить</button></div>' +
       S.sellers.map(function (s) {
         return '<div class="cd rw"><div><b>' + esc(s.name) + '</b><div class="mu">' + esc(s.login) + '</div></div><div class="rw g8">' +
           (s.active ? '' : '<span class="tg">Отключен</span>') +
@@ -289,13 +383,12 @@ function page() {
           '<button class="ghost dg" data-a="delDict" data-id="' + esc(x.id) + '">Удалить</button></div></div>';
       }).join('') : '');
   }
-  return '<h2>Главная</h2><div class="cd"><p style="margin:0">Основа готова: вход, продавцы и справочники. Товары, склад и заказы появятся на следующих этапах.</p></div>';
+  return '<h2>Главная</h2><div class="cd"><p style="margin:0">Готовы: вход, пользователи, справочники, склад, поступления, списания, корректировки и ценообразование. Заказы и продажи появятся на следующих этапах.</p></div>';
 }
 
 var D = null;
-var DOC = {receipt: 'Поступление', writeoff: 'Списание', adjust: 'Корректировка'};
-function avail(v) { return v.stock - v.reserve; }
-function vcls(v, p) { var a = avail(v); return a <= 0 ? 'd' : a <= p.min ? 'y' : 'g'; }
+var DOC = {receipt: 'Поступление', pricing: 'Ценообразование', writeoff: 'Списание', adjust: 'Корректировка'};
+var DOCS = {receipt: 'Поступления', pricing: 'Ценообразование', writeoff: 'Списания', adjust: 'Корректировки'};
 function prod(id) { return S.products.filter(function (p) { return p.id === id; })[0]; }
 function dn(t, cur) {
   var a = S.dict.filter(function (x) { return x.type === t && !x.archived; }).map(function (x) { return x.name; });
@@ -308,10 +401,22 @@ function opts(a, sel) {
 function money(n) { return Number(n).toLocaleString('ru', {maximumFractionDigits: 2}) + ' грн'; }
 function fdt(s) { return new Date(s).toLocaleString('ru', {dateStyle: 'short', timeStyle: 'short'}); }
 
+// Поиск: каждое набранное слово должно быть НАЧАЛОМ какого-то слова в названии или артикуле
+function words(s) { return String(s == null ? '' : s).toLowerCase().split(/[^0-9a-zа-яёіїєґ]+/i).filter(Boolean); }
+function pmatch(p, q) {
+  var t = words(q);
+  if (!t.length) return false;
+  var w = words(p.name + ' ' + p.sku);
+  return t.every(function (x) { return w.some(function (y) { return y.indexOf(x) === 0; }); });
+}
+
 var IC = {
   photo: '<path d="M15 8h.01"/><path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"/><path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"/><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"/>',
   dots: '<path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>',
   edit: '<path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"/><path d="M13.5 6.5l4 4"/>',
+  eye: '<path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"/><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6"/>',
+  x: '<path d="M18 6l-12 12"/><path d="M6 6l12 12"/>',
+  check: '<path d="M5 12l5 5l10 -10"/>',
   'circle-check': '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M9 12l2 2l4 -4"/>',
   'circle-x': '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M10 10l4 4m0 -4l-4 4"/>',
   'alert-triangle': '<path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"/><path d="M12 16h.01"/>'
@@ -328,6 +433,9 @@ function badge(q, min) { var s = status(q, min); return '<span class="bdg ' + s[
 function qtyBox(q) { return '<span class="qty' + (q >= 1000 ? ' qs' : '') + '">' + q + ' <small>шт</small></span>'; }
 function vlabel(v) {
   return v.value === 'Без вариации' ? '<b>Без вариации</b>' : (v.vartype ? esc(v.vartype) + ' ' : '') + '<b>' + esc(v.value) + '</b>';
+}
+function priceHtml(p) {
+  return p.price > 0 ? '<span class="pc-price">' + money(p.price) + '</span>' : '<span class="pc-price mu">Цена не задана</span>';
 }
 function prank(p) {
   var vs = p.vars.filter(function (v) { return !v.archived; });
@@ -356,7 +464,7 @@ function cardHtml(p) {
     (p.photo ? '<img src="' + esc(p.photo) + '" alt="">' : ico('photo')) + '</div>';
   var head = photo + '<div class="pc-main"><p class="pc-name" title="' + esc(p.name) + '">' + esc(p.name) + '</p>' +
     (meta ? '<p class="pc-meta">' + esc(meta) + '</p>' : '') + '</div>';
-  var m = menu(mn, p.id, ico('dots')), price = '<span class="pc-price">' + money(p.price) + '</span>';
+  var m = menu(mn, p.id, ico('dots')), price = priceHtml(p);
   if (single) {
     var q = vs.length ? vs[0].stock : 0;
     return '<div class="pc single"><div class="pc-head">' + head + '<div class="stock-row">' + price + qtyBox(q) + badge(q, p.min) + '</div>' + m + '</div></div>';
@@ -370,6 +478,7 @@ function plist() {
   var q = S.q.trim().toLowerCase();
   var items = S.products.filter(function (p) {
     if (!!p.archived !== (S.tab === 'arc')) return false;
+    if (S.cat && p.category !== S.cat) return false;
     if (S.tab === 'no' || S.tab === 'low') {
       var want = S.tab;
       if (!p.vars.some(function (v) { return !v.archived && status(v.stock, p.min)[0] === want; })) return false;
@@ -380,35 +489,76 @@ function plist() {
   return sortItems(items).map(cardHtml).join('');
 }
 
+var SORTS = [['name', 'По названию: А → Я'], ['name-d', 'По названию: Я → А'], ['st', 'По статусу: сначала нет в наличии'], ['st-d', 'По статусу: сначала в наличии']];
+var STATS = [['all', 'Все'], ['no', 'Нет в наличии'], ['low', 'Заканчивается']];
+
+function catsHtml() {
+  var list = dn('category');
+  S.products.forEach(function (p) { if (p.category && list.indexOf(p.category) < 0) list.push(p.category); });
+  return '<div class="chips cats"><button class="' + (S.cat ? '' : 'on') + '" data-a="cat" data-k="">Все категории</button>' + list.map(function (c) {
+    return '<button class="' + (S.cat === c ? 'on' : '') + '" data-a="cat" data-k="' + esc(c) + '">' + esc(c) + '</button>';
+  }).join('') + '</div>';
+}
+
 function productsPage() {
-  var so = [['name', 'По названию: А → Я'], ['name-d', 'По названию: Я → А'], ['st', 'По статусу: сначала нет в наличии'], ['st-d', 'По статусу: сначала в наличии']];
-  var tabs = [['act', 'Активные'], ['no', 'Нет в наличии'], ['low', 'Заканчивается']].map(function (c) {
+  var stat = STATS.map(function (c) {
     return '<button class="' + (S.tab === c[0] ? 'on' : '') + '" data-a="tab" data-v="' + c[0] + '">' + c[1] + '</button>';
-  }).join('') + '<button class="rt ' + (S.tab === 'arc' ? 'on' : '') + '" data-a="tab" data-v="arc">Архив</button>';
-  return '<div class="rw"><h2>Склад</h2><button class="pri" data-a="newP">Новый товар</button></div>' +
+  }).join('') + '<button class="rt do ' + (S.tab === 'arc' ? 'on' : '') + '" data-a="tab" data-v="arc">Архив</button>';
+  var filtOn = S.sort !== 'name' || S.tab === 'no' || S.tab === 'low';
+  return '<div class="rw"><h2>Склад</h2><div class="rw g8"><button class="mo ' + (S.tab === 'arc' ? 'on' : '') + '" data-a="tab" data-v="arc">Архив</button>' +
+    '<button class="pri" data-a="newP">Новый товар</button></div></div>' +
     '<input id="q" placeholder="Введите название или артикул для поиска" value="' + esc(S.q) + '" style="margin-top:10px">' +
-    '<select id="srt" aria-label="Сортировка">' + opts(so, S.sort) + '</select>' +
-    '<div class="chips" style="margin-top:0">' + tabs + '</div>' +
+    '<div class="fl-d"><select id="srt" aria-label="Сортировка">' + opts(SORTS, S.sort) + '</select>' +
+    '<div class="chips" style="margin-top:0">' + stat + '</div></div>' +
+    '<div class="mf"><button data-a="filt">Фильтр' + (filtOn ? ' ●' : '') + '</button></div>' +
+    catsHtml() +
     '<div id="plist">' + plist() + '</div>';
 }
 
+// ---------- документы: список и просмотр ----------
+
 function docsPage() {
-  var chips = [['receipt', 'Поступления'], ['writeoff', 'Списания'], ['adjust', 'Корректировки']].map(function (c) {
-    return '<button class="' + (S.df === c[0] ? 'on' : '') + '" data-a="df" data-k="' + c[0] + '">' + c[1] + '</button>';
+  var chips = ['receipt', 'pricing', 'writeoff', 'adjust'].map(function (k) {
+    return '<button class="' + (S.df === k ? 'on' : '') + '" data-a="df" data-k="' + k + '">' + DOCS[k] + '</button>';
   }).join('');
   var items = S.docs.filter(function (x) { return x.type === S.df; });
+  var sec = {receipt: 'Поставщик', writeoff: 'Причина', pricing: 'Позиций', adjust: 'Позиций'}[S.df];
   return '<div class="rw"><h2>Документы</h2><details class="menu"><summary class="pri">Создать</summary><div>' +
-    ['receipt', 'writeoff', 'adjust'].map(function (t) { return '<button data-a="newDoc" data-t="' + t + '">' + DOC[t] + '</button>'; }).join('') +
+    ['receipt', 'pricing', 'writeoff', 'adjust'].map(function (t) { return '<button data-a="newDoc" data-t="' + t + '">' + DOC[t] + '</button>'; }).join('') +
     '</div></details></div><div class="chips">' + chips + '</div>' +
-    (items.length ? items.map(function (x) {
-      var who = x.type === 'receipt' && x.supplier ? ' · ' + esc(x.supplier) : (x.type === 'writeoff' && x.reason ? ' · ' + esc(x.reason) : '');
-      return '<div class="cd doc" role="button" tabindex="0" data-a="openDoc" data-id="' + esc(x.id) + '"><div class="rw"><b>№' + x.num + who + '</b><b>' + money(x.total) + '</b></div>' +
-        '<div class="mu">Создал: ' + esc(x.seller) + ' · ' + fdt(x.created) + '</div>' +
-        (x.comment ? '<div class="mu">Комментарий: ' + esc(x.comment) + '</div>' : '') + '</div>';
-    }).join('') : '<p class="mu">Документов этого типа пока нет. Нажмите «Создать».</p>');
+    (items.length
+      ? '<div class="dr hd0"><div class="dc">№</div><div class="dc">' + sec + '</div><div class="dc">Сумма</div><div class="dc">Создатель</div><div class="dc">Комментарий</div><div></div></div>' +
+        items.map(function (x) {
+          var s2 = x.type === 'receipt' ? x.supplier : x.type === 'writeoff' ? x.reason : (x.n || 0) + ' поз.';
+          var sum = x.type === 'pricing' ? '—' : money(x.total);
+          return '<div class="dr"><div class="dc dn"><b>№' + x.num + '</b><small>' + fdt(x.created) + '</small></div><div class="dc ds">' + esc(s2 || '—') + '</div>' +
+            '<div class="dc dm">' + sum + '</div><div class="dc du">' + esc(x.seller) + '</div><div class="dc dk">' + esc(x.comment || '') + '</div>' +
+            '<div class="de"><button class="ghost ic" data-a="openDoc" data-id="' + esc(x.id) + '" aria-label="Открыть документ">' + ico('eye') + '</button></div></div>';
+        }).join('')
+      : '<p class="mu">Документов этого типа пока нет. Нажмите «Создать».</p>');
 }
 
-// ---------- накладная (поступление, списание, корректировка) ----------
+function viewDoc(doc, lines) {
+  var T = doc.type, head = '<div class="dmeta"><span>Дата: ' + fdt(doc.created) + '</span>' +
+    (T === 'receipt' && doc.supplier ? '<span>Поставщик: ' + esc(doc.supplier) + '</span>' : '') +
+    (T === 'writeoff' && doc.reason ? '<span>Причина: ' + esc(doc.reason) + '</span>' : '') +
+    '<span>Создал: ' + esc(doc.seller) + '</span></div>';
+  var tbl;
+  if (T === 'pricing') {
+    tbl = '<tr><th>Наименование</th><th class="r">Было</th><th class="r">Стало</th></tr>' + lines.map(function (l) {
+      return '<tr><td>' + esc(l.label) + '</td><td class="r">' + (l.oldPrice > 0 ? money(l.oldPrice) : '—') + '</td><td class="r"><b>' + money(l.price) + '</b></td></tr>';
+    }).join('');
+  } else {
+    tbl = '<tr><th>Наименование</th><th class="r">Кол-во</th><th class="r">Цена</th><th class="r">Сумма</th></tr>' + lines.map(function (l) {
+      return '<tr><td>' + esc(l.label) + '</td><td class="r">' + (T === 'adjust' && l.qty > 0 ? '+' : '') + l.qty + ' шт</td><td class="r">' + money(l.cost) + '</td><td class="r">' + money(l.sum) + '</td></tr>';
+    }).join('');
+  }
+  view(DOC[T] + ' №' + doc.num, head + '<div class="tbw"><table class="tb">' + tbl + '</table></div>' +
+    (T === 'pricing' ? '' : '<p class="tot">Итого: ' + money(doc.total) + '</p>') +
+    (doc.comment ? '<p class="cmt">Комментарий: ' + esc(doc.comment) + '</p>' : ''));
+}
+
+// ---------- создание документа ----------
 
 function activeVars(p) { return p.vars.filter(function (v) { return !v.archived; }); }
 function needVar(p) { var a = activeVars(p); return !(a.length === 1 && a[0].value === 'Без вариации'); }
@@ -431,52 +581,86 @@ function pbtn() {
     : '<button type="button" data-a="dNewP">Создать товар</button>';
 }
 function sugHtml() {
-  var q = D.q.trim().toLowerCase();
-  if (D.pid || !q) return '';
-  var m = S.products.filter(function (p) { return !p.archived && (p.name + ' ' + p.sku).toLowerCase().indexOf(q) >= 0; })
-    .sort(function (a, b) { return a.name.localeCompare(b.name, 'ru'); }).slice(0, 10);
-  if (!m.length) return '<p class="mu" style="margin:-4px 0 10px">Ничего не найдено.' + (D.type === 'receipt' ? ' Товар можно создать кнопкой сверху.' : '') + '</p>';
+  var q = D.q.trim(), pr = D.type === 'pricing';
+  if (!q || (!pr && D.pid)) return '';
+  var m = S.products.filter(function (p) {
+    return !p.archived && pmatch(p, q) && (!pr || !D.plines.some(function (l) { return l.pid === p.id; }));
+  }).sort(function (a, b) { return a.name.localeCompare(b.name, 'ru'); }).slice(0, 10);
+  if (!m.length) return '<div class="sug"><p class="mu" style="margin:0;padding:10px 12px">Ничего не найдено.' + (D.type === 'receipt' ? ' Товар можно создать кнопкой сверху.' : '') + '</p></div>';
   return '<div class="sug">' + m.map(function (p) {
-    return '<button type="button" data-a="dPick" data-id="' + esc(p.id) + '">' + esc(p.name) + '<span class="mu">' +
+    return '<button type="button" data-a="' + (pr ? 'pAdd' : 'dPick') + '" data-id="' + esc(p.id) + '">' + esc(p.name) + '<span class="mu">' +
       esc([p.category, p.sku ? '#' + p.sku : ''].filter(Boolean).join(' · ')) + '</span></button>';
   }).join('') + '</div>';
 }
 function varHtml() {
   var p = prod(D.pid);
   if (!p || !needVar(p)) return '';
-  return '<select data-p="vid"><option value="">Выберите вариацию</option>' +
+  return '<label>Вариация</label><select data-p="vid"><option value="">Выберите</option>' +
     opts(activeVars(p).map(function (v) { return [v.id, vname(v) + ' — ' + v.stock + ' шт']; }), D.vid) + '</select>';
 }
 function linesHtml() {
-  var rc = D.type === 'receipt';
+  var rc = D.type === 'receipt', ad = D.type === 'adjust';
+  if (!D.lines.length) return '<p class="mu">Список пуст. Выберите товар выше и нажмите «Добавить».</p>';
   return D.lines.map(function (l, i) {
-    var info = D.type === 'adjust' ? 'Факт: ' + l.qty + ' шт' : l.qty + ' шт' + (rc ? ' × ' + money(l.price) : '');
-    return '<div class="ln"><div class="ln-main"><div class="ln-name">' + esc(lineLabel(l)) + '</div><div class="mu">' + esc(info) + '</div></div>' +
+    var q = Number(l.qty) || 0, pr = Number(l.price) || 0;
+    return '<div class="ln"><div class="ln-main"><div class="ln-name">' + esc(lineLabel(l)) + '</div></div>' +
+      '<div class="ln-n">' + (ad ? 'Факт: ' : '') + q + ' шт</div>' +
+      (rc ? '<div class="ln-n">' + money(pr) + '</div><div class="ln-n s">' + money(q * pr) + '</div>' : '') +
       '<button type="button" class="ghost ic" data-a="dEditLine" data-i="' + i + '" aria-label="Изменить позицию">' + ico('edit') + '</button></div>';
   }).join('');
 }
 
+function rcHtml() {
+  if (!D.rcOpen) return '';
+  var rs = S.docs.filter(function (x) { return x.type === 'receipt'; }).slice(0, 10);
+  if (!rs.length) return '<div class="sug"><p class="mu" style="margin:0;padding:10px 12px">Поступлений пока нет.</p></div>';
+  return '<div class="sug">' + rs.map(function (x) {
+    return '<button type="button" data-a="pRc" data-id="' + esc(x.id) + '"><b>№' + x.num + '</b> · ' + esc(x.supplier || '—') + '<span class="mu">' +
+      fdt(x.created) + ' · ' + (x.n || 0) + ' поз. · ' + money(x.total) + '</span></button>';
+  }).join('') + '</div>';
+}
+function plinesHtml() {
+  if (!D.plines.length) return '<p class="mu">Список пуст. Подтяните товары из поступления или найдите товар по названию.</p>';
+  return D.plines.map(function (l, i) {
+    var p = prod(l.pid);
+    return '<div class="pl"><div class="pl-n"><div class="ln-name">' + esc(p ? p.name : 'Товар удален') + '</div><div class="mu">' +
+      (p && p.price > 0 ? 'Сейчас: ' + money(p.price) : 'Цена не задана') + '</div></div>' +
+      '<input data-pl="' + i + '" type="number" inputmode="decimal" step="any" min="0" placeholder="Розничная цена, грн" value="' + esc(l.price) + '" aria-label="Розничная цена">' +
+      '<button type="button" class="ghost dg ic" data-a="pDel" data-i="' + i + '" aria-label="Убрать позицию">' + ico('x') + '</button></div>';
+  }).join('');
+}
+
+function docFoot(T) {
+  return '<label style="margin-top:10px">Комментарий' + (T === 'adjust' ? ' (причина, обязательно) *' : '') + '</label>' +
+    '<input data-h="cm" autocomplete="off" placeholder="' + (T === 'adjust' ? 'Введите причину корректировки' : 'Введите комментарий (необязательно)') + '" value="' + esc(D.cm) + '">' +
+    (T === 'receipt' ? '<p class="tot" id="dtot"></p>' : '') +
+    '<p class="er" id="der">' + esc(D.err || '') + '</p><div class="rw"><button class="ghost" data-a="dClose">Отмена</button><button class="pri" data-a="dSave">Провести</button></div>';
+}
+
 function docBody() {
   var T = D.type, rc = T === 'receipt';
+  if (T === 'pricing') {
+    return '<div class="rw dh"><h3>Ценообразование (новый документ)</h3></div>' +
+      '<div class="rcbox"><label>Подтянуть товары из поступления</label><button type="button" class="sel" data-a="pRcToggle">Нажмите и выберите поступление ▾</button><div id="prc">' + rcHtml() + '</div></div>' +
+      '<label>Или добавьте товар вручную</label><div class="sgw" style="margin-bottom:12px"><input data-p="q" placeholder="Введите название или артикул" autocomplete="off" value="' + esc(D.q) + '" style="margin:0"><div id="dsug">' + sugHtml() + '</div></div>' +
+      '<div id="dlines">' + plinesHtml() + '</div>' + docFoot(T);
+  }
   var h = '<div class="rw dh"><h3>' + DOC[T] + ' (новый документ)</h3>' + (rc ? '<span id="dpb">' + pbtn() + '</span>' : '') + '</div>';
   if (rc) {
     var sups = dn('supplier');
-    h += '<label>Поставщик *</label><select data-h="sup"><option value="">Не выбрано</option>' +
+    h += '<div class="hd"><label>Поставщик *</label><select data-h="sup"><option value="">Не выбрано</option>' +
       opts(sups.map(function (x) { return [x, x]; }), D.sup) + '</select>' +
-      (sups.length ? '' : '<p class="mu" style="margin:-4px 0 10px">Список пуст. Добавьте поставщиков в разделе «Справочники».</p>');
+      (sups.length ? '' : '<p class="mu" style="margin:-4px 0 10px">Список пуст. Добавьте поставщиков в разделе «Справочники».</p>') + '</div>';
   }
-  if (T === 'writeoff') h += '<label>Причина списания *</label><select data-h="rs"><option value="">Не выбрано</option>' +
-    opts(dn('writeoff_reason').map(function (x) { return [x, x]; }), D.rs) + '</select>';
-  h += '<div class="lb"><label>Товар</label><input data-p="q" placeholder="Введите название или артикул" autocomplete="off" value="' + esc(D.q) + '">' +
-    '<div id="dsug">' + sugHtml() + '</div><div id="dvar">' + varHtml() + '</div>' +
-    '<div class="two"><input data-p="qty" type="number" inputmode="numeric" min="0" step="1" placeholder="' + (T === 'adjust' ? 'Фактическое количество' : 'Введите количество') + '" value="' + esc(D.qty) + '">' +
-    (rc ? '<input data-p="price" type="number" inputmode="decimal" step="any" placeholder="Введите цену, грн" value="' + esc(D.price) + '">' : '') + '</div>' +
-    '<p class="er" id="dper"></p><button type="button" class="pri" style="width:100%" data-a="dAddLine">Добавить в список</button></div>' +
-    '<div id="dlines">' + linesHtml() + '</div>' +
-    '<label style="margin-top:10px">Комментарий' + (T === 'adjust' ? ' (причина, обязательно) *' : '') + '</label>' +
-    '<input data-h="cm" autocomplete="off" placeholder="' + (T === 'adjust' ? 'Введите причину корректировки' : 'Введите комментарий (необязательно)') + '" value="' + esc(D.cm) + '">' +
-    (rc ? '<p class="tot" id="dtot"></p>' : '') +
-    '<p class="er" id="der"></p><div class="rw"><button class="ghost" data-a="dClose">Отмена</button><button class="pri" data-a="dSave">Провести</button></div>';
+  if (T === 'writeoff') h += '<div class="hd"><label>Причина списания *</label><select data-h="rs"><option value="">Не выбрано</option>' +
+    opts(dn('writeoff_reason').map(function (x) { return [x, x]; }), D.rs) + '</select></div>';
+  h += '<div class="lb"><div class="er1"><div class="f nm"><label>Наименование</label><div class="sgw"><input data-p="q" placeholder="Введите название или артикул" autocomplete="off" value="' + esc(D.q) + '"><div id="dsug">' + sugHtml() + '</div></div></div>' +
+    '<div class="f vr" id="dvar">' + varHtml() + '</div>' +
+    '<div class="f qy"><label>' + (T === 'adjust' ? 'Факт. кол-во' : 'Количество') + '</label><input data-p="qty" type="number" inputmode="numeric" min="0" step="1" placeholder="Кол-во" value="' + esc(D.qty) + '"></div>' +
+    (rc ? '<div class="f pz"><label>Цена, грн</label><input data-p="price" type="number" inputmode="decimal" step="any" placeholder="Цена" value="' + esc(D.price) + '"></div>' : '') +
+    '<div class="f bt"><button type="button" class="pri" data-a="dAddLine">Добавить</button></div></div>' +
+    '<p class="er" id="dper" style="margin:8px 0 0"></p></div>' +
+    '<div id="dlines">' + linesHtml() + '</div>' + docFoot(T);
   return h;
 }
 function dTot() {
@@ -497,6 +681,7 @@ function dSync(e) {
   var t = e.target;
   if (!D || !dlg() || !t.dataset || !dlg().contains(t)) return;
   t.classList.remove('bad');
+  if (t.dataset.pl !== undefined) { D.plines[+t.dataset.pl].price = t.value; return; }
   if (t.dataset.h) { D[t.dataset.h] = t.value; return; }
   var k = t.dataset.p;
   if (!k || D[k] === t.value) return;
@@ -506,9 +691,15 @@ function dSync(e) {
     dCur();
   }
 }
+function docDlg() {
+  var el = document.createElement('dialog'), mine = D;
+  el.id = 'ddlg'; el.className = 'xl'; el.innerHTML = docBody();
+  el.addEventListener('close', function () { el.remove(); if (D === mine) D = null; });
+  document.body.appendChild(el); el.showModal(); dTot();
+}
 function view(title, html) {
   var el = document.createElement('dialog');
-  el.className = 'wide';
+  el.className = 'md';
   el.innerHTML = '<h3>' + esc(title) + '</h3>' + html + '<div class="rw"><button class="ghost" data-c>Закрыть</button></div>';
   el.querySelector('[data-c]').onclick = function () { el.close(); };
   el.addEventListener('close', function () { el.remove(); });
@@ -547,7 +738,7 @@ function lineDlg(i) {
   document.body.appendChild(d); d.showModal();
 }
 
-// ---------- окна: товар, вариации, подтверждение удаления ----------
+// ---------- окна: товар, вариации, подтверждение ----------
 
 function shrink(file, cb) {
   var img = new Image(), u = URL.createObjectURL(file);
@@ -564,34 +755,37 @@ function shrink(file, cb) {
   img.src = u;
 }
 
-// p == null: создание, иначе редактирование. pre: подставить название при создании.
-function prodForm(p, done, pre) {
+// p == null: создание, иначе редактирование. pre: подставить название. draft: вернуть введенное после ошибки сервера.
+function prodForm(p, done, pre, draft) {
   var edit = !!p;
   var hasVars = edit && p.vars.some(function (v) { return !v.archived && v.value !== 'Без вариации'; });
-  var photo;
+  var photo = draft ? draft.photo : undefined;
+  var dv = function (n, def) { return draft && draft.f[n] !== undefined ? draft.f[n] : def; };
   var sel = function (name, label, list, cur) {
-    return '<label>' + label + '</label><select name="' + name + '"><option value="">Не выбрано</option>' +
-      opts(list.map(function (x) { return [x, x]; }), cur) + '</select>';
+    return '<div class="fd"><label>' + label + '</label><select name="' + name + '"><option value="">Не выбрано</option>' +
+      opts(list.map(function (x) { return [x, x]; }), dv(name, cur)) + '</select></div>';
   };
-  var inp = function (name, label, ph, val, extra) {
-    return '<label>' + label + '</label><input name="' + name + '" placeholder="' + ph + '" value="' + esc(val) + '" autocomplete="off"' + (extra || '') + '>';
+  var inp = function (name, label, ph, val, extra, cls) {
+    return '<div class="fd' + (cls ? ' ' + cls : '') + '"><label>' + label + '</label><input name="' + name + '" placeholder="' + ph + '" value="' + esc(dv(name, val)) + '" autocomplete="off"' + (extra || '') + '></div>';
   };
+  var curPhoto = photo !== undefined ? photo : (edit ? p.photo : '');
+  var vtCur = dv('pvt', '');
   var d = document.createElement('dialog');
-  d.innerHTML = '<form method="dialog" novalidate><h3>' + (edit ? 'Редактировать товар' : 'Новый товар') + '</h3>' +
-    inp('pname', 'Название *', 'Введите название', edit ? p.name : (pre || '')) +
+  d.className = 'md';
+  d.innerHTML = '<form method="dialog" novalidate><h3>' + (edit ? 'Редактировать товар' : 'Новый товар') + '</h3><div class="fg">' +
+    inp('pname', 'Название *', 'Введите название', edit ? p.name : (pre || ''), '', 'sp') +
     inp('psku', 'Артикул (необязательно)', 'Введите артикул', edit ? p.sku : '') +
+    (edit ? '<div class="fd"></div>' : inp('pmin', 'Минимальный остаток (необязательно)', 'Введите число', '', ' type="number" step="1" inputmode="numeric"')) +
     sel('pcat', 'Категория *', dn('category', edit ? p.category : ''), edit ? p.category : '') +
     sel('pmat', 'Материал *', dn('material', edit ? p.material : ''), edit ? p.material : '') +
-    inp('pprice', 'Цена продажи, грн *', 'Введите цену', edit ? p.price : '', ' type="number" step="any" inputmode="decimal"') +
-    (edit ? '' : inp('pmin', 'Минимальный остаток (необязательно)', 'Введите число', '', ' type="number" step="1" inputmode="numeric"')) +
-    (hasVars ? '' : '<label>Тип вариации</label><select name="pvt"><option value="">Без вариации</option>' +
-      opts(dn('vartype').map(function (x) { return [x, x]; }), '') + '</select>' +
-      '<div id="pvbox" hidden>' + inp('pvals', 'Значения вариаций *', 'Например: 16, 17, 18', '') + '</div>' +
-      (edit ? '<p class="mu" style="margin:-4px 0 10px">Чтобы разбить товар на вариации, выберите тип и укажите значения. Остаток товара при этом должен быть 0.</p>' : '')) +
-    (edit ? '<label>Фото</label><div class="rw" style="justify-content:flex-start;gap:12px;margin:0 0 10px"><div class="pc-photo" id="pph">' +
-      (p.photo ? '<img src="' + esc(p.photo) + '" alt="">' : ico('photo')) + '</div><div><button type="button" class="ghost" data-pick>Выбрать фото</button> ' +
-      '<button type="button" class="ghost dg" data-nop>Удалить фото</button></div></div><input type="file" accept="image/*" id="pfile" hidden>' : '') +
-    '<p class="er"></p><div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">' + (edit ? 'Сохранить' : 'Создать') + '</button></div></form>';
+    (hasVars ? '' : '<div class="fd"><label>Тип вариации</label><select name="pvt"><option value="">Без вариации</option>' +
+      opts(dn('vartype').map(function (x) { return [x, x]; }), vtCur) + '</select></div>' +
+      '<div class="fd" id="pvbox"' + (vtCur ? '' : ' hidden') + '><label>Значения вариаций *</label><input name="pvals" placeholder="Например: 16, 17, 18" value="' + esc(dv('pvals', '')) + '" autocomplete="off"></div>' +
+      (edit ? '<p class="mu sp" style="margin:-2px 0 10px">Чтобы разбить товар на вариации, выберите тип и укажите значения. Остаток товара при этом должен быть 0.</p>' : '')) +
+    (edit ? '<div class="fd sp"><label>Фото</label><div class="rw" style="justify-content:flex-start;gap:12px;margin:0 0 10px"><div class="pc-photo" id="pph">' +
+      (curPhoto ? '<img src="' + esc(curPhoto) + '" alt="">' : ico('photo')) + '</div><div><button type="button" class="ghost" data-pick>Выбрать фото</button> ' +
+      '<button type="button" class="ghost dg" data-nop>Удалить фото</button></div></div><input type="file" accept="image/*" id="pfile" hidden></div>' : '') +
+    '</div><p class="er">' + esc(draft && draft.err || '') + '</p><div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">' + (edit ? 'Сохранить' : 'Создать') + '</button></div></form>';
   var f = d.querySelector('form'), er = d.querySelector('.er');
   d.querySelector('[data-c]').onclick = function () { d.close(); };
   f.addEventListener('input', function (e) { e.target.classList.remove('bad'); });
@@ -615,70 +809,36 @@ function prodForm(p, done, pre) {
   f.addEventListener('submit', function (e) {
     e.preventDefault();
     var g = function (n) { return f.elements[n] ? f.elements[n].value.trim() : ''; };
-    var req = ['pname', 'pcat', 'pmat', 'pprice'];
+    var req = ['pname', 'pcat', 'pmat'];
     if (vt && g('pvt')) req.push('pvals');
     var bad = req.filter(function (n) { return g(n) === ''; });
     if (bad.length) {
       bad.forEach(function (n) { f.elements[n].classList.add('bad'); });
       f.elements[bad[0]].focus(); er.textContent = 'Заполните выделенные поля'; return;
     }
-    var data = {name: g('pname'), sku: g('psku'), category: g('pcat'), material: g('pmat'), price: g('pprice')};
+    var data = {name: g('pname'), sku: g('psku'), category: g('pcat'), material: g('pmat')};
     if (edit) data.id = p.id; else data.min = g('pmin');
     if (edit && photo !== undefined) data.photo = photo;
     if (vt) { data.vartype = g('pvt'); data.values = g('pvals'); }
-    var btn = f.querySelector('.pri'); btn.disabled = true; S.btn = btn;
-    call('products.save', data).then(function (j) { d.close(); done(j); })
-      .catch(function (err) { btn.disabled = false; er.textContent = err.message; });
-  });
-  d.addEventListener('close', function () { d.remove(); });
-  document.body.appendChild(d); d.showModal();
-  var first = d.querySelector('input'); if (first) first.focus();
-}
-
-function varsForm(p) {
-  var vs = p.vars.filter(function (v) { return v.value !== 'Без вариации'; });
-  var cur = (vs[0] || {}).vartype || '';
-  var d = document.createElement('dialog');
-  d.innerHTML = '<form method="dialog" novalidate><h3>Вариации: ' + esc(p.name) + '</h3>' +
-    '<label>Тип вариации</label><select name="vt"><option value="">Не выбрано</option>' + opts(dn('vartype', cur).map(function (x) { return [x, x]; }), cur) + '</select>' +
-    '<label>Текущие вариации</label>' + vs.map(function (v) {
-      return '<div class="vrow" data-id="' + esc(v.id) + '" data-st="' + v.stock + '" data-arc="' + (v.archived ? 1 : 0) + '"><input value="' + esc(v.value) + '"' +
-        (v.archived ? ' disabled' : '') + ' autocomplete="off"><button type="button" class="ghost" data-t>' + (v.archived ? 'Вернуть' : 'В архив') + '</button></div>';
-    }).join('') +
-    '<label>Добавить значения</label><input name="vv" placeholder="Например: 20, 21" autocomplete="off">' +
-    '<p class="er"></p><div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">Сохранить</button></div></form>';
-  var f = d.querySelector('form'), er = d.querySelector('.er');
-  d.querySelector('[data-c]').onclick = function () { d.close(); };
-  f.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-t]');
-    if (!b) return;
-    var row = b.parentNode, arc = row.dataset.arc === '1';
-    if (!arc && Number(row.dataset.st) > 0) {
-      er.textContent = 'Нельзя архивировать вариацию с остатком (' + row.dataset.st + ' шт.). Сначала спишите остаток.'; return;
-    }
-    er.textContent = '';
-    row.dataset.arc = arc ? '0' : '1';
-    row.querySelector('input').disabled = !arc;
-    b.textContent = arc ? 'В архив' : 'Вернуть';
-  });
-  f.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var items = Array.prototype.map.call(f.querySelectorAll('.vrow'), function (r) {
-      return {id: r.dataset.id, value: r.querySelector('input').value.trim(), archived: r.dataset.arc === '1'};
+    var snap = {f: {}, photo: photo};
+    Array.prototype.forEach.call(f.elements, function (el) { if (el.name) snap.f[el.name] = el.value; });
+    // окно закрывается сразу, загрузка показывается сверху справа; при ошибке форма вернется с введенными данными
+    S.btn = null; d.close();
+    call('products.save', data).then(function (j) {
+      done(j); toast(edit ? 'Товар сохранен' : 'Товар создан');
+    }, function (err) {
+      snap.err = err.message; prodForm(edit ? (prod(p.id) || p) : null, done, pre, snap);
     });
-    var btn = f.querySelector('.pri'); btn.disabled = true; S.btn = btn;
-    call('vars.update', {productId: p.id, vartype: f.elements.vt.value, items: items, values: f.elements.vv.value})
-      .then(function (j) { d.close(); productsDone(j); })
-      .catch(function (err) { btn.disabled = false; er.textContent = err.message; });
   });
   d.addEventListener('close', function () { d.remove(); });
   document.body.appendChild(d); d.showModal();
+  var first = d.querySelector('input'); if (first && !draft) first.focus();
 }
 
-function confirmDel(text, cb) {
+function confirmAct(title, text, okLabel, kind, cb) {
   var d = document.createElement('dialog');
-  d.innerHTML = '<h3>Удалить навсегда?</h3><p style="margin:0 0 10px">' + text + '</p><p class="er"></p>' +
-    '<div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="button" class="dgb" data-ok>Удалить навсегда</button></div>';
+  d.innerHTML = '<h3>' + esc(title) + '</h3><p style="margin:0 0 10px">' + text + '</p><p class="er"></p>' +
+    '<div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="button" class="' + (kind === 'ok' ? 'okb' : 'dgb') + '" data-ok>' + esc(okLabel) + '</button></div>';
   d.querySelector('[data-c]').onclick = function () { d.close(); };
   d.querySelector('[data-ok]').onclick = function () {
     var b = this; b.disabled = true; S.btn = b;
@@ -686,6 +846,108 @@ function confirmDel(text, cb) {
   };
   d.addEventListener('close', function () { d.remove(); });
   document.body.appendChild(d); d.showModal();
+}
+function confirmDel(text, cb) { confirmAct('Удалить навсегда?', text, 'Удалить навсегда', 'dg', cb); }
+
+function vrowState(row, arc) {
+  row.dataset.arc = arc ? '1' : '0';
+  row.classList.toggle('off', arc);
+  row.querySelector('input').disabled = arc;
+  var b = row.querySelector('[data-t]');
+  b.className = (arc ? 'okb' : 'ghost dg') + ' ic';
+  b.setAttribute('aria-label', arc ? 'Вернуть вариацию' : 'Отключить вариацию');
+  b.innerHTML = ico(arc ? 'check' : 'x');
+}
+
+function varsForm(p) {
+  var vs = p.vars.filter(function (v) { return v.value !== 'Без вариации'; });
+  var cur = (vs[0] || {}).vartype || '';
+  var d = document.createElement('dialog');
+  d.className = 'wide';
+  d.innerHTML = '<form method="dialog" novalidate><h3>Вариации: ' + esc(p.name) + '</h3>' +
+    '<label>Тип вариации</label><select name="vt"><option value="">Не выбрано</option>' + opts(dn('vartype', cur).map(function (x) { return [x, x]; }), cur) + '</select>' +
+    '<label>Текущие вариации</label>' + vs.map(function (v) {
+      return '<div class="vrow" data-id="' + esc(v.id) + '" data-arc="0"><input value="' + esc(v.value) + '" autocomplete="off"><button type="button" data-t></button></div>';
+    }).join('') +
+    '<label>Добавить значения</label><input name="vv" placeholder="Например: 20, 21" autocomplete="off">' +
+    '<p class="er"></p><div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">Сохранить</button></div></form>';
+  var f = d.querySelector('form'), er = d.querySelector('.er');
+  Array.prototype.forEach.call(d.querySelectorAll('.vrow'), function (row, i) { vrowState(row, !!vs[i].archived); });
+  d.querySelector('[data-c]').onclick = function () { d.close(); };
+  f.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-t]');
+    if (!b) return;
+    var row = b.closest('.vrow'), id = row.dataset.id, arc = row.dataset.arc === '1';
+    var nm = esc(row.querySelector('input').defaultValue);
+    er.textContent = '';
+    var go = function () {
+      return call(arc ? 'vars.restore' : 'vars.disable', {id: id}).then(function (j) {
+        S.products = j.items; S.dict = j.dict; render();
+        var np = prod(p.id), nv = np && np.vars.filter(function (x) { return x.id === id; })[0];
+        if (!nv) row.remove(); else vrowState(row, !!nv.archived);
+        toast(!nv ? 'Вариация удалена' : nv.archived ? 'Вариация отключена' : 'Вариация возвращена');
+      });
+    };
+    if (arc) confirmAct('Вернуть вариацию?', 'Вариация «' + nm + '» снова станет доступной.', 'Вернуть', 'ok', go);
+    else confirmAct('Отключить вариацию?', 'Вариация «' + nm + '» будет отключена. Если по ней еще не было ни одного движения, она удалится полностью.', 'Отключить', 'dg', go);
+  });
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var items = Array.prototype.map.call(f.querySelectorAll('.vrow'), function (r) {
+      return {id: r.dataset.id, value: r.querySelector('input').value.trim(), archived: r.dataset.arc === '1'};
+    });
+    var data = {productId: p.id, vartype: f.elements.vt.value, items: items, values: f.elements.vv.value};
+    S.btn = null; d.close();
+    call('vars.update', data).then(function (j) { productsDone(j); toast('Вариации сохранены'); }, function (err) { toast(err.message); });
+  });
+  d.addEventListener('close', function () { d.remove(); });
+  document.body.appendChild(d); d.showModal();
+}
+
+function filtDlg() {
+  var d = document.createElement('dialog');
+  d.paint = function () {
+    d.innerHTML = '<h3>Фильтр</h3><label>Сортировка</label><select id="srt2">' + opts(SORTS, S.sort) + '</select>' +
+      '<label>Показывать</label><div class="chips" style="margin-top:0">' + STATS.map(function (c) {
+        return '<button class="' + (S.tab === c[0] ? 'on' : '') + '" data-a="ftab" data-v="' + c[0] + '">' + c[1] + '</button>';
+      }).join('') + '</div><div class="rw" style="margin-top:14px"><button class="pri" data-c>Готово</button></div>';
+    d.querySelector('[data-c]').onclick = function () { d.close(); };
+  };
+  d.paint(); S.fd = d;
+  d.addEventListener('close', function () { d.remove(); S.fd = null; });
+  document.body.appendChild(d); d.showModal();
+}
+
+function infoPage() {
+  var i = S.info, same = i.ver === NEED;
+  var kv = function (k, v) { return '<div class="kv"><span class="mu">' + k + '</span><span>' + v + '</span></div>'; };
+  var counts = Object.keys(i.counts || {}).map(function (k) { return kv(esc(k), i.counts[k]); }).join('');
+  return '<h2>Инфо</h2>' +
+    '<div class="cd"><h3>Версии</h3>' + kv('Страница (index.html)', NEED + ' · сборка ' + BUILD) + kv('Скрипт (Code.gs)', i.ver) +
+    kv('Совпадение', same ? 'да ✓' : '<b style="color:var(--dg)">нет: обновите ' + (i.ver < NEED ? 'Code.gs и новую версию развертывания' : 'index.html') + '</b>') + '</div>' +
+    '<div class="cd"><h3>Подключение</h3>' + kv('Ссылка скрипта', esc(url())) + kv('Таблица', '<a href="' + esc(i.sheetUrl) + '" target="_blank" rel="noopener">' + esc(i.sheetName) + '</a>') +
+    kv('Проверка скрипта', '<a href="' + esc(url()) + '?check=1" target="_blank" rel="noopener">открыть ?check=1</a>') +
+    kv('Часовой пояс скрипта', esc(i.tz)) + kv('Срок сессии', i.sessionDays + ' дн.') +
+    '<div class="rw g8" style="justify-content:flex-start;margin-top:8px"><button class="ghost" data-a="copyApi">Скопировать ссылку</button><button class="ghost" data-a="copyInfo">Скопировать диагностику</button></div></div>' +
+    '<div class="cd"><h3>Строк в листах</h3>' + counts + '</div>' +
+    '<div class="cd"><h3>Для разработчика</h3><ul>' +
+    '<li>После правки Code.gs: Развернуть → Управление развертываниями → карандаш → Версия: Новая версия → Развернуть. Ссылка /exec не меняется.</li>' +
+    '<li>VERSION в Code.gs и NEED в index.html должны совпадать, иначе страница покажет ошибку подключения.</li>' +
+    '<li>API: POST на ссылку скрипта, тело {action, token, data}, ответ JSON {ok, ...}. Заголовок Content-Type не ставить, иначе браузер сделает preflight.</li>' +
+    '<li>Фото товаров хранятся в таблице как сжатый data-URL (до 45 КБ).</li>' +
+    '<li>Типы документов: receipt, pricing, writeoff, adjust.</li></ul></div>' +
+    '<div class="cd"><h3>Среда</h3>' + kv('Браузер', esc(navigator.userAgent)) + kv('Окно', innerWidth + '×' + innerHeight) +
+    kv('Вход сохранен', S.tk ? 'да' : 'нет') + kv('Пользователь', esc(S.me ? S.me.name + ' (' + S.me.login + ')' : '—')) + '</div>';
+}
+function diag() {
+  var i = S.info || {};
+  return JSON.stringify({page: NEED, build: BUILD, script: i.ver, api: url(), tz: i.tz, counts: i.counts, ua: navigator.userAgent,
+    viewport: innerWidth + 'x' + innerHeight, user: S.me && S.me.login, products: S.products.length, docs: S.docs.length}, null, 2);
+}
+function copy(text, okMsg) {
+  var done = function () { toast(okMsg); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () { prompt('Скопируйте вручную:', text); });
+  else prompt('Скопируйте вручную:', text);
 }
 
 function render() {
@@ -696,14 +958,19 @@ function render() {
     h = box('Не удалось подключиться', '<p>' + esc(S.err) + '</p><button class="pri" data-a="retry">Повторить</button><button class="ghost" data-a="resetApi">Изменить ссылку</button><p class="mu" style="margin:12px 0 0"><a href="' + esc(url()) + '?check=1" target="_blank" rel="noopener">Проверить скрипт (откроется в новой вкладке)</a></p>');
   } else if (S.view === 'login') {
     h = box(S.first ? 'Первый запуск' : 'Вход',
-      (S.first ? '<p class="mu">Создайте первого продавца. Он сможет добавить остальных.</p><input id="nm" placeholder="Имя">' : '') +
+      (S.first ? '<p class="mu">Создайте первого пользователя. Он сможет добавить остальных.</p><input id="nm" placeholder="Имя">' : '') +
       '<input id="lg" placeholder="Логин" autocapitalize="none" autocomplete="username"><input id="pw" type="password" placeholder="Пароль" autocomplete="current-password"><p class="er" id="er"></p>' +
       '<button class="pri" data-a="login">' + (S.first ? 'Создать и войти' : 'Войти') + '</button>');
   } else if (S.view === 'app' && S.me) {
+    var extra = NAV.filter(function (n) { return n[2]; });
     h = '<div class="top"><b>Hoolshop StockUp</b><div class="rw g8"><span class="sess">Текущий сеанс:</span><details class="menu"><summary>' + esc(S.me.name) + ' ▾</summary><div><button data-a="myPw">Сменить пароль</button><button class="dg" data-a="logout">Выйти</button></div></details></div></div>' +
       '<div class="wrap"><nav>' + NAV.map(function (n) {
+        return '<button class="' + (S.page === n[0] ? 'on' : '') + (n[2] ? ' xt' : '') + '" data-a="nav" data-p="' + n[0] + '">' + n[1] + '</button>';
+      }).join('') + '<button class="mb ' + (extra.some(function (n) { return n[0] === S.page; }) ? 'on' : '') + '" data-a="more" aria-label="Еще разделы">⋯</button></nav>' +
+      '<main' + (S.fx ? ' class="fx"' : '') + '>' + page() + '</main></div>' +
+      (S.more ? '<div class="more">' + extra.map(function (n) {
         return '<button class="' + (S.page === n[0] ? 'on' : '') + '" data-a="nav" data-p="' + n[0] + '">' + n[1] + '</button>';
-      }).join('') + '</nav><main' + (S.fx ? ' class="fx"' : '') + '>' + page() + '</main></div>';
+      }).join('') + '</div>' : '');
   } else { h = ''; }
   document.getElementById('app').innerHTML = h;
   S.fx = 0;
@@ -756,23 +1023,24 @@ var A = {
   },
   logout: function () {
     call('logout').catch(function () {}).then(function () {
-      S.tk = ''; S.me = null; localStorage.removeItem('tk'); init();
+      S.tk = ''; S.me = null; localStorage.removeItem('tk'); S.ld = {}; init();
     });
   },
-  nav: function (d) { S.page = d.p; S.fx = 1; render(); load(); },
+  nav: function (d) { S.page = d.p; S.more = false; S.fx = 1; render(); load(); },
+  more: function () { S.more = !S.more; render(); },
   myPw: function () {
     ask('Сменить пароль', [{l: 'Новый пароль', t: 'password'}], 'Сохранить', function (v) {
       return call('sellers.password', {id: S.me.id, password: v[0]}).then(function () { toast('Пароль изменен'); });
     });
   },
   addSeller: function () {
-    ask('Новый продавец', [{l: 'Имя'}, {l: 'Логин'}, {l: 'Пароль', t: 'password'}], 'Добавить', function (v) {
+    ask('Новый пользователь', [{l: 'Имя'}, {l: 'Логин'}, {l: 'Пароль', t: 'password'}], 'Добавить', function (v) {
       return call('sellers.add', {name: v[0], login: v[1], password: v[2]}).then(sellersDone);
     });
   },
   renSeller: function (d) {
     var s = seller(d.id);
-    ask('Имя продавца', [{l: 'Имя', v: s.name}], 'Сохранить', function (v) {
+    ask('Имя пользователя', [{l: 'Имя', v: s.name}], 'Сохранить', function (v) {
       return call('sellers.update', {id: s.id, name: v[0]}).then(sellersDone);
     });
   },
@@ -786,7 +1054,10 @@ var A = {
     var s = seller(d.id);
     call('sellers.update', {id: s.id, active: !s.active}).then(sellersDone).catch(function (e) { toast(e.message); });
   },
-  tab: function (d) { S.tab = d.v; render(); },
+  tab: function (d) { S.tab = (d.v === 'arc' && S.tab === 'arc') ? 'all' : d.v; render(); },
+  ftab: function (d) { S.tab = d.v; render(); if (S.fd) S.fd.paint(); },
+  cat: function (d) { S.cat = S.cat === d.k ? '' : d.k; render(); },
+  filt: function () { filtDlg(); },
   newP: function () { prodForm(null, productsDone); },
   editP: function (d) { var p = prod(d.id); if (p) prodForm(p, productsDone); },
   minP: function (d) {
@@ -808,11 +1079,10 @@ var A = {
   newDoc: function (d) {
     document.querySelectorAll('details.menu[open]').forEach(function (m) { m.open = false; });
     if (d.t !== 'receipt' && !S.products.some(function (p) { return !p.archived; })) return toast('Сначала добавьте товар в разделе «Склад»');
-    D = {type: d.t, lines: [], sup: '', rs: '', cm: '', q: '', pid: '', vid: '', qty: '', price: ''};
-    var el = document.createElement('dialog');
-    el.id = 'ddlg'; el.className = 'wide'; el.innerHTML = docBody();
-    el.addEventListener('close', function () { el.remove(); D = null; });
-    document.body.appendChild(el); el.showModal(); dTot();
+    D = d.t === 'pricing'
+      ? {type: 'pricing', plines: [], cm: '', q: '', rcOpen: false, err: ''}
+      : {type: d.t, lines: [], sup: '', rs: '', cm: '', q: '', pid: '', vid: '', qty: '', price: '', err: ''};
+    docDlg();
   },
   dPick: function (d) {
     var p = prod(d.id);
@@ -828,7 +1098,7 @@ var A = {
     prodForm(null, function (j) {
       S.products = j.items; S.dict = j.dict;
       var np = j.items.filter(function (p) { return old.indexOf(p.id) < 0; })[0];
-      if (np) { D.pid = np.id; D.q = np.name; D.vid = ''; D.price = ''; dfix(); }
+      if (D && np) { D.pid = np.id; D.q = np.name; D.vid = ''; D.price = ''; dfix(); }
       dRedraw();
     }, D.q);
   },
@@ -837,9 +1107,9 @@ var A = {
     if (!p) return;
     prodForm(p, function (j) {
       S.products = j.items; S.dict = j.dict;
-      var np = prod(D.pid);
+      var np = D && prod(D.pid);
       if (np) D.q = np.name;
-      dfix(); dRedraw();
+      if (D) { dfix(); dRedraw(); }
     });
   },
   dAddLine: function () {
@@ -856,37 +1126,71 @@ var A = {
     D.lines.push({pid: D.pid, vid: D.vid, qty: D.qty, price: D.price});
     D.q = ''; D.pid = ''; D.vid = ''; D.qty = ''; D.price = '';
     dRedraw();
+    var q = dlg().querySelector('[data-p="q"]'); if (q) q.focus();
   },
   dEditLine: function (d) { lineDlg(+d.i); },
+  // ценообразование
+  pRcToggle: function () { D.rcOpen = !D.rcOpen; document.getElementById('prc').innerHTML = rcHtml(); },
+  pRc: function (d) {
+    var mine = D;
+    call('docs.get', {id: d.id}).then(function (j) {
+      if (D !== mine || !dlg()) return;
+      var added = 0, skipped = 0;
+      j.lines.forEach(function (l) {
+        var p = prod(l.productId);
+        if (!p || p.archived) { skipped++; return; }
+        if (D.plines.some(function (x) { return x.pid === p.id; })) return;
+        D.plines.push({pid: p.id, price: p.price > 0 ? String(p.price) : ''}); added++;
+      });
+      D.rcOpen = false; dRedraw();
+      toast('Добавлено товаров: ' + added + (skipped ? '. Пропущено (удалены или в архиве): ' + skipped : ''));
+    }).catch(function (e) { toast(e.message); });
+  },
+  pAdd: function (d) {
+    var p = prod(d.id);
+    if (!p || D.plines.some(function (x) { return x.pid === p.id; })) return;
+    D.plines.push({pid: p.id, price: p.price > 0 ? String(p.price) : ''}); D.q = '';
+    dRedraw();
+    var el = dlg().querySelector('[data-pl="' + (D.plines.length - 1) + '"]'); if (el) el.focus();
+  },
+  pDel: function (d) { D.plines.splice(+d.i, 1); dRedraw(); },
   dClose: function () { dlg().close(); },
   dSave: function () {
     var T = D.type, er = document.getElementById('der'), bad = [];
     er.textContent = '';
-    if (T === 'receipt' && !D.sup) bad.push('sup');
-    if (T === 'writeoff' && !D.rs) bad.push('rs');
-    if (T === 'adjust' && !D.cm.trim()) bad.push('cm');
-    if (bad.length) {
-      bad.forEach(function (k) { var el = dlg().querySelector('[data-h="' + k + '"]'); if (el) el.classList.add('bad'); });
-      er.textContent = 'Заполните выделенные поля'; return;
+    var payload;
+    if (T === 'pricing') {
+      if (!D.plines.length) { er.textContent = 'Добавьте хотя бы один товар'; return; }
+      D.plines.forEach(function (l, i) { if (l.price.trim() === '' || !(Number(l.price) >= 0)) bad.push(i); });
+      if (bad.length) {
+        bad.forEach(function (i) { var el = dlg().querySelector('[data-pl="' + i + '"]'); if (el) el.classList.add('bad'); });
+        er.textContent = 'Укажите розничную цену у выделенных товаров'; return;
+      }
+      payload = {type: T, comment: D.cm, lines: D.plines.map(function (l) { return {productId: l.pid, price: l.price}; })};
+    } else {
+      if (T === 'receipt' && !D.sup) bad.push('sup');
+      if (T === 'writeoff' && !D.rs) bad.push('rs');
+      if (T === 'adjust' && !D.cm.trim()) bad.push('cm');
+      if (bad.length) {
+        bad.forEach(function (k) { var el = dlg().querySelector('[data-h="' + k + '"]'); if (el) el.classList.add('bad'); });
+        er.textContent = 'Заполните выделенные поля'; return;
+      }
+      if (D.pid && D.qty !== '') { er.textContent = 'Товар выбран, но не добавлен в список. Нажмите «Добавить».'; return; }
+      if (!D.lines.length) { er.textContent = 'Добавьте хотя бы одну позицию в список'; return; }
+      payload = {type: T, supplier: D.sup, reason: D.rs, comment: D.cm,
+        lines: D.lines.map(function (l) { return {varId: l.vid, qty: l.qty, price: l.price}; })};
     }
-    if (D.pid && D.qty !== '') { er.textContent = 'Товар выбран, но не добавлен в список. Нажмите «Добавить в список».'; return; }
-    if (!D.lines.length) { er.textContent = 'Добавьте хотя бы одну позицию в список'; return; }
-    call('docs.save', {type: T, supplier: D.sup, reason: D.rs, comment: D.cm,
-      lines: D.lines.map(function (l) { return {varId: l.vid, qty: l.qty, price: l.price}; })}).then(function (j) {
-      S.docs = j.items; S.products = j.products; S.dict = j.dict; S.df = T; dlg().close(); toast('Документ проведен'); render();
-    }).catch(function (e) { er.textContent = e.message; });
+    // окно закрывается сразу, загрузка показывается сверху справа; при ошибке документ вернется как был
+    var snap = D; D = null; S.btn = null; dlg().close();
+    call('docs.save', payload).then(function (j) {
+      S.docs = j.items; S.products = j.products; S.dict = j.dict; S.df = T; toast('Документ проведен'); render();
+    }, function (e) {
+      D = snap; D.err = e.message; docDlg();
+    });
   },
   openDoc: function (d) {
     var doc = S.docs.filter(function (x) { return x.id === d.id; })[0];
-    call('docs.get', {id: d.id}).then(function (j) {
-      view(DOC[doc.type] + ' №' + doc.num,
-        '<p class="mu">' + fdt(doc.created) + ' · ' + esc(doc.seller) + (doc.supplier ? ' · Поставщик: ' + esc(doc.supplier) : '') +
-        (doc.type === 'writeoff' && doc.reason ? ' · Причина: ' + esc(doc.reason) : '') + (doc.comment ? ' · ' + esc(doc.comment) : '') + '</p>' +
-        j.lines.map(function (l) {
-          return '<div class="lb"><b>' + esc(l.label) + '</b><div class="mu">' + (l.qty > 0 && doc.type !== 'receipt' ? '+' : '') + l.qty +
-            ' шт × ' + money(l.cost) + ' = ' + money(l.sum) + '</div></div>';
-        }).join('') + '<p><b>Итого: ' + money(doc.total) + '</b></p>');
-    }).catch(function (e) { toast(e.message); });
+    call('docs.get', {id: d.id}).then(function (j) { viewDoc(doc, j.lines); }).catch(function (e) { toast(e.message); });
   },
   dt: function (d) { S.dt = d.k; render(); },
   addDict: function () {
@@ -907,11 +1211,15 @@ var A = {
     confirmDel('Запись «' + esc(x.name) + '» будет удалена. Это действие нельзя отменить.', function () {
       return call('dict.delete', {id: x.id}).then(dictDone);
     });
-  }
+  },
+  copyApi: function () { copy(url(), 'Ссылка скопирована'); },
+  copyInfo: function () { copy(diag(), 'Диагностика скопирована'); }
 };
 
 document.addEventListener('click', function (e) {
   document.querySelectorAll('details.menu[open]').forEach(function (m) { if (!m.contains(e.target)) m.open = false; });
+  if (S.more && !e.target.closest('.more') && !e.target.closest('[data-a="more"]')) { S.more = false; render(); }
+  if (D && D.rcOpen && !e.target.closest('.rcbox')) { D.rcOpen = false; var pr = document.getElementById('prc'); if (pr) pr.innerHTML = ''; }
   var b = e.target.closest('[data-a]');
   if (b && A[b.dataset.a]) {
     var mm = b.closest('details.menu');
@@ -926,9 +1234,9 @@ document.addEventListener('keydown', function (e) {
 });
 
 document.addEventListener('change', function (e) {
-  if (e.target.id !== 'srt') return;
+  if (e.target.id !== 'srt' && e.target.id !== 'srt2') return;
   S.sort = e.target.value; localStorage.setItem('sort', S.sort);
-  document.getElementById('plist').innerHTML = plist();
+  if (e.target.id === 'srt2') render(); else document.getElementById('plist').innerHTML = plist();
 });
 document.addEventListener('input', dSync);
 document.addEventListener('change', dSync);
