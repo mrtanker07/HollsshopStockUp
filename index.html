@@ -4,9 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hoolshop StockUp</title>
+<script>try{var __t=localStorage.getItem('theme');if(__t)document.documentElement.setAttribute('data-theme',__t)}catch(e){}</script>
 <style>
-:root{--bg:#f3f4f5;--card:#fff;--tx:#1b2024;--mu:#5f6872;--bd:#d9dde1;--ac:#0e6b5c;--acbg:#dff0ec;--dg:#b3261e;--on:#fff;--ach:#0a5649;--wb:#fdf0d3;--wt:#7a5200;--db:#fbe3e1;--dt:#b3261e;--gb:#d8f1df;--gt:#14632f;--bs:#b4bbc2;--mm:#8a929a}
-@media(prefers-color-scheme:dark){:root{--bg:#16191b;--card:#1f2326;--tx:#e9ecee;--mu:#9aa3ab;--bd:#343a3f;--ac:#5fc4b0;--acbg:#1d3a35;--dg:#f2958f;--on:#0b1512;--ach:#86d9c8;--wb:#3d3216;--wt:#f0c96a;--db:#4a2220;--dt:#f2958f;--gb:#1b3a28;--gt:#8fdcab;--bs:#555e66;--mm:#7b858e}}
+:root{--bg:#f3f4f5;--card:#fff;--tx:#1b2024;--mu:#5f6872;--bd:#d9dde1;--ac:#0e6b5c;--acbg:#dff0ec;--dg:#b3261e;--on:#fff;--ach:#0a5649;--wb:#fdf0d3;--wt:#7a5200;--db:#fbe3e1;--dt:#b3261e;--gb:#d8f1df;--gt:#14632f;--bs:#b4bbc2;--mm:#8a929a;color-scheme:light}
+:root[data-theme=dark]{--bg:#16191b;--card:#1f2326;--tx:#e9ecee;--mu:#9aa3ab;--bd:#343a3f;--ac:#5fc4b0;--acbg:#1d3a35;--dg:#f2958f;--on:#0b1512;--ach:#86d9c8;--wb:#3d3216;--wt:#f0c96a;--db:#4a2220;--dt:#f2958f;--gb:#1b3a28;--gt:#8fdcab;--bs:#555e66;--mm:#7b858e;color-scheme:dark}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#16191b;--card:#1f2326;--tx:#e9ecee;--mu:#9aa3ab;--bd:#343a3f;--ac:#5fc4b0;--acbg:#1d3a35;--dg:#f2958f;--on:#0b1512;--ach:#86d9c8;--wb:#3d3216;--wt:#f0c96a;--db:#4a2220;--dt:#f2958f;--gb:#1b3a28;--gt:#8fdcab;--bs:#555e66;--mm:#7b858e;color-scheme:dark}}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
@@ -45,6 +47,7 @@ nav .mb,.more{display:none}
 .menu>div button{text-align:left;border:none;background:none}
 .menu>div button.dg{color:var(--dg)}
 dialog{max-height:92vh;overflow:auto;border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);padding:18px;width:min(92vw,380px)}
+dialog:focus{outline:none}
 dialog::backdrop{background:rgba(0,0,0,.45)}
 dialog.md{width:min(94vw,700px)}
 dialog.wide{width:min(94vw,600px)}
@@ -263,7 +266,7 @@ var BUILD = '2026-10-04';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
 var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category',
-  ld: {}, fx: 0, products: [], docs: [], df: 'receipt', q: '', tab: 'all', cat: '', more: false, busy: 0, info: null,
+  ld: {}, ts: {}, sig: {}, dl: {}, lerr: {}, rec: '', fx: 0, products: [], docs: [], df: 'receipt', q: '', tab: 'all', cat: '', more: false, busy: 0, info: null,
   sort: localStorage.getItem('sort') || 'name'};
 var DT = {category: 'Категории', material: 'Материалы', vartype: 'Типы вариаций', supplier: 'Поставщики', source: 'Источники заказов',
   payment: 'Способы оплаты', delivery: 'Способы доставки', discount_reason: 'Причины скидок',
@@ -271,6 +274,9 @@ var DT = {category: 'Категории', material: 'Материалы', vartyp
 // третий элемент: 1 = на телефоне прячется за кнопку «⋯»
 var NAV = [['home', 'Главная'], ['products', 'Склад'], ['docs', 'Документы'], ['settings', 'Справочники', 1], ['sellers', 'Пользователи', 1], ['info', 'Инфо', 1]];
 
+function themeNow() {
+  return document.documentElement.getAttribute('data-theme') || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+}
 function url() { return API || localStorage.getItem('api') || ''; }
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -290,12 +296,13 @@ function busy(n) {
   if (g) g.hidden = !S.busy;
 }
 
-async function call(a, d) {
+async function call(a, d, silent) {
   var el = S.btn; S.btn = null;
+  if (silent) el = null;
   if (el) el.classList.add('ld');
-  busy(1);
+  if (!silent) busy(1);
   try { return await call0(a, d); }
-  finally { busy(-1); if (el) el.classList.remove('ld'); }
+  finally { if (!silent) busy(-1); if (el) el.classList.remove('ld'); }
 }
 async function call0(a, d) {
   var r, j;
@@ -326,20 +333,36 @@ async function init() {
   if (S.me) load();
 }
 
+// страница -> [действие сервера, ключ готовности данных, как применить ответ]
+var LOADS = {
+  sellers: ['sellers.list', 'sellers', function (j) { S.sellers = j.items; }],
+  settings: ['dict.list', 'dict', function (j) { S.dict = j.items; }],
+  info: ['info', 'info', function (j) { S.info = j; }],
+  products: ['products.list', 'products', function (j) { S.products = j.items; S.dict = j.dict; S.ld.dict = 1; }],
+  docs: ['docs.list', 'docs', function (j) { S.docs = j.items; S.products = j.products; S.dict = j.dict; S.ld.products = 1; S.ld.dict = 1; }]
+};
+// Данные уже есть: показываем сразу, без анимации; обновляем тихо в фоне не чаще раза в 30 секунд.
 async function load() {
+  var pg = S.page, L = LOADS[pg];
+  if (!L) return;
+  var have = !!S.ld[L[1]];
+  if (have && Date.now() - (S.ts[pg] || 0) < 30000) return;
   try {
-    if (S.page === 'sellers') { S.sellers = (await call('sellers.list')).items; S.ld.sellers = 1; }
-    if (S.page === 'settings') { S.dict = (await call('dict.list')).items; S.ld.dict = 1; }
-    if (S.page === 'info') { S.info = await call('info'); S.ld.info = 1; }
-    if (S.page === 'products') {
-      var pj = await call('products.list'); S.products = pj.items; S.dict = pj.dict; S.ld.products = 1; S.ld.dict = 1;
-    }
-    if (S.page === 'docs') {
-      var dj = await call('docs.list'); S.docs = dj.items; S.products = dj.products; S.dict = dj.dict;
-      S.ld.docs = 1; S.ld.products = 1; S.ld.dict = 1;
-    }
-  } catch (e) { toast(e.message); if (!S.me) return init(); }
-  try { render(); } catch (e) { toast('Ошибка отображения: ' + e.message); console.error(e); }
+    var j = await call(L[0], null, have), sg = JSON.stringify(j);
+    S.ts[pg] = Date.now();
+    delete S.lerr[pg];
+    if (have && S.sig[pg] === sg) return;
+    S.sig[pg] = sg; L[2](j); S.ld[L[1]] = 1;
+  } catch (e) {
+    if (!S.me) { toast(e.message); return init(); }
+    if (have) return;
+    toast(e.message); S.lerr[pg] = e.message;
+  }
+  if (S.page === pg) render();
+}
+function wait(title) {
+  var er = S.lerr[S.page];
+  return '<h2>' + title + '</h2>' + (er ? '<p class="er">' + esc(er) + '</p><button class="pri" data-a="reload">Повторить</button>' : '<p class="mu">Загрузка…</p>');
 }
 
 function box(title, body) { return '<div class="auth"><div class="box"><h1>' + title + '</h1>' + body + '</div></div>'; }
@@ -352,11 +375,11 @@ function menu(items, id, icon) {
 }
 
 function page() {
-  if (S.page === 'products') return S.ld.products ? productsPage() : '<h2>Склад</h2><p class="mu">Загрузка…</p>';
-  if (S.page === 'docs') return S.ld.docs ? docsPage() : '<h2>Документы</h2><p class="mu">Загрузка…</p>';
-  if (S.page === 'info') return S.ld.info ? infoPage() : '<h2>Инфо</h2><p class="mu">Загрузка…</p>';
-  if (S.page === 'sellers' && !S.ld.sellers) return '<h2>Пользователи</h2><p class="mu">Загрузка…</p>';
-  if (S.page === 'settings' && !S.ld.dict) return '<h2>Справочники</h2><p class="mu">Загрузка…</p>';
+  if (S.page === 'products') return S.ld.products ? productsPage() : wait('Склад');
+  if (S.page === 'docs') return S.ld.docs ? docsPage() : wait('Документы');
+  if (S.page === 'info') return S.ld.info ? infoPage() : wait('Инфо');
+  if (S.page === 'sellers' && !S.ld.sellers) return wait('Пользователи');
+  if (S.page === 'settings' && !S.ld.dict) return wait('Справочники');
   if (S.page === 'sellers') {
     return '<div class="rw"><h2>Пользователи</h2><button class="pri" data-a="addSeller">Добавить</button></div>' +
       S.sellers.map(function (s) {
@@ -419,6 +442,8 @@ var IC = {
   check: '<path d="M5 12l5 5l10 -10"/>',
   'circle-check': '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M9 12l2 2l4 -4"/>',
   'circle-x': '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M10 10l4 4m0 -4l-4 4"/>',
+  sun: '<path d="M8 12a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/>',
+  moon: '<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/>',
   'alert-triangle': '<path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"/><path d="M12 16h.01"/>'
 };
 function ico(n) {
@@ -447,6 +472,7 @@ function sortItems(items) {
   return items.slice().sort(function (a, b) {
     if (s === 'name') return nm(a, b);
     if (s === 'name-d') return nm(b, a);
+    if (s === 'new') { var x = a.lastIn || '', y = b.lastIn || ''; return x < y ? 1 : x > y ? -1 : nm(a, b); }
     var d = prank(a) - prank(b);
     if (s === 'st-d') d = -d;
     return d || nm(a, b);
@@ -483,13 +509,25 @@ function plist() {
       var want = S.tab;
       if (!p.vars.some(function (v) { return !v.archived && status(v.stock, p.min)[0] === want; })) return false;
     }
+    if (S.rec) {
+      var lim = Date.now() - Number(S.rec) * 864e5;
+      if (!p.lastIn || new Date(p.lastIn).getTime() < lim) return false;
+    }
     return !q || (p.name + ' ' + p.sku).toLowerCase().indexOf(q) >= 0;
   });
   if (!items.length) return '<p class="mu">' + (S.products.length ? 'Ничего не найдено.' : 'Товаров пока нет. Нажмите «Новый товар».') + '</p>';
   return sortItems(items).map(cardHtml).join('');
 }
 
-var SORTS = [['name', 'По названию: А → Я'], ['name-d', 'По названию: Я → А'], ['st', 'По статусу: сначала нет в наличии'], ['st-d', 'По статусу: сначала в наличии']];
+var SORTS = [['name', 'По названию: А → Я'], ['name-d', 'По названию: Я → А'], ['new', 'По поступлению: сначала новые'], ['st', 'По статусу: сначала нет в наличии'], ['st-d', 'По статусу: сначала в наличии']];
+var RECS = [['', 'Любые'], ['7', 'За 7 дней'], ['30', 'За 30 дней']];
+function filtOn() { return S.sort !== 'name' || S.tab === 'no' || S.tab === 'low' || !!S.rec || !!S.cat; }
+function recHtml(reset) {
+  return '<div class="chips" style="margin-top:0"><span class="mu" style="align-self:center">Недавние поступления:</span>' + RECS.map(function (c) {
+    return '<button class="' + (S.rec === c[0] ? 'on' : '') + '" data-a="frec" data-v="' + c[0] + '">' + c[1] + '</button>';
+  }).join('') + (reset ? '<button class="ghost rt" data-a="resetF"' + (filtOn() ? '' : ' disabled') + '>Сбросить</button>' : '') + '</div>';
+}
+function syncReset() { document.querySelectorAll('[data-a="resetF"]').forEach(function (b) { b.disabled = !filtOn(); }); }
 var STATS = [['all', 'Все'], ['no', 'Нет в наличии'], ['low', 'Заканчивается']];
 
 function catsHtml() {
@@ -504,13 +542,12 @@ function productsPage() {
   var stat = STATS.map(function (c) {
     return '<button class="' + (S.tab === c[0] ? 'on' : '') + '" data-a="tab" data-v="' + c[0] + '">' + c[1] + '</button>';
   }).join('') + '<button class="rt do ' + (S.tab === 'arc' ? 'on' : '') + '" data-a="tab" data-v="arc">Архив</button>';
-  var filtOn = S.sort !== 'name' || S.tab === 'no' || S.tab === 'low';
   return '<div class="rw"><h2>Склад</h2><div class="rw g8"><button class="mo ' + (S.tab === 'arc' ? 'on' : '') + '" data-a="tab" data-v="arc">Архив</button>' +
     '<button class="pri" data-a="newP">Новый товар</button></div></div>' +
     '<input id="q" placeholder="Введите название или артикул для поиска" value="' + esc(S.q) + '" style="margin-top:10px">' +
     '<div class="fl-d"><select id="srt" aria-label="Сортировка">' + opts(SORTS, S.sort) + '</select>' +
-    '<div class="chips" style="margin-top:0">' + stat + '</div></div>' +
-    '<div class="mf"><button data-a="filt">Фильтр' + (filtOn ? ' ●' : '') + '</button></div>' +
+    '<div class="chips" style="margin-top:0">' + stat + '</div>' + recHtml(true) + '</div>' +
+    '<div class="mf"><button data-a="filt">Фильтр' + (filtOn() ? ' ●' : '') + '</button></div>' +
     catsHtml() +
     '<div id="plist">' + plist() + '</div>';
 }
@@ -538,11 +575,12 @@ function docsPage() {
       : '<p class="mu">Документов этого типа пока нет. Нажмите «Создать».</p>');
 }
 
-function viewDoc(doc, lines) {
+function docHtml(doc, lines) {
   var T = doc.type, head = '<div class="dmeta"><span>Дата: ' + fdt(doc.created) + '</span>' +
     (T === 'receipt' && doc.supplier ? '<span>Поставщик: ' + esc(doc.supplier) + '</span>' : '') +
     (T === 'writeoff' && doc.reason ? '<span>Причина: ' + esc(doc.reason) + '</span>' : '') +
     '<span>Создал: ' + esc(doc.seller) + '</span></div>';
+  if (!lines) return head + '<p class="mu">Позиции подгружаются…</p>' + (doc.comment ? '<p class="cmt">Комментарий: ' + esc(doc.comment) + '</p>' : '');
   var tbl;
   if (T === 'pricing') {
     tbl = '<tr><th>Наименование</th><th class="r">Было</th><th class="r">Стало</th></tr>' + lines.map(function (l) {
@@ -553,9 +591,14 @@ function viewDoc(doc, lines) {
       return '<tr><td>' + esc(l.label) + '</td><td class="r">' + (T === 'adjust' && l.qty > 0 ? '+' : '') + l.qty + ' шт</td><td class="r">' + money(l.cost) + '</td><td class="r">' + money(l.sum) + '</td></tr>';
     }).join('');
   }
-  view(DOC[T] + ' №' + doc.num, head + '<div class="tbw"><table class="tb">' + tbl + '</table></div>' +
+  return head + '<div class="tbw"><table class="tb">' + tbl + '</table></div>' +
     (T === 'pricing' ? '' : '<p class="tot">Итого: ' + money(doc.total) + '</p>') +
-    (doc.comment ? '<p class="cmt">Комментарий: ' + esc(doc.comment) + '</p>' : ''));
+    (doc.comment ? '<p class="cmt">Комментарий: ' + esc(doc.comment) + '</p>' : '');
+}
+// строки документа не меняются после проведения, поэтому запоминаем их
+function docLines(id, silent) {
+  if (S.dl[id]) return Promise.resolve(S.dl[id]);
+  return call('docs.get', {id: id}, silent).then(function (j) { S.dl[id] = j.lines; return j.lines; });
 }
 
 // ---------- создание документа ----------
@@ -567,6 +610,8 @@ function lineLabel(l) {
   var p = prod(l.pid), v = p && p.vars.filter(function (x) { return x.id === l.vid; })[0];
   return p ? p.name + (v && v.value !== 'Без вариации' ? ', ' + vname(v) : '') : 'Товар удален';
 }
+// Открыть окно без перехода фокуса на первое поле ввода
+function openD(d) { d.tabIndex = -1; document.body.appendChild(d); d.showModal(); d.focus(); }
 function dlg() { return document.getElementById('ddlg'); }
 function dfix() {
   var p = prod(D.pid);
@@ -694,16 +739,18 @@ function dSync(e) {
 function docDlg() {
   var el = document.createElement('dialog'), mine = D;
   el.id = 'ddlg'; el.className = 'xl'; el.innerHTML = docBody();
-  el.addEventListener('close', function () { el.remove(); if (D === mine) D = null; });
-  document.body.appendChild(el); el.showModal(); dTot();
+  el.addEventListener('cancel', function (e) { if (mine && mine.saving) e.preventDefault(); });
+  el.addEventListener('close', function () { el.remove(); if (D === mine && !el.dataset.keep) D = null; });
+  openD(el); dTot();
 }
 function view(title, html) {
   var el = document.createElement('dialog');
   el.className = 'md';
-  el.innerHTML = '<h3>' + esc(title) + '</h3>' + html + '<div class="rw"><button class="ghost" data-c>Закрыть</button></div>';
+  el.innerHTML = '<h3>' + esc(title) + '</h3><div class="vb">' + html + '</div><div class="rw"><button class="ghost" data-c>Закрыть</button></div>';
   el.querySelector('[data-c]').onclick = function () { el.close(); };
   el.addEventListener('close', function () { el.remove(); });
-  document.body.appendChild(el); el.showModal();
+  openD(el);
+  return el;
 }
 
 // Окно изменения одной позиции накладной
@@ -735,7 +782,7 @@ function lineDlg(i) {
     d.close(); dRedraw();
   });
   d.addEventListener('close', function () { d.remove(); });
-  document.body.appendChild(d); d.showModal();
+  openD(d);
 }
 
 // ---------- окна: товар, вариации, подтверждение ----------
@@ -790,6 +837,8 @@ function prodForm(p, done, pre, draft) {
   d.querySelector('[data-c]').onclick = function () { d.close(); };
   f.addEventListener('input', function (e) { e.target.classList.remove('bad'); });
   f.addEventListener('change', function (e) { e.target.classList.remove('bad'); });
+  var saving = false;
+  d.addEventListener('cancel', function (e) { if (saving) e.preventDefault(); });
   var vt = f.elements.pvt;
   if (vt) vt.addEventListener('change', function () { d.querySelector('#pvbox').hidden = !vt.value; });
   if (edit) {
@@ -808,6 +857,7 @@ function prodForm(p, done, pre, draft) {
   }
   f.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (saving) return;
     var g = function (n) { return f.elements[n] ? f.elements[n].value.trim() : ''; };
     var req = ['pname', 'pcat', 'pmat'];
     if (vt && g('pvt')) req.push('pvals');
@@ -822,17 +872,17 @@ function prodForm(p, done, pre, draft) {
     if (vt) { data.vartype = g('pvt'); data.values = g('pvals'); }
     var snap = {f: {}, photo: photo};
     Array.prototype.forEach.call(f.elements, function (el) { if (el.name) snap.f[el.name] = el.value; });
-    // окно закрывается сразу, загрузка показывается сверху справа; при ошибке форма вернется с введенными данными
-    S.btn = null; d.close();
+    // окно остается открытым, пока идет сохранение, и закрывается после ответа; при ошибке откроется заново с введенными данными
+    var sb = f.querySelector('button[type="submit"]'), cb = f.querySelector('[data-c]');
+    saving = true; sb.disabled = true; cb.disabled = true; S.btn = sb; er.textContent = '';
     call('products.save', data).then(function (j) {
-      done(j); toast(edit ? 'Товар сохранен' : 'Товар создан');
+      d.close(); done(j); toast(edit ? 'Товар сохранен' : 'Товар создан');
     }, function (err) {
-      snap.err = err.message; prodForm(edit ? (prod(p.id) || p) : null, done, pre, snap);
+      d.close(); snap.err = err.message; prodForm(edit ? (prod(p.id) || p) : null, done, pre, snap);
     });
   });
   d.addEventListener('close', function () { d.remove(); });
-  document.body.appendChild(d); d.showModal();
-  var first = d.querySelector('input'); if (first && !draft) first.focus();
+  openD(d);
 }
 
 function confirmAct(title, text, okLabel, kind, cb) {
@@ -845,7 +895,7 @@ function confirmAct(title, text, okLabel, kind, cb) {
     cb().then(function () { d.close(); }).catch(function (e) { b.disabled = false; d.querySelector('.er').textContent = e.message; });
   };
   d.addEventListener('close', function () { d.remove(); });
-  document.body.appendChild(d); d.showModal();
+  openD(d);
 }
 function confirmDel(text, cb) { confirmAct('Удалить навсегда?', text, 'Удалить навсегда', 'dg', cb); }
 
@@ -871,7 +921,8 @@ function varsForm(p) {
     }).join('') +
     '<label>Добавить значения</label><input name="vv" placeholder="Например: 20, 21" autocomplete="off">' +
     '<p class="er"></p><div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">Сохранить</button></div></form>';
-  var f = d.querySelector('form'), er = d.querySelector('.er');
+  var f = d.querySelector('form'), er = d.querySelector('.er'), saving = false;
+  d.addEventListener('cancel', function (e) { if (saving) e.preventDefault(); });
   Array.prototype.forEach.call(d.querySelectorAll('.vrow'), function (row, i) { vrowState(row, !!vs[i].archived); });
   d.querySelector('[data-c]').onclick = function () { d.close(); };
   f.addEventListener('click', function (e) {
@@ -893,15 +944,19 @@ function varsForm(p) {
   });
   f.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (saving) return;
     var items = Array.prototype.map.call(f.querySelectorAll('.vrow'), function (r) {
       return {id: r.dataset.id, value: r.querySelector('input').value.trim(), archived: r.dataset.arc === '1'};
     });
     var data = {productId: p.id, vartype: f.elements.vt.value, items: items, values: f.elements.vv.value};
-    S.btn = null; d.close();
-    call('vars.update', data).then(function (j) { productsDone(j); toast('Вариации сохранены'); }, function (err) { toast(err.message); });
+    var sb = f.querySelector('button[type="submit"]');
+    saving = true; er.textContent = '';
+    f.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
+    S.btn = sb;
+    call('vars.update', data).then(function (j) { d.close(); productsDone(j); toast('Вариации сохранены'); }, function (err) { d.close(); toast(err.message); });
   });
   d.addEventListener('close', function () { d.remove(); });
-  document.body.appendChild(d); d.showModal();
+  openD(d);
 }
 
 function filtDlg() {
@@ -910,12 +965,13 @@ function filtDlg() {
     d.innerHTML = '<h3>Фильтр</h3><label>Сортировка</label><select id="srt2">' + opts(SORTS, S.sort) + '</select>' +
       '<label>Показывать</label><div class="chips" style="margin-top:0">' + STATS.map(function (c) {
         return '<button class="' + (S.tab === c[0] ? 'on' : '') + '" data-a="ftab" data-v="' + c[0] + '">' + c[1] + '</button>';
-      }).join('') + '</div><div class="rw" style="margin-top:14px"><button class="pri" data-c>Готово</button></div>';
+      }).join('') + '</div><div style="margin-top:12px">' + recHtml(false) + '</div>' +
+      '<div class="rw" style="margin-top:14px;justify-content:space-between"><button class="ghost" data-a="resetF"' + (filtOn() ? '' : ' disabled') + '>Сбросить</button><button class="pri" data-c>Готово</button></div>';
     d.querySelector('[data-c]').onclick = function () { d.close(); };
   };
   d.paint(); S.fd = d;
   d.addEventListener('close', function () { d.remove(); S.fd = null; });
-  document.body.appendChild(d); d.showModal();
+  openD(d);
 }
 
 function infoPage() {
@@ -963,7 +1019,7 @@ function render() {
       '<button class="pri" data-a="login">' + (S.first ? 'Создать и войти' : 'Войти') + '</button>');
   } else if (S.view === 'app' && S.me) {
     var extra = NAV.filter(function (n) { return n[2]; });
-    h = '<div class="top"><b>Hoolshop StockUp</b><div class="rw g8"><span class="sess">Текущий сеанс:</span><details class="menu"><summary>' + esc(S.me.name) + ' ▾</summary><div><button data-a="myPw">Сменить пароль</button><button class="dg" data-a="logout">Выйти</button></div></details></div></div>' +
+    h = '<div class="top"><b>Hoolshop StockUp</b><div class="rw g8"><button class="ghost ic" data-a="theme" aria-label="Сменить тему" title="Сменить тему">' + ico(themeNow() === 'dark' ? 'sun' : 'moon') + '</button><span class="sess">Текущий сеанс:</span><details class="menu"><summary>' + esc(S.me.name) + ' ▾</summary><div><button data-a="myPw">Сменить пароль</button><button class="dg" data-a="logout">Выйти</button></div></details></div></div>' +
       '<div class="wrap"><nav>' + NAV.map(function (n) {
         return '<button class="' + (S.page === n[0] ? 'on' : '') + (n[2] ? ' xt' : '') + '" data-a="nav" data-p="' + n[0] + '">' + n[1] + '</button>';
       }).join('') + '<button class="mb ' + (extra.some(function (n) { return n[0] === S.page; }) ? 'on' : '') + '" data-a="more" aria-label="Еще разделы">⋯</button></nav>' +
@@ -972,7 +1028,9 @@ function render() {
         return '<button class="' + (S.page === n[0] ? 'on' : '') + '" data-a="nav" data-p="' + n[0] + '">' + n[1] + '</button>';
       }).join('') + '</div>' : '');
   } else { h = ''; }
+  var ae = document.activeElement, keep = ae && ae.id === 'q' && ae.selectionStart != null ? [ae.selectionStart, ae.selectionEnd] : null;
   document.getElementById('app').innerHTML = h;
+  if (keep) { var qe = document.getElementById('q'); if (qe) { qe.focus(); try { qe.setSelectionRange(keep[0], keep[1]); } catch (x) {} } }
   S.fx = 0;
 }
 
@@ -994,9 +1052,7 @@ function ask(title, fields, okLabel, cb) {
     });
   });
   d.addEventListener('close', function () { d.remove(); });
-  document.body.appendChild(d);
-  d.showModal();
-  var first = d.querySelector('input'); if (first) first.focus();
+  openD(d);
 }
 
 function seller(id) { return S.sellers.filter(function (s) { return s.id === id; })[0]; }
@@ -1023,10 +1079,11 @@ var A = {
   },
   logout: function () {
     call('logout').catch(function () {}).then(function () {
-      S.tk = ''; S.me = null; localStorage.removeItem('tk'); S.ld = {}; init();
+      S.tk = ''; S.me = null; localStorage.removeItem('tk'); S.ld = {}; S.ts = {}; S.sig = {}; S.dl = {}; S.lerr = {}; init();
     });
   },
-  nav: function (d) { S.page = d.p; S.more = false; S.fx = 1; render(); load(); },
+  nav: function (d) { S.btn = null; S.page = d.p; S.more = false; S.fx = 1; render(); load(); },
+  reload: function () { S.btn = null; S.lerr = {}; render(); load(); },
   more: function () { S.more = !S.more; render(); },
   myPw: function () {
     ask('Сменить пароль', [{l: 'Новый пароль', t: 'password'}], 'Сохранить', function (v) {
@@ -1056,6 +1113,13 @@ var A = {
   },
   tab: function (d) { S.tab = (d.v === 'arc' && S.tab === 'arc') ? 'all' : d.v; render(); },
   ftab: function (d) { S.tab = d.v; render(); if (S.fd) S.fd.paint(); },
+  frec: function (d) { S.rec = d.v; render(); if (S.fd) S.fd.paint(); },
+  resetF: function () {
+    S.btn = null; S.sort = 'name'; localStorage.setItem('sort', 'name');
+    if (S.tab === 'no' || S.tab === 'low') S.tab = 'all';
+    S.rec = ''; S.cat = '';
+    render(); if (S.fd) S.fd.paint();
+  },
   cat: function (d) { S.cat = S.cat === d.k ? '' : d.k; render(); },
   filt: function () { filtDlg(); },
   newP: function () { prodForm(null, productsDone); },
@@ -1133,10 +1197,10 @@ var A = {
   pRcToggle: function () { D.rcOpen = !D.rcOpen; document.getElementById('prc').innerHTML = rcHtml(); },
   pRc: function (d) {
     var mine = D;
-    call('docs.get', {id: d.id}).then(function (j) {
+    docLines(d.id).then(function (lines) {
       if (D !== mine || !dlg()) return;
       var added = 0, skipped = 0;
-      j.lines.forEach(function (l) {
+      lines.forEach(function (l) {
         var p = prod(l.productId);
         if (!p || p.archived) { skipped++; return; }
         if (D.plines.some(function (x) { return x.pid === p.id; })) return;
@@ -1156,6 +1220,7 @@ var A = {
   pDel: function (d) { D.plines.splice(+d.i, 1); dRedraw(); },
   dClose: function () { dlg().close(); },
   dSave: function () {
+    if (D.saving) return;
     var T = D.type, er = document.getElementById('der'), bad = [];
     er.textContent = '';
     var payload;
@@ -1180,17 +1245,29 @@ var A = {
       payload = {type: T, supplier: D.sup, reason: D.rs, comment: D.cm,
         lines: D.lines.map(function (l) { return {varId: l.vid, qty: l.qty, price: l.price}; })};
     }
-    // окно закрывается сразу, загрузка показывается сверху справа; при ошибке документ вернется как был
-    var snap = D; D = null; S.btn = null; dlg().close();
+    // окно остается открытым, пока идет проведение, и закрывается после ответа; при ошибке документ откроется заново как был
+    var snap = D, el = dlg(), sb = S.btn;
+    snap.saving = true;
+    if (!sb || !el.contains(sb)) sb = el.querySelector('[data-a="dSave"]');
+    el.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
+    S.btn = sb;
     call('docs.save', payload).then(function (j) {
+      D = null; el.close();
       S.docs = j.items; S.products = j.products; S.dict = j.dict; S.df = T; toast('Документ проведен'); render();
     }, function (e) {
-      D = snap; D.err = e.message; docDlg();
+      el.dataset.keep = '1'; el.close(); el.remove();
+      snap.saving = false; snap.err = e.message; D = snap; docDlg();
     });
   },
   openDoc: function (d) {
     var doc = S.docs.filter(function (x) { return x.id === d.id; })[0];
-    call('docs.get', {id: d.id}).then(function (j) { viewDoc(doc, j.lines); }).catch(function (e) { toast(e.message); });
+    if (!doc) return;
+    S.btn = null;
+    var el = view(DOC[doc.type] + ' №' + doc.num, docHtml(doc, S.dl[d.id]));
+    if (S.dl[d.id]) return;
+    docLines(d.id, true).then(function (ls) {
+      var vb = el.querySelector('.vb'); if (vb) vb.innerHTML = docHtml(doc, ls);
+    }).catch(function (e) { el.close(); toast(e.message); });
   },
   dt: function (d) { S.dt = d.k; render(); },
   addDict: function () {
@@ -1211,6 +1288,13 @@ var A = {
     confirmDel('Запись «' + esc(x.name) + '» будет удалена. Это действие нельзя отменить.', function () {
       return call('dict.delete', {id: x.id}).then(dictDone);
     });
+  },
+  theme: function () {
+    S.btn = null;
+    var t = themeNow() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+    try { localStorage.setItem('theme', t); } catch (e) {}
+    document.querySelectorAll('[data-a="theme"]').forEach(function (b) { b.innerHTML = ico(t === 'dark' ? 'sun' : 'moon'); });
   },
   copyApi: function () { copy(url(), 'Ссылка скопирована'); },
   copyInfo: function () { copy(diag(), 'Диагностика скопирована'); }
@@ -1236,7 +1320,7 @@ document.addEventListener('keydown', function (e) {
 document.addEventListener('change', function (e) {
   if (e.target.id !== 'srt' && e.target.id !== 'srt2') return;
   S.sort = e.target.value; localStorage.setItem('sort', S.sort);
-  if (e.target.id === 'srt2') render(); else document.getElementById('plist').innerHTML = plist();
+  if (e.target.id === 'srt2') { render(); if (S.fd) S.fd.paint(); } else { document.getElementById('plist').innerHTML = plist(); syncReset(); }
 });
 document.addEventListener('input', dSync);
 document.addEventListener('change', dSync);
