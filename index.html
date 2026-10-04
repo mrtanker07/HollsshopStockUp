@@ -123,6 +123,7 @@ dialog[open]::backdrop{animation:fade .18s ease both}
 @media(prefers-reduced-motion:reduce){*,::before,::after{animation:none!important;transition:none!important}}
 /* красные кнопки, зеленая кнопка, желтая кнопка, подсветка полей */
 button.dg{color:var(--dg);border-color:var(--dg)}
+button.dg:disabled{cursor:default}
 .dgb{background:var(--dg);color:var(--on);border-color:var(--dg)}
 .okb{background:var(--gb);color:var(--gt);border-color:var(--gt)}
 .warn{background:var(--wb);color:var(--wt);border-color:var(--wt)}
@@ -262,11 +263,11 @@ nav .mb{display:block;font-size:22px;line-height:1;flex:0 0 64px}
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
 var NEED = 6; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var BUILD = '2026-10-04';
+var BUILD = '2026-10-04b';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
 var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category',
-  ld: {}, ts: {}, sig: {}, dl: {}, lerr: {}, rec: '', fx: 0, products: [], docs: [], df: 'receipt', q: '', tab: 'all', cat: '', more: false, busy: 0, info: null,
+  ld: {}, ts: {}, sig: {}, dl: {}, lerr: {}, fx: 0, products: [], docs: [], df: 'receipt', q: '', tab: 'all', cat: '', more: false, busy: 0, info: null,
   sort: localStorage.getItem('sort') || 'name'};
 var DT = {category: 'Категории', material: 'Материалы', vartype: 'Типы вариаций', supplier: 'Поставщики', source: 'Источники заказов',
   payment: 'Способы оплаты', delivery: 'Способы доставки', discount_reason: 'Причины скидок',
@@ -304,12 +305,24 @@ async function call(a, d, silent) {
   try { return await call0(a, d); }
   finally { if (!silent) busy(-1); if (el) el.classList.remove('ld'); }
 }
+var RO = {status: 1, me: 1, 'sellers.list': 1, 'dict.list': 1, 'products.list': 1, 'docs.list': 1, 'docs.get': 1, info: 1};
+function pause(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+// Скрипт Google иногда не отвечает с первого раза (холодный старт, перегрузка). Чтение безопасно повторить сразу, без участия пользователя.
 async function call0(a, d) {
-  var r, j;
+  var tries = RO[a] ? 3 : 1, last;
+  for (var i = 0; i < tries; i++) {
+    if (i) await pause(i * 900);
+    try { return await call1(a, d); }
+    catch (e) { last = e; if (!e.retry) throw e; }
+  }
+  throw last;
+}
+async function call1(a, d) {
+  var r, j, bad = function (m) { var e = new Error(m); e.retry = true; return e; };
   try {
     r = await fetch(url(), {method: 'POST', body: JSON.stringify({action: a, token: S.tk, data: d || {}})});
-  } catch (e) { throw new Error('Нет связи со скриптом. Проверьте ссылку и интернет.'); }
-  try { j = await r.json(); } catch (e) { throw new Error('Скрипт ответил неожиданно. Проверьте, что он опубликован для всех.'); }
+  } catch (e) { throw bad('Нет связи со скриптом. Проверьте ссылку и интернет.'); }
+  try { j = await r.json(); } catch (e) { throw bad('Скрипт ответил неожиданно. Проверьте, что он опубликован для всех.'); }
   if (j.auth === false) { S.tk = ''; S.me = null; localStorage.removeItem('tk'); }
   if (!j.ok) throw new Error(j.error || 'Ошибка');
   return j;
@@ -339,7 +352,7 @@ var LOADS = {
   settings: ['dict.list', 'dict', function (j) { S.dict = j.items; }],
   info: ['info', 'info', function (j) { S.info = j; }],
   products: ['products.list', 'products', function (j) { S.products = j.items; S.dict = j.dict; S.ld.dict = 1; }],
-  docs: ['docs.list', 'docs', function (j) { S.docs = j.items; S.products = j.products; S.dict = j.dict; S.ld.products = 1; S.ld.dict = 1; }]
+  docs: ['docs.list', 'docs', function (j) { S.docs = j.items; S.products = j.products; S.dict = j.dict; S.ld.products = 1; S.ld.dict = 1; keepLines(j.items); }]
 };
 // Данные уже есть: показываем сразу, без анимации; обновляем тихо в фоне не чаще раза в 30 секунд.
 async function load() {
@@ -359,6 +372,10 @@ async function load() {
     toast(e.message); S.lerr[pg] = e.message;
   }
   if (S.page === pg) render();
+}
+// сервер присылает позиции документов вместе со списком: просмотр открывается мгновенно, без запросов
+function keepLines(items) {
+  (items || []).forEach(function (x) { if (x.lines) { S.dl[x.id] = x.lines; delete x.lines; } });
 }
 function wait(title) {
   var er = S.lerr[S.page];
@@ -472,7 +489,7 @@ function sortItems(items) {
   return items.slice().sort(function (a, b) {
     if (s === 'name') return nm(a, b);
     if (s === 'name-d') return nm(b, a);
-    if (s === 'new') { var x = a.lastIn || '', y = b.lastIn || ''; return x < y ? 1 : x > y ? -1 : nm(a, b); }
+    if (s === 'new') return S.products.indexOf(b) - S.products.indexOf(a); // строки в таблице идут по порядку создания
     var d = prank(a) - prank(b);
     if (s === 'st-d') d = -d;
     return d || nm(a, b);
@@ -509,24 +526,14 @@ function plist() {
       var want = S.tab;
       if (!p.vars.some(function (v) { return !v.archived && status(v.stock, p.min)[0] === want; })) return false;
     }
-    if (S.rec) {
-      var lim = Date.now() - Number(S.rec) * 864e5;
-      if (!p.lastIn || new Date(p.lastIn).getTime() < lim) return false;
-    }
     return !q || (p.name + ' ' + p.sku).toLowerCase().indexOf(q) >= 0;
   });
   if (!items.length) return '<p class="mu">' + (S.products.length ? 'Ничего не найдено.' : 'Товаров пока нет. Нажмите «Новый товар».') + '</p>';
   return sortItems(items).map(cardHtml).join('');
 }
 
-var SORTS = [['name', 'По названию: А → Я'], ['name-d', 'По названию: Я → А'], ['new', 'По поступлению: сначала новые'], ['st', 'По статусу: сначала нет в наличии'], ['st-d', 'По статусу: сначала в наличии']];
-var RECS = [['', 'Любые'], ['7', 'За 7 дней'], ['30', 'За 30 дней']];
-function filtOn() { return S.sort !== 'name' || S.tab === 'no' || S.tab === 'low' || !!S.rec || !!S.cat; }
-function recHtml(reset) {
-  return '<div class="chips" style="margin-top:0"><span class="mu" style="align-self:center">Недавние поступления:</span>' + RECS.map(function (c) {
-    return '<button class="' + (S.rec === c[0] ? 'on' : '') + '" data-a="frec" data-v="' + c[0] + '">' + c[1] + '</button>';
-  }).join('') + (reset ? '<button class="ghost rt" data-a="resetF"' + (filtOn() ? '' : ' disabled') + '>Сбросить</button>' : '') + '</div>';
-}
+var SORTS = [['name', 'По названию: А → Я'], ['name-d', 'По названию: Я → А'], ['new', 'Сначала новые товары'], ['st', 'По статусу: сначала нет в наличии'], ['st-d', 'По статусу: сначала в наличии']];
+function filtOn() { return S.sort !== 'name' || S.tab === 'no' || S.tab === 'low' || !!S.cat; }
 function syncReset() { document.querySelectorAll('[data-a="resetF"]').forEach(function (b) { b.disabled = !filtOn(); }); }
 var STATS = [['all', 'Все'], ['no', 'Нет в наличии'], ['low', 'Заканчивается']];
 
@@ -546,7 +553,7 @@ function productsPage() {
     '<button class="pri" data-a="newP">Новый товар</button></div></div>' +
     '<input id="q" placeholder="Введите название или артикул для поиска" value="' + esc(S.q) + '" style="margin-top:10px">' +
     '<div class="fl-d"><select id="srt" aria-label="Сортировка">' + opts(SORTS, S.sort) + '</select>' +
-    '<div class="chips" style="margin-top:0">' + stat + '</div>' + recHtml(true) + '</div>' +
+    '<div class="chips" style="margin-top:0">' + stat + '<button class="ghost dg rt" data-a="resetF"' + (filtOn() ? '' : ' disabled') + '>Сбросить</button></div></div>' +
     '<div class="mf"><button data-a="filt">Фильтр' + (filtOn() ? ' ●' : '') + '</button></div>' +
     catsHtml() +
     '<div id="plist">' + plist() + '</div>';
@@ -965,8 +972,8 @@ function filtDlg() {
     d.innerHTML = '<h3>Фильтр</h3><label>Сортировка</label><select id="srt2">' + opts(SORTS, S.sort) + '</select>' +
       '<label>Показывать</label><div class="chips" style="margin-top:0">' + STATS.map(function (c) {
         return '<button class="' + (S.tab === c[0] ? 'on' : '') + '" data-a="ftab" data-v="' + c[0] + '">' + c[1] + '</button>';
-      }).join('') + '</div><div style="margin-top:12px">' + recHtml(false) + '</div>' +
-      '<div class="rw" style="margin-top:14px;justify-content:space-between"><button class="ghost" data-a="resetF"' + (filtOn() ? '' : ' disabled') + '>Сбросить</button><button class="pri" data-c>Готово</button></div>';
+      }).join('') + '</div>' +
+      '<div class="rw" style="margin-top:14px;justify-content:space-between"><button class="ghost dg" data-a="resetF"' + (filtOn() ? '' : ' disabled') + '>Сбросить</button><button class="pri" data-c>Готово</button></div>';
     d.querySelector('[data-c]').onclick = function () { d.close(); };
   };
   d.paint(); S.fd = d;
@@ -1113,11 +1120,10 @@ var A = {
   },
   tab: function (d) { S.tab = (d.v === 'arc' && S.tab === 'arc') ? 'all' : d.v; render(); },
   ftab: function (d) { S.tab = d.v; render(); if (S.fd) S.fd.paint(); },
-  frec: function (d) { S.rec = d.v; render(); if (S.fd) S.fd.paint(); },
   resetF: function () {
     S.btn = null; S.sort = 'name'; localStorage.setItem('sort', 'name');
     if (S.tab === 'no' || S.tab === 'low') S.tab = 'all';
-    S.rec = ''; S.cat = '';
+    S.cat = '';
     render(); if (S.fd) S.fd.paint();
   },
   cat: function (d) { S.cat = S.cat === d.k ? '' : d.k; render(); },
@@ -1253,7 +1259,7 @@ var A = {
     S.btn = sb;
     call('docs.save', payload).then(function (j) {
       D = null; el.close();
-      S.docs = j.items; S.products = j.products; S.dict = j.dict; S.df = T; toast('Документ проведен'); render();
+      keepLines(j.items); S.docs = j.items; S.products = j.products; S.dict = j.dict; S.df = T; toast('Документ проведен'); render();
     }, function (e) {
       el.dataset.keep = '1'; el.close(); el.remove();
       snap.saving = false; snap.err = e.message; D = snap; docDlg();
