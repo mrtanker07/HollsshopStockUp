@@ -197,6 +197,7 @@ button.dg:disabled{cursor:default}
 .kv>span:last-child{text-align:right;word-break:break-all;min-width:0}
 .cd h3{margin-top:0}
 .cd ul{margin:6px 0 0;padding-left:20px}
+.tbtn.on{background:var(--acbg);color:var(--ac);border-color:transparent}
 .mo,.mf{display:none}
 @media(max-width:799px){
 .wrap{display:block;padding:12px 12px 120px}
@@ -254,6 +255,7 @@ nav .mb{display:block;font-size:22px;line-height:1;flex:0 0 64px}
 .hd{max-width:none}
 }
 @media(max-width:380px){.sess{display:none}}
+@media(max-width:420px){nav button{font-size:13px;padding:15px 2px}}
 </style>
 </head>
 <body>
@@ -262,18 +264,18 @@ nav .mb{display:block;font-size:22px;line-height:1;flex:0 0 64px}
 <div id="toast" role="status"></div>
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
-var NEED = 6; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var BUILD = '2026-10-04b';
+var NEED = 7; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
+var BUILD = '2026-10-05a';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
 var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category',
   ld: {}, ts: {}, sig: {}, dl: {}, lerr: {}, fx: 0, products: [], docs: [], df: 'receipt', q: '', tab: 'all', cat: '', more: false, busy: 0, info: null,
-  sort: localStorage.getItem('sort') || 'name'};
+  sort: localStorage.getItem('sort') || 'name', orders: [], clients: [], loy: [], os: 'act', oq: '', ca: 0, cq: ''};
 var DT = {category: 'Категории', material: 'Материалы', vartype: 'Типы вариаций', supplier: 'Поставщики', source: 'Источники заказов',
   payment: 'Способы оплаты', delivery: 'Способы доставки', discount_reason: 'Причины скидок',
   writeoff_reason: 'Причины списания', return_reason: 'Причины возврата'};
 // третий элемент: 1 = на телефоне прячется за кнопку «⋯»
-var NAV = [['home', 'Главная'], ['products', 'Склад'], ['docs', 'Документы'], ['settings', 'Справочники', 1], ['sellers', 'Пользователи', 1], ['info', 'Инфо', 1]];
+var NAV = [['home', 'Главная'], ['orders', 'Заказы'], ['products', 'Склад'], ['docs', 'Документы'], ['clients', 'Клиенты', 1], ['settings', 'Справочники', 1], ['sellers', 'Пользователи', 1], ['info', 'Инфо', 1]];
 
 function themeNow() {
   return document.documentElement.getAttribute('data-theme') || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -305,7 +307,7 @@ async function call(a, d, silent) {
   try { return await call0(a, d); }
   finally { if (!silent) busy(-1); if (el) el.classList.remove('ld'); }
 }
-var RO = {status: 1, me: 1, 'sellers.list': 1, 'dict.list': 1, 'products.list': 1, 'docs.list': 1, 'docs.get': 1, info: 1};
+var RO = {status: 1, me: 1, 'sellers.list': 1, 'dict.list': 1, 'products.list': 1, 'docs.list': 1, 'docs.get': 1, 'clients.list': 1, 'orders.list': 1, info: 1};
 function pause(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 // Скрипт Google иногда не отвечает с первого раза (холодный старт, перегрузка). Чтение безопасно повторить сразу, без участия пользователя.
 async function call0(a, d) {
@@ -352,7 +354,9 @@ var LOADS = {
   settings: ['dict.list', 'dict', function (j) { S.dict = j.items; }],
   info: ['info', 'info', function (j) { S.info = j; }],
   products: ['products.list', 'products', function (j) { S.products = j.items; S.dict = j.dict; S.ld.dict = 1; }],
-  docs: ['docs.list', 'docs', function (j) { S.docs = j.items; S.products = j.products; S.dict = j.dict; S.ld.products = 1; S.ld.dict = 1; keepLines(j.items); }]
+  docs: ['docs.list', 'docs', function (j) { S.docs = j.items; S.products = j.products; S.dict = j.dict; S.ld.products = 1; S.ld.dict = 1; keepLines(j.items); }],
+  orders: ['orders.list', 'orders', function (j) { S.orders = j.items; S.clients = j.clients; S.products = j.products; S.dict = j.dict; S.loy = j.loyalty; S.ld.products = 1; S.ld.dict = 1; S.ld.clients = 1; }],
+  clients: ['clients.list', 'clients', function (j) { S.clients = j.items; }]
 };
 // Данные уже есть: показываем сразу, без анимации; обновляем тихо в фоне не чаще раза в 30 секунд.
 async function load() {
@@ -394,6 +398,8 @@ function menu(items, id, icon) {
 function page() {
   if (S.page === 'products') return S.ld.products ? productsPage() : wait('Склад');
   if (S.page === 'docs') return S.ld.docs ? docsPage() : wait('Документы');
+  if (S.page === 'orders') return S.ld.orders ? ordersPage() : wait('Заказы');
+  if (S.page === 'clients') return S.ld.clients ? clientsPage() : wait('Клиенты');
   if (S.page === 'info') return S.ld.info ? infoPage() : wait('Инфо');
   if (S.page === 'sellers' && !S.ld.sellers) return wait('Пользователи');
   if (S.page === 'settings' && !S.ld.dict) return wait('Справочники');
@@ -423,7 +429,188 @@ function page() {
           '<button class="ghost dg" data-a="delDict" data-id="' + esc(x.id) + '">Удалить</button></div></div>';
       }).join('') : '');
   }
-  return '<h2>Главная</h2><div class="cd"><p style="margin:0">Готовы: вход, пользователи, справочники, склад, поступления, списания, корректировки и ценообразование. Заказы и продажи появятся на следующих этапах.</p></div>';
+  return '<h2>Главная</h2><div class="cd"><p style="margin:0">Готовы: вход, пользователи, справочники, склад, документы, клиенты и заказы с резервом и скидками. Акции, возвраты и отчеты появятся на следующих этапах.</p></div>';
+}
+
+// ---------- клиенты ----------
+var OST = {new: 'Новый', paid: 'Оплачен', sent: 'Отправлен', done: 'Завершен', cancelled: 'Отменен'};
+var OCL = {new: 'tg', paid: 'bdg low', sent: 'bdg low', done: 'bdg ok', cancelled: 'bdg no'};
+function byName(a, b) { return String(a.name).localeCompare(String(b.name), 'ru'); }
+function ostat(s) { return '<span class="' + OCL[s] + '">' + OST[s] + '</span>'; }
+function client(id) { return S.clients.filter(function (c) { return c.id === id; })[0]; }
+function ord(id) { return S.orders.filter(function (o) { return o.id === id; })[0]; }
+function oAct(o) { return o.status === 'new' || o.status === 'paid' || o.status === 'sent'; }
+
+function clist() {
+  var q = S.cq.trim().toLowerCase();
+  var items = S.clients.filter(function (c) {
+    return !!c.archived === !!S.ca && (!q || (c.name + ' ' + c.phone + ' ' + c.contact).toLowerCase().indexOf(q) >= 0);
+  }).sort(byName);
+  if (!items.length) return '<p class="mu">' + (S.clients.length ? 'Ничего не найдено.' : 'Клиентов пока нет. Нажмите «Новый клиент».') + '</p>';
+  return items.map(function (c) {
+    var sub = [c.phone, c.contact].filter(Boolean).join(' · ');
+    return '<div class="cd rw"><div style="min-width:0"><b>' + esc(c.name) + '</b>' + (sub ? '<div class="mu">' + esc(sub) + '</div>' : '') +
+      '<div class="mu">Заказов: ' + c.n + ' · Покупки: ' + money(c.sum) + (c.pct ? ' · Скидка: ' + c.pct + '%' : '') + '</div>' +
+      (c.note ? '<div class="mu">' + esc(c.note) + '</div>' : '') + '</div>' +
+      (c.archived
+        ? '<div class="rw g8"><button class="ghost" data-a="resC" data-id="' + esc(c.id) + '">Восстановить</button><button class="ghost dg" data-a="delC" data-id="' + esc(c.id) + '">Удалить</button></div>'
+        : menu([['editC', 'Редактировать'], ['arcC', 'В архив']], c.id)) + '</div>';
+  }).join('');
+}
+function clientsPage() {
+  return '<div class="rw"><h2>Клиенты</h2><div class="rw g8"><button class="tbtn ' + (S.ca ? 'on' : '') + '" data-a="cArc">Архив</button>' +
+    '<button class="pri" data-a="newC">Новый клиент</button></div></div>' +
+    '<input id="cq" placeholder="Введите имя, телефон или контакт" value="' + esc(S.cq) + '" style="margin:10px 0">' +
+    '<div id="clist">' + clist() + '</div>';
+}
+function clientForm(c, done) {
+  ask(c ? 'Редактировать клиента' : 'Новый клиент', [
+    {l: 'Имя *', v: c && c.name, p: 'Введите имя'}, {l: 'Телефон', v: c && c.phone, p: 'Введите телефон'},
+    {l: 'Соцсеть или контакт', v: c && c.contact, p: 'Например: @nick'}, {l: 'Заметка', v: c && c.note, p: 'Введите заметку'}
+  ], c ? 'Сохранить' : 'Создать', function (v) {
+    return call('clients.save', {id: c ? c.id : '', name: v[0], phone: v[1], contact: v[2], note: v[3]}).then(function (j) {
+      S.clients = j.items; if (done) done(j); render();
+    });
+  });
+}
+
+// ---------- заказы: список и просмотр ----------
+function olist() {
+  var q = S.oq.trim().toLowerCase();
+  var items = S.orders.filter(function (o) {
+    var okS = S.os === 'act' ? oAct(o) : o.status === S.os;
+    return okS && (!q || String(o.num) === q.replace('№', '') || (o.clientName || '').toLowerCase().indexOf(q) >= 0);
+  });
+  if (!items.length) return '<p class="mu">Заказов здесь пока нет.</p>';
+  return items.map(function (o) {
+    return '<div class="cd" role="button" style="cursor:pointer" data-a="openOrd" data-id="' + esc(o.id) + '"><div class="rw"><b>№' + o.num +
+      (o.clientName ? ' · ' + esc(o.clientName) : '') + '</b><b>' + money(o.total) + '</b></div>' +
+      '<div class="rw" style="margin-top:6px"><span class="mu">' + fdt(o.created) + ' · ' + o.lines.length + ' поз. · ' + esc(o.seller) + '</span>' + ostat(o.status) + '</div></div>';
+  }).join('');
+}
+function ordersPage() {
+  var chips = [['act', 'Активные'], ['done', 'Завершенные'], ['cancelled', 'Отмененные']].map(function (c) {
+    return '<button class="' + (S.os === c[0] ? 'on' : '') + '" data-a="os" data-k="' + c[0] + '">' + c[1] + '</button>';
+  }).join('');
+  return '<div class="rw"><h2>Заказы</h2><button class="pri" data-a="newOrd">Новый заказ</button></div>' +
+    '<input id="oq" placeholder="Введите номер или имя клиента" value="' + esc(S.oq) + '" style="margin-top:10px"><div class="chips">' + chips + '</div>' +
+    '<div id="olist">' + olist() + '</div>';
+}
+function ordHtml(o) {
+  var meta = '<div class="dmeta"><span>Дата: ' + fdt(o.created) + '</span><span>Статус: ' + OST[o.status] + '</span><span>Создал: ' + esc(o.seller) + '</span>' +
+    (o.clientName ? '<span>Клиент: ' + esc(o.clientName) + '</span>' : '') + (o.source ? '<span>Источник: ' + esc(o.source) + '</span>' : '') +
+    (o.payment ? '<span>Оплата: ' + esc(o.payment) + '</span>' : '') + (o.delivery ? '<span>Доставка: ' + esc(o.delivery) + '</span>' : '') + '</div>';
+  var tbl = '<tr><th>Наименование</th><th class="r">Кол-во</th><th class="r">Цена</th><th class="r">Сумма</th></tr>' + o.lines.map(function (l) {
+    return '<tr><td>' + esc(l.label) + '</td><td class="r">' + l.qty + ' шт</td><td class="r">' + money(l.price) + '</td><td class="r">' + money(l.qty * l.price) + '</td></tr>';
+  }).join('');
+  var rt = 'style="margin:4px 0 0;text-align:right"';
+  return meta + '<div class="tbw"><table class="tb">' + tbl + '</table></div><p class="mu" ' + rt + '>Сумма: ' + money(o.sub) + '</p>' +
+    (o.dAuto > 0 ? '<p class="mu" ' + rt + '>Постоянный клиент −' + o.autoPct + '%: −' + money(o.dAuto) + '</p>' : '') +
+    (o.dMan > 0 ? '<p class="mu" ' + rt + '>Скидка (' + esc(o.manual ? o.manual.reason : '') + '): −' + money(o.dMan) + '</p>' : '') +
+    '<p class="tot">Итого: ' + money(o.total) + '</p>' + (o.comment ? '<p class="cmt">Комментарий: ' + esc(o.comment) + '</p>' : '');
+}
+function ordDone(j) { S.orders = j.items; S.clients = j.clients; S.products = j.products; S.dict = j.dict; render(); }
+
+// ---------- заказы: создание и редактирование ----------
+var O = null;
+function oFree(v) { return v.stock - v.reserve; }
+function oCalc() {
+  var sub = 0, cl = client(O.cid), pct = (cl && !O.autoOff) ? cl.pct : 0, dM = 0;
+  O.lines.forEach(function (l) { var p = prod(l.pid); sub += (Number(l.qty) || 0) * (p ? p.price : 0); });
+  var dA = Math.round(sub * pct) / 100;
+  if (O.man && Number(O.man.value) > 0) dM = O.man.kind === 'pct' ? Math.round(sub * Number(O.man.value)) / 100 : Number(O.man.value);
+  dM = Math.min(dM, Math.max(0, sub - dA));
+  return {sub: sub, dA: dA, dM: dM, total: sub - dA - dM};
+}
+function oSug() {
+  var q = O.q.trim();
+  if (!q || O.pid) return '';
+  var m = S.products.filter(function (p) { return !p.archived && pmatch(p, q); }).sort(byName).slice(0, 10);
+  if (!m.length) return '<div class="sug"><p class="mu" style="margin:0;padding:10px 12px">Ничего не найдено.</p></div>';
+  return '<div class="sug">' + m.map(function (p) {
+    return '<button type="button" data-a="oPick" data-id="' + esc(p.id) + '">' + esc(p.name) + '<span class="mu">' +
+      esc([p.category, p.sku ? '#' + p.sku : ''].filter(Boolean).join(' · ')) + '</span></button>';
+  }).join('') + '</div>';
+}
+function oVar() {
+  var p = prod(O.pid);
+  if (!p || !needVar(p)) return '';
+  return '<label>Вариация</label><select data-o="vid"><option value="">Выберите</option>' +
+    opts(activeVars(p).map(function (v) { return [v.id, vname(v) + ' — доступно ' + oFree(v) + ' шт']; }), O.vid) + '</select>';
+}
+function oLines() {
+  if (!O.lines.length) return '<p class="mu">Список пуст. Найдите товар выше и нажмите «Добавить».</p>';
+  return O.lines.map(function (l, i) {
+    var p = prod(l.pid), q = Number(l.qty) || 0, pr = p ? p.price : 0;
+    return '<div class="ln"><div class="ln-main"><div class="ln-name">' + esc(lineLabel(l)) + '</div></div><div class="ln-n">' + q + ' шт</div><div class="ln-n">' + money(pr) +
+      '</div><div class="ln-n s">' + money(q * pr) + '</div><button type="button" class="ghost dg ic" data-a="oDel" data-i="' + i + '" aria-label="Убрать позицию">' + ico('x') + '</button></div>';
+  }).join('');
+}
+function oDisc() {
+  var c = oCalc(), cl = client(O.cid), h = '';
+  if (cl && cl.pct > 0) {
+    h += '<div class="ln"><div class="ln-main">' + (O.autoOff ? '<span class="mu"><s>Постоянный клиент −' + cl.pct + '%</s> (снята)</span>' : 'Постоянный клиент −' + cl.pct + '%') +
+      '</div><div class="ln-n s">' + (O.autoOff ? '—' : '−' + money(c.dA)) + '</div><button type="button" class="ghost ic" data-a="oAuto" aria-label="' +
+      (O.autoOff ? 'Вернуть скидку' : 'Убрать скидку') + '">' + ico(O.autoOff ? 'check' : 'x') + '</button></div>';
+  }
+  if (O.man) {
+    h += '<div class="ln" style="align-items:flex-start"><div style="display:flex;gap:8px;flex-wrap:wrap;flex:1;min-width:0">' +
+      '<select data-o="mk" style="width:90px;margin:0"><option value="sum"' + (O.man.kind === 'sum' ? ' selected' : '') + '>грн</option><option value="pct"' + (O.man.kind === 'pct' ? ' selected' : '') + '>%</option></select>' +
+      '<input data-o="mv" type="number" inputmode="decimal" step="any" min="0" placeholder="Размер скидки" value="' + esc(O.man.value) + '" style="width:140px;margin:0">' +
+      '<select data-o="mr" style="flex:1;min-width:150px;margin:0"><option value="">Причина не выбрана</option>' +
+      opts(dn('discount_reason', O.man.reason).map(function (x) { return [x, x]; }), O.man.reason) + '</select></div>' +
+      '<button type="button" class="ghost dg ic" data-a="oMan" aria-label="Убрать скидку">' + ico('x') + '</button></div>';
+  } else h += '<button type="button" class="ghost" data-a="oMan">+ Добавить скидку</button>';
+  return h;
+}
+function oSel(k, label, type, cur) {
+  return '<div class="hd"><label>' + label + '</label><select data-o="' + k + '"><option value="">Не выбрано</option>' +
+    opts(dn(type, cur).map(function (x) { return [x, x]; }), cur) + '</select></div>';
+}
+function oBody() {
+  var cls = S.clients.filter(function (c) { return !c.archived || c.id === O.cid; }).sort(byName);
+  return '<div class="rw dh"><h3>' + (O.id ? 'Заказ №' + O.num + ' (редактирование)' : 'Новый заказ') + '</h3></div>' +
+    '<div class="hd"><label>Клиент</label><div class="rw g8"><select data-o="cid" style="margin:0;flex:1"><option value="">Не выбрано</option>' +
+    opts(cls.map(function (c) { return [c.id, c.name + (c.phone ? ' · ' + c.phone : '')]; }), O.cid) + '</select><button type="button" class="ghost" data-a="oNewC">Новый клиент</button></div></div>' +
+    oSel('src', 'Источник', 'source', O.src) + oSel('pay', 'Способ оплаты', 'payment', O.pay) + oSel('del', 'Способ доставки', 'delivery', O.del) +
+    '<div class="lb"><label>Наименование</label><div class="sgw"><input data-o="q" placeholder="Введите название или артикул" autocomplete="off" value="' + esc(O.q) + '"><div id="osug">' + oSug() + '</div></div>' +
+    '<div id="ovar">' + oVar() + '</div><label>Количество</label><input data-o="qty" type="number" inputmode="numeric" min="1" step="1" placeholder="Введите количество" value="' + esc(O.qty) + '">' +
+    '<button type="button" class="pri" data-a="oAdd" style="width:100%">Добавить</button><p class="er" id="oper" style="margin:8px 0 0"></p></div>' +
+    '<div id="olines">' + oLines() + '</div><label style="margin-top:10px">Скидки</label><div id="odisc">' + oDisc() + '</div>' +
+    '<label style="margin-top:10px">Комментарий</label><input data-o="cm" autocomplete="off" placeholder="Введите комментарий (необязательно)" value="' + esc(O.cm) + '">' +
+    '<div id="otot"></div><p class="er" id="oer"></p><div class="rw"><button class="ghost" data-a="oClose">Отмена</button><button class="pri" data-a="oSave">Сохранить заказ</button></div>';
+}
+function oTot() {
+  var e = document.getElementById('otot'), d = document.getElementById('odisc'); if (!e) return;
+  var c = oCalc();
+  e.innerHTML = '<p class="mu" style="margin:6px 0 0;text-align:right">Сумма: ' + money(c.sub) + (c.dA + c.dM > 0 ? ' · Скидки: −' + money(c.dA + c.dM) : '') + '</p><p class="tot">Итого: ' + money(c.total) + '</p>';
+  if (d && O.autoOff !== undefined) { var f = d.querySelector('.ln-n.s'); if (f && client(O.cid) && client(O.cid).pct > 0 && !O.autoOff) f.textContent = '−' + money(c.dA); }
+}
+function oRedraw() {
+  var el = document.getElementById('odlg'); if (!el) return;
+  var sc = el.scrollTop; el.innerHTML = oBody(); el.scrollTop = sc; oTot();
+}
+function oDlg() {
+  var el = document.createElement('dialog'), mine = O;
+  el.id = 'odlg'; el.className = 'xl'; el.innerHTML = oBody();
+  el.addEventListener('close', function () { el.remove(); if (O === mine) O = null; });
+  openD(el); oTot();
+}
+function oSync(e) {
+  var t = e.target, el = document.getElementById('odlg');
+  if (!O || !el || !el.contains(t) || !t.dataset || !t.dataset.o) return;
+  var k = t.dataset.o, v = t.value;
+  if (k === 'q') {
+    if (O.q === v) return;
+    O.q = v; if (O.pid) { O.pid = ''; O.vid = ''; }
+    var s = document.getElementById('osug'), r = document.getElementById('ovar');
+    if (s) s.innerHTML = oSug(); if (r) r.innerHTML = oVar();
+    return;
+  }
+  if (k === 'mk' || k === 'mv' || k === 'mr') { O.man[{mk: 'kind', mv: 'value', mr: 'reason'}[k]] = v; oTot(); return; }
+  if (O[k] === v) return;
+  O[k] = v;
+  if (k === 'cid') { O.autoOff = false; oRedraw(); } else if (k === 'qty') { /* без перерисовки */ }
 }
 
 var D = null;
@@ -548,8 +735,8 @@ function catsHtml() {
 function productsPage() {
   var stat = STATS.map(function (c) {
     return '<button class="' + (S.tab === c[0] ? 'on' : '') + '" data-a="tab" data-v="' + c[0] + '">' + c[1] + '</button>';
-  }).join('') + '<button class="rt do ' + (S.tab === 'arc' ? 'on' : '') + '" data-a="tab" data-v="arc">Архив</button>';
-  return '<div class="rw"><h2>Склад</h2><div class="rw g8"><button class="mo ' + (S.tab === 'arc' ? 'on' : '') + '" data-a="tab" data-v="arc">Архив</button>' +
+  }).join('');
+  return '<div class="rw"><h2>Склад</h2><div class="rw g8"><button class="tbtn ' + (S.tab === 'arc' ? 'on' : '') + '" data-a="tab" data-v="arc">Архив</button>' +
     '<button class="pri" data-a="newP">Новый товар</button></div></div>' +
     '<input id="q" placeholder="Введите название или артикул для поиска" value="' + esc(S.q) + '" style="margin-top:10px">' +
     '<div class="fl-d"><select id="srt" aria-label="Сортировка">' + opts(SORTS, S.sort) + '</select>' +
@@ -1145,6 +1332,84 @@ var A = {
       return call('products.delete', {id: p.id}).then(productsDone);
     });
   },
+  newC: function () { clientForm(null); },
+  editC: function (d) { var c = client(d.id); if (c) clientForm(c); },
+  cArc: function () { S.ca = S.ca ? 0 : 1; render(); },
+  arcC: function (d) { call('clients.archive', {id: d.id}).then(function (j) { S.clients = j.items; render(); }).catch(function (e) { toast(e.message); }); },
+  resC: function (d) { call('clients.restore', {id: d.id}).then(function (j) { S.clients = j.items; render(); }).catch(function (e) { toast(e.message); }); },
+  delC: function (d) {
+    var c = client(d.id);
+    confirmDel('Клиент «' + esc(c.name) + '» будет удален навсегда. Это действие нельзя отменить.', function () {
+      return call('clients.delete', {id: c.id}).then(function (j) { S.clients = j.items; render(); });
+    });
+  },
+  os: function (d) { S.os = d.k; render(); },
+  openOrd: function (d) {
+    var o = ord(d.id); if (!o) return;
+    var el = document.createElement('dialog'), id = esc(o.id), b = function (s, label, cls) { return '<button class="' + cls + '" data-a="ordSt" data-id="' + id + '" data-s="' + s + '">' + label + '</button>'; };
+    el.id = 'ovdlg'; el.className = 'md';
+    el.innerHTML = '<h3>Заказ №' + o.num + '</h3><div class="vb">' + ordHtml(o) + '</div><p class="er" id="oer"></p>' +
+      (oAct(o) ? '<div class="rw" style="flex-wrap:wrap;gap:8px;margin:10px 0"><button class="ghost" data-a="editOrd" data-id="' + id + '">Редактировать</button>' +
+        (o.status === 'new' ? b('paid', 'Оплачен', 'ghost') : '') + (o.status !== 'sent' ? b('sent', 'Отправлен', 'ghost') : '') +
+        b('done', 'Завершить', 'pri') + b('cancelled', 'Отменить заказ', 'ghost dg') + '</div>' : '') +
+      '<div class="rw"><button class="ghost" data-c>Закрыть</button></div>';
+    el.querySelector('[data-c]').onclick = function () { el.close(); };
+    el.addEventListener('close', function () { el.remove(); });
+    openD(el);
+  },
+  ordSt: function (d) {
+    var o = ord(d.id), s = d.s;
+    var go = function () {
+      return call('orders.status', {id: o.id, status: s}).then(function (j) { var m = document.getElementById('ovdlg'); if (m) m.close(); ordDone(j); });
+    };
+    if (s === 'done') confirmAct('Завершить заказ?', 'Товар спишется со склада по партиям, после этого заказ изменить нельзя.', 'Завершить', 'ok', go);
+    else if (s === 'cancelled') confirmAct('Отменить заказ?', 'Резерв товара будет снят.', 'Отменить заказ', 'dg', go);
+    else go().catch(function (e) { var er = document.getElementById('oer'); if (er) er.textContent = e.message; });
+  },
+  newOrd: function () {
+    O = {id: '', num: 0, cid: '', src: '', pay: '', del: '', cm: '', lines: [], q: '', pid: '', vid: '', qty: '', autoOff: false, man: null};
+    oDlg();
+  },
+  editOrd: function (d) {
+    var o = ord(d.id); if (!o) return;
+    var m = document.getElementById('ovdlg'); if (m) m.close();
+    O = {id: o.id, num: o.num, cid: o.clientId, src: o.source, pay: o.payment, del: o.delivery, cm: o.comment, q: '', pid: '', vid: '', qty: '', autoOff: o.autoOff,
+      man: o.manual ? {kind: o.manual.kind, value: String(o.manual.value), reason: o.manual.reason} : null,
+      lines: o.lines.map(function (l) { return {pid: l.productId, vid: l.varId, qty: String(l.qty)}; })};
+    oDlg();
+  },
+  oPick: function (d) {
+    var p = prod(d.id); if (!p) return;
+    O.pid = p.id; O.q = p.name; O.vid = needVar(p) ? '' : (activeVars(p)[0] || {}).id || '';
+    oRedraw();
+  },
+  oAdd: function () {
+    var p = prod(O.pid), er = document.getElementById('oper'), q = Number(O.qty);
+    var bad = function (m) { if (er) er.textContent = m; };
+    if (!p) return bad('Выберите товар из списка');
+    if (!O.vid) return bad('Выберите вариацию');
+    if (!isFinite(q) || q <= 0 || Math.floor(q) !== q) return bad('Введите целое количество больше 0');
+    var v = p.vars.filter(function (x) { return x.id === O.vid; })[0];
+    var ex = O.lines.filter(function (l) { return l.vid === O.vid; })[0], have = ex ? Number(ex.qty) : 0;
+    if (!O.id && have + q > oFree(v)) return bad('Доступно только ' + oFree(v) + ' шт.');
+    if (!(p.price > 0)) return bad('У товара не задана цена. Задайте ее документом «Ценообразование»');
+    if (ex) ex.qty = String(have + q); else O.lines.push({pid: p.id, vid: O.vid, qty: String(q)});
+    O.pid = ''; O.vid = ''; O.q = ''; O.qty = ''; oRedraw();
+  },
+  oDel: function (d) { O.lines.splice(+d.i, 1); oRedraw(); },
+  oAuto: function () { O.autoOff = !O.autoOff; oRedraw(); },
+  oMan: function () { O.man = O.man ? null : {kind: 'sum', value: '', reason: ''}; oRedraw(); },
+  oNewC: function () { clientForm(null, function (j) { if (j.id) O.cid = j.id; oRedraw(); }); },
+  oClose: function () { var el = document.getElementById('odlg'); if (el) el.close(); },
+  oSave: function () {
+    var er = document.getElementById('oer'); er.textContent = '';
+    call('orders.save', {id: O.id, clientId: O.cid, source: O.src, payment: O.pay, delivery: O.del, comment: O.cm, autoOff: O.autoOff,
+      manual: O.man ? {kind: O.man.kind, value: O.man.value, reason: O.man.reason} : null,
+      lines: O.lines.map(function (l) { return {varId: l.vid, qty: l.qty}; })}).then(function (j) {
+      var el = document.getElementById('odlg'); if (el) el.close();
+      ordDone(j); toast('Заказ сохранен');
+    }).catch(function (e) { er.textContent = e.message; });
+  },
   df: function (d) { S.df = d.k; render(); },
   newDoc: function (d) {
     document.querySelectorAll('details.menu[open]').forEach(function (m) { m.open = false; });
@@ -1332,6 +1597,13 @@ document.addEventListener('input', dSync);
 document.addEventListener('change', dSync);
 document.addEventListener('input', function (e) {
   if (e.target.id === 'q') { S.q = e.target.value; document.getElementById('plist').innerHTML = plist(); }
+});
+
+document.addEventListener('input', oSync);
+document.addEventListener('change', oSync);
+document.addEventListener('input', function (e) {
+  if (e.target.id === 'cq') { S.cq = e.target.value; document.getElementById('clist').innerHTML = clist(); }
+  if (e.target.id === 'oq') { S.oq = e.target.value; document.getElementById('olist').innerHTML = olist(); }
 });
 
 init();
