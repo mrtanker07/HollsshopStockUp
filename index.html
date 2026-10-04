@@ -339,7 +339,7 @@ async function load() {
       S.ld.docs = 1; S.ld.products = 1; S.ld.dict = 1;
     }
   } catch (e) { toast(e.message); if (!S.me) return init(); }
-  render();
+  try { render(); } catch (e) { toast('Ошибка отображения: ' + e.message); console.error(e); }
 }
 
 function box(title, body) { return '<div class="auth"><div class="box"><h1>' + title + '</h1>' + body + '</div></div>'; }
@@ -443,7 +443,7 @@ function prank(p) {
   return Math.min.apply(null, vs.map(function (v) { return {no: 0, low: 1, ok: 2}[status(v.stock, p.min)[0]]; }));
 }
 function sortItems(items) {
-  var s = S.sort, nm = function (a, b) { return a.name.localeCompare(b.name, 'ru'); };
+  var s = S.sort, nm = function (a, b) { return String(a.name).localeCompare(String(b.name), 'ru'); };
   return items.slice().sort(function (a, b) {
     if (s === 'name') return nm(a, b);
     if (s === 'name-d') return nm(b, a);
@@ -585,7 +585,7 @@ function sugHtml() {
   if (!q || (!pr && D.pid)) return '';
   var m = S.products.filter(function (p) {
     return !p.archived && pmatch(p, q) && (!pr || !D.plines.some(function (l) { return l.pid === p.id; }));
-  }).sort(function (a, b) { return a.name.localeCompare(b.name, 'ru'); }).slice(0, 10);
+  }).sort(function (a, b) { return String(a.name).localeCompare(String(b.name), 'ru'); }).slice(0, 10);
   if (!m.length) return '<div class="sug"><p class="mu" style="margin:0;padding:10px 12px">Ничего не найдено.' + (D.type === 'receipt' ? ' Товар можно создать кнопкой сверху.' : '') + '</p></div>';
   return '<div class="sug">' + m.map(function (p) {
     return '<button type="button" data-a="' + (pr ? 'pAdd' : 'dPick') + '" data-id="' + esc(p.id) + '">' + esc(p.name) + '<span class="mu">' +
