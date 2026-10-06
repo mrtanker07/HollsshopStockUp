@@ -82,10 +82,7 @@ dialog.xl{width:min(96vw,1180px)}
 .bdg.ok{background:var(--gb);color:var(--gt)}
 .bdg.low{background:var(--wb);color:var(--wt)}
 .bdg.no{background:var(--db);color:var(--dt)}
-.stock-row{display:grid;grid-template-columns:auto auto;grid-template-areas:"q p" "q b";column-gap:14px;row-gap:6px;align-items:center}
-.stock-row .pc-price{grid-area:p;justify-self:end}
-.stock-row .qty{grid-area:q}
-.stock-row .bdg{grid-area:b;justify-self:end}
+.sg{display:contents}
 .pc-vars{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:12px;padding-top:12px;border-top:.5px solid var(--bd)}
 .pc-var{border:.5px solid var(--bd);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .pc-vrow{display:flex;justify-content:space-between;align-items:center;gap:8px;align-self:stretch}
@@ -173,7 +170,7 @@ button.dg:disabled{cursor:default}
 .vrow input{margin:0;flex:1;min-width:0}
 .vrow.off input{text-decoration:line-through;opacity:.5}
 /* документы */
-.dr{display:grid;grid-template-columns:150px minmax(0,1.3fr) 130px minmax(0,1fr) minmax(0,1.6fr) 46px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:6px 6px 6px 0}
+.dr{display:grid;grid-template-columns:150px minmax(0,1.3fr) 130px minmax(0,1fr) minmax(0,1.6fr) 92px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:6px 6px 6px 0}
 .dr.hd0{background:none;border:0;margin-top:12px;padding-top:0;padding-bottom:0}
 .dr.hd0 .dc{font-size:12px;color:var(--mu)}
 .dc{padding:2px 12px;border-left:1px solid var(--bd);min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -183,7 +180,7 @@ button.dg:disabled{cursor:default}
 .dn small{display:block;color:var(--mu);font-size:11px}
 .dm{font-weight:600;white-space:nowrap}
 .dk{color:var(--mu)}
-.de{justify-self:end}
+.de{justify-self:end;display:flex;gap:4px}
 .tbw{overflow-x:auto;margin:6px 0}
 .tb{width:100%;border-collapse:collapse}
 .tb th,.tb td{padding:8px 10px;border-bottom:1px solid var(--bd);text-align:left}
@@ -223,7 +220,7 @@ nav .mb{display:block;font-size:22px;line-height:1;flex:0 0 64px}
 .pc .menu summary{width:28px;height:28px;border:0}
 .pc.single .pc-head{flex-wrap:wrap}
 .pc.single .menu{order:2}
-.pc.single .stock-row{order:3;flex:0 0 100%;grid-template-columns:minmax(0,1fr) 60px 120px;grid-template-areas:none;column-gap:8px;margin-top:8px;padding-top:8px;border-top:.5px solid var(--bd)}
+.pc.single .stock-row{display:grid;order:3;flex:0 0 100%;grid-template-columns:minmax(0,1fr) 60px 120px;grid-template-areas:none;column-gap:8px;margin-top:8px;padding-top:8px;border-top:.5px solid var(--bd)}
 .pc.single .stock-row>*{grid-area:auto;justify-self:auto}
 .qty{width:60px;min-width:0;padding:2px 6px;font-size:16px}
 .qty small{font-size:12px}
@@ -247,15 +244,122 @@ nav .mb{display:block;font-size:22px;line-height:1;flex:0 0 64px}
 .pl{flex-wrap:wrap}
 .pl-n{flex:1 1 100%}
 .pl input{flex:1;width:auto}
-.dr{grid-template-columns:auto minmax(0,1fr) auto 44px;grid-template-areas:"n s m e" "u u k k";row-gap:4px;padding:8px 6px 8px 0}
+.dr{grid-template-columns:auto minmax(0,1fr) auto 88px;grid-template-areas:"n s m e" "u u k k";row-gap:4px;padding:8px 6px 8px 0}
 .dr.hd0{display:none}
 .dr .dn{grid-area:n}.dr .ds{grid-area:s}.dr .dm{grid-area:m}.dr .du{grid-area:u}.dr .dk{grid-area:k}.dr .de{grid-area:e}
 .dr .du,.dr .dk{border-left:0;padding-top:0;font-size:13px}
 .dr .du{color:var(--mu)}
 .hd{max-width:none}
 }
-@media(max-width:380px){.sess{display:none}}
+@media(max-width:430px){.sess{display:none}}
 @media(max-width:420px){nav button{font-size:13px;padding:15px 2px}}
+
+/* ===== версия 8 ===== */
+textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;margin:0 0 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);resize:vertical;box-sizing:border-box}
+textarea:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+input[readonly]{background:var(--bg);color:var(--mu);cursor:default}
+.bdg.nw{background:var(--bg);color:var(--mu);border:1px solid var(--bd)}
+.wt{background:var(--wb);color:var(--wt);border-radius:8px;padding:8px 10px;font-size:14px;margin:0 0 10px}
+.menu>div button.on{background:var(--acbg);color:var(--ac);font-weight:600}
+.menu.st summary,.menu.st summary:hover{border:0;padding:0;background:none}
+.menu.st summary span{cursor:pointer}
+button.lk{border:0;background:none;padding:0;text-align:left;color:inherit;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;font-size:15px}
+button.lk:not(:disabled):hover,button.lk:active{background:none;border-color:transparent;text-decoration:underline}
+/* клиенты: сегменты */
+.cr{display:grid;grid-template-columns:90px minmax(0,1.6fr) 110px 160px minmax(0,1.2fr) 46px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:8px 6px 8px 0;max-width:1000px}
+.cr.hd0{background:none;border:0;margin-top:12px;padding-top:0;padding-bottom:0}
+.cr.hd0 .dc{font-size:12px;color:var(--mu);border-left-color:transparent}
+.cr .cn{font-weight:600;color:var(--mu)}
+.cr .cm b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cpt{display:block;font-size:11px;color:var(--gt)}
+.cr .co,.cr .cs{white-space:nowrap}
+.cr .ce{justify-self:end}
+.cr.arc .dc{opacity:.7}
+.sl{display:none}
+dialog.cf{width:min(94vw,420px)}
+.cg,.cg2{display:block}
+/* заказы: сегменты */
+.oc,.oh0{max-width:1000px}
+.oc{background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:8px 6px 8px 0}
+.oh0{margin-top:12px;padding:0 7px 0 1px}
+.oh0 .dc{font-size:12px;color:var(--mu);border-left-color:transparent}
+.or{display:grid;grid-template-columns:minmax(0,1.5fr) 100px 140px minmax(0,1fr) 46px;align-items:center}
+.or .dn small{display:block;color:var(--mu);font-size:11px}
+.or .dn button.lk b{display:inline}
+.or .dn button.lk{max-width:100%}
+.oce{justify-self:end}
+.ocm,.otg,.omob{display:none}
+.ofoot{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;border-top:1px solid var(--bd);margin:8px 0 0 12px;padding-top:8px}
+.ofoot .of b{color:var(--tx);font-weight:500}
+.ofoot .std{margin-left:auto}
+.ttn{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ttn-i{width:180px;margin:0;padding:6px 10px;letter-spacing:.5px}
+.ttn-c{font-size:12px;min-width:34px}
+.ttn .er{flex:0 0 100%;margin:0;font-size:13px}
+.ttn b{font-variant-numeric:tabular-nums}
+/* окно заказа */
+.gh{font-size:12px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.04em;margin:0 0 8px}
+.grp{border-top:1px solid var(--bd);padding-top:12px;margin-top:14px}
+.ogi{display:none}
+.cs{display:flex;gap:8px;align-items:flex-start}
+.cs .sgw{flex:1;min-width:0}
+.og .two{flex-wrap:wrap;gap:0 10px}
+.og .two>*{flex:1 1 200px}
+.mshow{display:none}
+.ot td.ta{white-space:nowrap}
+.ot .ta .ic{display:inline-flex;vertical-align:middle;margin-left:4px}
+.dp{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+.dp input{width:90px;margin:0}
+.dmw{display:flex;gap:8px;flex-wrap:wrap;flex:1;min-width:0}
+.ci-h{margin:0 0 8px;font-size:16px}
+.ogi .kv>span:last-child,dialog .kv>span:last-child{word-break:normal;overflow-wrap:anywhere}
+@media(min-width:800px){
+dialog.cf{width:min(94vw,780px)}
+.cg{display:grid;grid-template-columns:repeat(3,1fr);column-gap:12px}
+.cg2{display:grid;grid-template-columns:1fr 1fr;column-gap:12px}
+.og{display:grid;grid-template-columns:minmax(0,500px) minmax(0,1fr);grid-template-areas:"a i" "b i";column-gap:28px;align-items:start}
+.oga{grid-area:a}.ogb{grid-area:b}
+.ogi{grid-area:i;display:block;margin-top:0;position:sticky;top:0}
+/* склад: сегменты */
+.stock-row{display:contents}
+.sg{display:flex;align-items:center;justify-content:center;align-self:stretch;padding:0 12px;border-left:1px solid var(--bd)}
+.sg.sp{flex:0 0 150px}.sg.sq{flex:0 0 120px}.sg.ss{flex:0 0 190px}
+.sg.so{flex:0 0 54px;padding:0 0 0 10px}
+.sg.sv{flex:1 1 auto;justify-content:flex-start;border-left:0;padding-left:0}
+.pc-main{padding-right:14px}
+.pc-vars{display:block;margin-top:10px;padding-top:0;border-top:1px solid var(--bd)}
+.pc-var{display:flex;flex-direction:row;align-items:stretch;gap:0;border:0;border-bottom:.5px solid var(--bd);border-radius:0;padding:6px 0}
+.pc-var:last-child{border-bottom:0;padding-bottom:0}
+.pc-var .sg{padding-top:2px;padding-bottom:2px}
+.pc-var .sg.sq{flex:0 0 150px}
+}
+@media(max-width:799px){
+.cr{grid-template-columns:minmax(0,1fr) auto 44px;grid-template-areas:"m n e" "p p p" "o s s";row-gap:4px;padding:8px 6px 8px 12px;max-width:none}
+.cr.hd0,.oh0{display:none}
+.cr .dc{border-left:0;padding:0}
+.cr .cm{grid-area:m}.cr .cn{grid-area:n}.cr .ce{grid-area:e}.cr .cp{grid-area:p;color:var(--mu);font-size:14px}.cr .co{grid-area:o}.cr .cs{grid-area:s}
+.cr .co,.cr .cs{font-size:13px;color:var(--mu)}
+.sl{display:inline}
+.oc{padding:10px 12px;max-width:none}
+.or{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"n s" "p m";gap:8px 10px}
+.or .dn{grid-area:n}.or .ocs{grid-area:s;text-align:right}.or .ocp{grid-area:p}.or .ocm{grid-area:m;display:block;justify-self:end}
+.or .ocu,.or .oce{display:none}
+.or .dc{border-left:0;padding:0}
+.otg{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:8px;padding:6px;border-style:dashed;font-size:14px;color:var(--mu)}
+.otg svg{width:16px;height:16px;transition:transform .2s}
+.otg .t2{display:none}
+.oc.open .otg .t1{display:none}.oc.open .otg .t2{display:inline}
+.oc.open .otg svg{transform:rotate(180deg)}
+.omore{display:none}
+.oc.open .omore{display:block}
+.ofoot{flex-direction:column;align-items:flex-start;margin:8px 0 0;gap:8px}
+.ofoot .std{display:none}
+.omob{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.mshow{display:inline-block}.mhide{display:none}
+.ot th,.ot td{padding:6px 5px;font-size:13px}
+.ot th:last-child,.ot td.ta{position:sticky;right:0;background:var(--card)}
+.ot .ta .ic{margin-left:2px}
+}
 </style>
 </head>
 <body>
@@ -264,13 +368,13 @@ nav .mb{display:block;font-size:22px;line-height:1;flex:0 0 64px}
 <div id="toast" role="status"></div>
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
-var NEED = 7; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var BUILD = '2026-10-05a';
+var NEED = 8; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
+var BUILD = '2026-10-05b';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
 var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category',
   ld: {}, ts: {}, sig: {}, dl: {}, lerr: {}, fx: 0, products: [], docs: [], df: 'receipt', q: '', tab: 'all', cat: '', more: false, busy: 0, info: null,
-  sort: localStorage.getItem('sort') || 'name', orders: [], clients: [], loy: [], os: 'act', oq: '', ca: 0, cq: ''};
+  sort: localStorage.getItem('sort') || 'name', orders: [], clients: [], loy: [], os: 'act', oq: '', ca: 0, cq: '', oo: {}, te: {}};
 var DT = {category: 'Категории', material: 'Материалы', vartype: 'Типы вариаций', supplier: 'Поставщики', source: 'Источники заказов',
   payment: 'Способы оплаты', delivery: 'Способы доставки', discount_reason: 'Причины скидок',
   writeoff_reason: 'Причины списания', return_reason: 'Причины возврата'};
@@ -434,47 +538,143 @@ function page() {
 
 // ---------- клиенты ----------
 var OST = {new: 'Новый', paid: 'Оплачен', sent: 'Отправлен', done: 'Завершен', cancelled: 'Отменен'};
-var OCL = {new: 'tg', paid: 'bdg low', sent: 'bdg low', done: 'bdg ok', cancelled: 'bdg no'};
+var OCL = {new: 'bdg nw', paid: 'bdg low', sent: 'bdg low', done: 'bdg ok', cancelled: 'bdg no'};
 function byName(a, b) { return String(a.name).localeCompare(String(b.name), 'ru'); }
 function ostat(s) { return '<span class="' + OCL[s] + '">' + OST[s] + '</span>'; }
 function client(id) { return S.clients.filter(function (c) { return c.id === id; })[0]; }
 function ord(id) { return S.orders.filter(function (o) { return o.id === id; })[0]; }
 function oAct(o) { return o.status === 'new' || o.status === 'paid' || o.status === 'sent'; }
 
+function plural(n, f) { var a = Math.abs(n) % 100, b = a % 10; return a > 10 && a < 20 ? f[2] : b > 1 && b < 5 ? f[1] : b === 1 ? f[0] : f[2]; }
+function cfio(c) { return [c.lastName, c.firstName, c.middleName].filter(Boolean).join(' ') || c.name; }
+// поиск клиента: каждое слово должно быть началом слова в имени, телефоне или номере; цифры телефона ищем в любом месте
+function cmatch(c, q) {
+  var t = words(q);
+  if (!t.length) return false;
+  var w = words([c.name, c.lastName, c.firstName, c.middleName, c.phone, c.num].join(' '));
+  if (t.every(function (x) { return w.some(function (y) { return y.indexOf(x) === 0; }); })) return true;
+  var dq = String(q).replace(/\D/g, '');
+  return dq.length >= 3 && String(c.phone).replace(/\D/g, '').indexOf(dq) >= 0;
+}
+// карточка с информацией о клиенте (в заказе и на телефоне)
+function cinfo(c) {
+  var kv = function (k, v) { return '<div class="kv"><span class="mu">' + k + '</span><span>' + v + '</span></div>'; };
+  var link = !c.contact ? '—' : /^https?:\/\//i.test(c.contact) ? '<a href="' + esc(c.contact) + '" target="_blank" rel="noopener">' + esc(c.contact) + '</a>' : esc(c.contact);
+  var next = (S.loy || []).filter(function (t) { return t[0] > c.n; }).sort(function (a, b) { return a[0] - b[0]; })[0];
+  return '<h4 class="ci-h">' + esc(cfio(c)) + '</h4>' +
+    kv('Клиент', '№' + c.num) + kv('Телефон', c.phone ? esc(c.phone) : '—') + kv('Адрес доставки', c.address ? esc(c.address) : '—') +
+    kv('Соцсеть', link) + kv('Статус', c.pct > 0 ? 'Постоянный клиент, скидка ' + c.pct + '%' : 'Обычный клиент') +
+    kv('Заказов', c.n) + kv('Сумма заказов', money(c.sum)) +
+    (next ? kv('До скидки ' + next[1] + '%', 'ещё ' + (next[0] - c.n) + ' ' + plural(next[0] - c.n, ['заказ', 'заказа', 'заказов'])) : '') +
+    (c.note ? kv('Заметка', esc(c.note)) : '');
+}
+
 function clist() {
-  var q = S.cq.trim().toLowerCase();
+  var q = S.cq.trim(), ql = q.toLowerCase();
   var items = S.clients.filter(function (c) {
-    return !!c.archived === !!S.ca && (!q || (c.name + ' ' + c.phone + ' ' + c.contact).toLowerCase().indexOf(q) >= 0);
+    return !!c.archived === !!S.ca && (!q || cmatch(c, q) || String(c.num) === ql.replace('№', '') ||
+      (c.name + ' ' + c.phone + ' ' + c.contact).toLowerCase().indexOf(ql) >= 0);
   }).sort(byName);
   if (!items.length) return '<p class="mu">' + (S.clients.length ? 'Ничего не найдено.' : 'Клиентов пока нет. Нажмите «Новый клиент».') + '</p>';
-  return items.map(function (c) {
-    var sub = [c.phone, c.contact].filter(Boolean).join(' · ');
-    return '<div class="cd rw"><div style="min-width:0"><b>' + esc(c.name) + '</b>' + (sub ? '<div class="mu">' + esc(sub) + '</div>' : '') +
-      '<div class="mu">Заказов: ' + c.n + ' · Покупки: ' + money(c.sum) + (c.pct ? ' · Скидка: ' + c.pct + '%' : '') + '</div>' +
-      (c.note ? '<div class="mu">' + esc(c.note) + '</div>' : '') + '</div>' +
-      (c.archived
-        ? '<div class="rw g8"><button class="ghost" data-a="resC" data-id="' + esc(c.id) + '">Восстановить</button><button class="ghost dg" data-a="delC" data-id="' + esc(c.id) + '">Удалить</button></div>'
-        : menu([['editC', 'Редактировать'], ['arcC', 'В архив']], c.id)) + '</div>';
-  }).join('');
+  return '<div class="cr hd0"><div class="dc">Клиент</div><div class="dc">Имя, фамилия</div><div class="dc">Заказов</div><div class="dc">Сумма заказов</div><div class="dc">Телефон</div><div></div></div>' +
+    items.map(function (c) {
+      var op = menu(c.archived ? [['resC', 'Восстановить'], ['delC', 'Удалить навсегда', 'dg']] : [['editC', 'Редактировать'], ['arcC', 'В архив']], c.id);
+      return '<div class="cr' + (c.archived ? ' arc' : '') + '">' +
+        '<div class="dc cn">№' + c.num + '</div>' +
+        '<div class="dc cm"><b title="' + esc(c.name) + '">' + esc(c.name) + '</b>' + (c.pct > 0 ? '<small class="cpt">Постоянный −' + c.pct + '%</small>' : '') + '</div>' +
+        '<div class="dc co"><span class="sl">Заказов: </span>' + c.n + '</div>' +
+        '<div class="dc cs"><span class="sl">Сумма: </span>' + money(c.sum) + '</div>' +
+        '<div class="dc cp">' + (c.phone ? esc(c.phone) : '—') + '</div>' +
+        '<div class="ce">' + op + '</div></div>';
+    }).join('');
 }
 function clientsPage() {
   return '<div class="rw"><h2>Клиенты</h2><div class="rw g8"><button class="tbtn ' + (S.ca ? 'on' : '') + '" data-a="cArc">Архив</button>' +
     '<button class="pri" data-a="newC">Новый клиент</button></div></div>' +
-    '<input id="cq" placeholder="Введите имя, телефон или контакт" value="' + esc(S.cq) + '" style="margin:10px 0">' +
+    '<input id="cq" placeholder="Введите имя, телефон или номер" value="' + esc(S.cq) + '" style="margin:10px 0">' +
     '<div id="clist">' + clist() + '</div>';
 }
+// окно клиента: остается открытым, пока идет сохранение
 function clientForm(c, done) {
-  ask(c ? 'Редактировать клиента' : 'Новый клиент', [
-    {l: 'Имя *', v: c && c.name, p: 'Введите имя'}, {l: 'Телефон', v: c && c.phone, p: 'Введите телефон'},
-    {l: 'Соцсеть или контакт', v: c && c.contact, p: 'Например: @nick'}, {l: 'Заметка', v: c && c.note, p: 'Введите заметку'}
-  ], c ? 'Сохранить' : 'Создать', function (v) {
-    return call('clients.save', {id: c ? c.id : '', name: v[0], phone: v[1], contact: v[2], note: v[3]}).then(function (j) {
-      S.clients = j.items; if (done) done(j); render();
-    });
+  var d = document.createElement('dialog'), saving = false;
+  d.className = 'cf';
+  var v = function (k) { return esc(c && c[k] ? c[k] : ''); };
+  d.innerHTML = '<form method="dialog" novalidate><h3>' + (c ? 'Редактировать клиента' : 'Новый клиент') + '</h3>' +
+    '<div class="cg"><div><label>Фамилия *</label><input name="ln" placeholder="Введите фамилию" autocomplete="off" value="' + v('lastName') + '"></div>' +
+    '<div><label>Имя *</label><input name="fn" placeholder="Введите имя" autocomplete="off" value="' + esc(c ? (c.firstName || c.name) : '') + '"></div>' +
+    '<div><label>Отчество</label><input name="mn" placeholder="Необязательно" autocomplete="off" value="' + v('middleName') + '"></div></div>' +
+    '<div class="cg2"><div><label>Телефон *</label><input name="ph" type="tel" inputmode="tel" placeholder="+380…" autocomplete="off" value="' + v('phone') + '"></div>' +
+    '<div><label>Ссылка на соцсеть</label><input name="ct" placeholder="Например: https://instagram.com/nick" autocomplete="off" value="' + v('contact') + '"></div></div>' +
+    '<label>Адрес доставки</label><input name="ad" placeholder="Город, отделение или адрес" autocomplete="off" value="' + v('address') + '">' +
+    '<label>Заметка</label><textarea name="nt" rows="3" placeholder="Введите заметку">' + v('note') + '</textarea>' +
+    '<p class="er"></p><div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">' + (c ? 'Сохранить' : 'Создать') + '</button></div></form>';
+  var f = d.querySelector('form'), er = d.querySelector('.er'), sb = f.querySelector('.pri'), cb = f.querySelector('[data-c]');
+  cb.onclick = function () { d.close(); };
+  d.addEventListener('cancel', function (e) { if (saving) e.preventDefault(); });
+  f.addEventListener('input', function (e) { e.target.classList.remove('bad'); });
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (saving) return;
+    var g = function (n) { return f.elements[n].value.trim(); }, bad = [];
+    if (!g('ln')) bad.push('ln');
+    if (!g('fn')) bad.push('fn');
+    if (g('ph').replace(/\D/g, '').length < 10) bad.push('ph');
+    if (bad.length) {
+      bad.forEach(function (n) { f.elements[n].classList.add('bad'); });
+      er.textContent = (bad.length === 1 && bad[0] === 'ph' && g('ph')) ? 'Номер телефона: минимум 10 цифр' : 'Заполните выделенные поля';
+      return;
+    }
+    saving = true; er.textContent = ''; sb.disabled = true; cb.disabled = true; S.btn = sb;
+    call('clients.save', {id: c ? c.id : '', lastName: g('ln'), firstName: g('fn'), middleName: g('mn'), phone: g('ph'),
+      contact: g('ct'), address: g('ad'), note: g('nt')}).then(function (j) {
+      d.close(); S.clients = j.items; if (done) done(j); render();
+    }, function (err) { saving = false; sb.disabled = false; cb.disabled = false; er.textContent = err.message; });
   });
+  d.addEventListener('close', function () { d.remove(); });
+  openD(d);
 }
 
 // ---------- заказы: список и просмотр ----------
+function oTtnLen(o) { return /укр/i.test(o.delivery || '') ? 13 : 14; } // Новая почта: 14 цифр, Укрпошта: 13
+function ttnHtml(o) {
+  var id = esc(o.id), len = oTtnLen(o);
+  if (o.status === 'cancelled') return '<div class="ttn"><span class="mu">ТТН:</span> ' + (o.ttn ? '<b>' + esc(o.ttn) + '</b>' : '—') + '</div>';
+  if (o.ttn && !S.te[o.id]) {
+    return '<div class="ttn"><span class="mu">ТТН:</span> <b>' + esc(o.ttn) + '</b><button class="ghost ic" data-a="ttnEdit" data-id="' + id + '" aria-label="Изменить ТТН">' + ico('edit') + '</button></div>';
+  }
+  return '<div class="ttn"><input class="ttn-i" data-ttn="' + id + '" inputmode="numeric" maxlength="' + len + '" placeholder="ТТН, ' + len + ' цифр" value="' + esc(o.ttn) + '" autocomplete="off" aria-label="ТТН">' +
+    '<span class="ttn-c mu">' + String(o.ttn || '').length + '/' + len + '</span>' +
+    '<button class="okb ic" data-a="ttnSave" data-id="' + id + '" aria-label="Сохранить ТТН">' + ico('check') + '</button><p class="er ttn-e"></p></div>';
+}
+// статус меняется нажатием на него (пока заказ активен)
+function stMenu(o) {
+  if (!oAct(o)) return ostat(o.status);
+  var id = esc(o.id);
+  return '<details class="menu st"><summary aria-label="Изменить статус"><span class="' + OCL[o.status] + '">' + OST[o.status] + ' ▾</span></summary><div>' +
+    ['new', 'paid', 'sent', 'done'].map(function (s) {
+      return '<button class="' + (s === o.status ? 'on' : '') + '" data-a="ordSt" data-id="' + id + '" data-s="' + s + '">' + OST[s] + '</button>';
+    }).join('') + '</div></details>';
+}
+function oMenu(o) {
+  var it = [['openOrd', 'Открыть']];
+  if (oAct(o)) it.push(['editOrd', 'Редактировать'], ['cancelOrd', 'Отменить заказ', 'dg']);
+  it.push(['delOrd', 'Удалить', 'dg']);
+  return menu(it, o.id);
+}
+function ocHtml(o) {
+  var id = esc(o.id), st = stMenu(o), mn = oMenu(o);
+  return '<div class="oc' + (S.oo[o.id] ? ' open' : '') + '" data-id="' + id + '"><div class="or">' +
+    '<div class="dc dn"><button class="lk" data-a="openOrd" data-id="' + id + '"><b>№' + o.num + '</b>' + (o.clientName ? ' · ' + esc(o.clientName) : '') + '</button><small>' + fdt(o.created) + '</small></div>' +
+    '<div class="dc ocp"><button class="lk" data-a="openOrd" data-id="' + id + '">' + o.lines.length + ' поз.</button></div>' +
+    '<div class="dc dm ocs">' + money(o.total) + '</div>' +
+    '<div class="dc du ocu">' + esc(o.seller || '—') + '</div>' +
+    '<div class="oce">' + mn + '</div><div class="ocm">' + st + '</div></div>' +
+    '<button class="otg ghost" data-a="oTog" data-id="' + id + '"><span class="t1">Подробнее</span><span class="t2">Свернуть</span>' + ico('chevron-down') + '</button>' +
+    '<div class="omore"><div class="ofoot">' + ttnHtml(o) +
+    '<span class="of mu">Доставка: <b>' + (o.delivery ? esc(o.delivery) : '—') + '</b></span><span class="of mu">Оплата: <b>' + (o.payment ? esc(o.payment) : '—') + '</b></span>' +
+    '<div class="std">' + st + '</div></div>' +
+    '<div class="omob"><span class="mu">Создал: <b>' + esc(o.seller || '—') + '</b></span>' + mn + '</div></div></div>';
+}
 function olist() {
   var q = S.oq.trim().toLowerCase();
   var items = S.orders.filter(function (o) {
@@ -482,11 +682,8 @@ function olist() {
     return okS && (!q || String(o.num) === q.replace('№', '') || (o.clientName || '').toLowerCase().indexOf(q) >= 0);
   });
   if (!items.length) return '<p class="mu">Заказов здесь пока нет.</p>';
-  return items.map(function (o) {
-    return '<div class="cd" role="button" style="cursor:pointer" data-a="openOrd" data-id="' + esc(o.id) + '"><div class="rw"><b>№' + o.num +
-      (o.clientName ? ' · ' + esc(o.clientName) : '') + '</b><b>' + money(o.total) + '</b></div>' +
-      '<div class="rw" style="margin-top:6px"><span class="mu">' + fdt(o.created) + ' · ' + o.lines.length + ' поз. · ' + esc(o.seller) + '</span>' + ostat(o.status) + '</div></div>';
-  }).join('');
+  return '<div class="oh0"><div class="or"><div class="dc">Заказ</div><div class="dc">Позиций</div><div class="dc">Сумма</div><div class="dc">Создал</div><div></div></div></div>' +
+    items.map(ocHtml).join('');
 }
 function ordersPage() {
   var chips = [['act', 'Активные'], ['done', 'Завершенные'], ['cancelled', 'Отмененные']].map(function (c) {
@@ -499,7 +696,8 @@ function ordersPage() {
 function ordHtml(o) {
   var meta = '<div class="dmeta"><span>Дата: ' + fdt(o.created) + '</span><span>Статус: ' + OST[o.status] + '</span><span>Создал: ' + esc(o.seller) + '</span>' +
     (o.clientName ? '<span>Клиент: ' + esc(o.clientName) + '</span>' : '') + (o.source ? '<span>Источник: ' + esc(o.source) + '</span>' : '') +
-    (o.payment ? '<span>Оплата: ' + esc(o.payment) + '</span>' : '') + (o.delivery ? '<span>Доставка: ' + esc(o.delivery) + '</span>' : '') + '</div>';
+    (o.payment ? '<span>Оплата: ' + esc(o.payment) + '</span>' : '') + (o.delivery ? '<span>Доставка: ' + esc(o.delivery) + '</span>' : '') + (o.address ? '<span>Адрес: ' + esc(o.address) + '</span>' : '') +
+    (o.ttn ? '<span>ТТН: ' + esc(o.ttn) + '</span>' : '') + '</div>';
   var tbl = '<tr><th>Наименование</th><th class="r">Кол-во</th><th class="r">Цена</th><th class="r">Сумма</th></tr>' + o.lines.map(function (l) {
     return '<tr><td>' + esc(l.label) + '</td><td class="r">' + l.qty + ' шт</td><td class="r">' + money(l.price) + '</td><td class="r">' + money(l.qty * l.price) + '</td></tr>';
   }).join('');
@@ -509,18 +707,43 @@ function ordHtml(o) {
     (o.dMan > 0 ? '<p class="mu" ' + rt + '>Скидка (' + esc(o.manual ? o.manual.reason : '') + '): −' + money(o.dMan) + '</p>' : '') +
     '<p class="tot">Итого: ' + money(o.total) + '</p>' + (o.comment ? '<p class="cmt">Комментарий: ' + esc(o.comment) + '</p>' : '');
 }
+function ordRepaint() { var el = document.getElementById('olist'); if (el) el.innerHTML = olist(); }
 function ordDone(j) { S.orders = j.items; S.clients = j.clients; S.products = j.products; S.dict = j.dict; render(); }
 
 // ---------- заказы: создание и редактирование ----------
 var O = null;
 function oFree(v) { return v.stock - v.reserve; }
+// сколько этой вариации уже стоит в редактируемом заказе (она уже в резерве) и сколько добавлено в список сейчас
+function oOwn(vid) {
+  var o = O.id ? ord(O.id) : null;
+  return o ? o.lines.filter(function (l) { return l.varId === vid; }).reduce(function (a, l) { return a + l.qty; }, 0) : 0;
+}
+function oInList(vid, skip) {
+  return O.lines.reduce(function (a, l, i) { return a + (l.vid === vid && i !== skip ? Number(l.qty) || 0 : 0); }, 0);
+}
+function oAvail(v, skip) { return oFree(v) + oOwn(v.id) - oInList(v.id, skip); }
+function oVarObj(vid) {
+  var r = null;
+  S.products.some(function (p) { return p.vars.some(function (v) { if (v.id === vid) { r = v; return true; } return false; }); });
+  return r;
+}
+function oPct() {
+  var cl = client(O.cid);
+  if (!cl || O.autoOff) return 0;
+  if (O.autoPct !== '') { var n = Number(String(O.autoPct).replace(',', '.')); return isFinite(n) ? Math.min(100, Math.max(0, n)) : 0; }
+  return cl.pct;
+}
 function oCalc() {
-  var sub = 0, cl = client(O.cid), pct = (cl && !O.autoOff) ? cl.pct : 0, dM = 0;
+  var sub = 0, pct = oPct(), dM = 0;
   O.lines.forEach(function (l) { var p = prod(l.pid); sub += (Number(l.qty) || 0) * (p ? p.price : 0); });
   var dA = Math.round(sub * pct) / 100;
   if (O.man && Number(O.man.value) > 0) dM = O.man.kind === 'pct' ? Math.round(sub * Number(O.man.value)) / 100 : Number(O.man.value);
   dM = Math.min(dM, Math.max(0, sub - dA));
   return {sub: sub, dA: dA, dM: dM, total: sub - dA - dM};
+}
+// адрес клиента подставляется сам, пока вы не поменяли его вручную
+function oAddrFill(cl) {
+  if (!O.addr || O.addr === O.addrAuto) { O.addr = cl ? cl.address || '' : ''; O.addrAuto = O.addr; }
 }
 function oSug() {
   var q = O.q.trim();
@@ -532,31 +755,63 @@ function oSug() {
       esc([p.category, p.sku ? '#' + p.sku : ''].filter(Boolean).join(' · ')) + '</span></button>';
   }).join('') + '</div>';
 }
+function oCsug() {
+  var q = O.cq.trim();
+  if (!q || O.cid) return '';
+  var m = S.clients.filter(function (c) { return !c.archived && cmatch(c, q); }).sort(byName).slice(0, 8);
+  if (!m.length) return '<div class="sug"><p class="mu" style="margin:0;padding:10px 12px">Клиент не найден. Создайте нового кнопкой «Новый клиент».</p></div>';
+  return '<div class="sug">' + m.map(function (c) {
+    return '<button type="button" data-a="oCPick" data-id="' + esc(c.id) + '">' + esc(c.name) + '<span class="mu">' +
+      esc(['№' + c.num, c.phone].filter(Boolean).join(' · ')) + '</span></button>';
+  }).join('') + '</div>';
+}
+function oClr() { return O.cid ? '<button type="button" class="ghost ic" data-a="oClrC" aria-label="Убрать клиента">' + ico('x') + '</button>' : ''; }
+function oInfoHtml() {
+  var c = client(O.cid);
+  return c ? cinfo(c) : '<p class="mu" style="margin:0">Выберите клиента, и здесь появится информация о нем: контакты, адрес, скидка и история заказов.</p>';
+}
+// на телефоне вместо «Новый клиент» появляется «Инфо о клиенте», как только клиент выбран
+function oHeadBtns() {
+  var cl = client(O.cid);
+  return '<button type="button" class="ghost' + (cl ? ' mhide' : '') + '" data-a="oNewC">Новый клиент</button>' +
+    (cl ? '<button type="button" class="ghost mshow" data-a="oInfo">Инфо о клиенте</button>' : '');
+}
 function oVar() {
   var p = prod(O.pid);
   if (!p || !needVar(p)) return '';
   return '<label>Вариация</label><select data-o="vid"><option value="">Выберите</option>' +
-    opts(activeVars(p).map(function (v) { return [v.id, vname(v) + ' — доступно ' + oFree(v) + ' шт']; }), O.vid) + '</select>';
+    opts(activeVars(p).map(function (v) { return [v.id, vname(v)]; }), O.vid) + '</select>';
 }
+// сколько можно добавить выбранной вариации: показывается отдельным полем рядом с кнопкой «Добавить»
+function oAvVal() {
+  var p = prod(O.pid), v = p && O.vid ? p.vars.filter(function (x) { return x.id === O.vid; })[0] : null;
+  return v ? Math.max(0, oAvail(v)) + ' шт' : '—';
+}
+function oAv() { var e = document.getElementById('oav'); if (e) e.value = oAvVal(); }
 function oLines() {
   if (!O.lines.length) return '<p class="mu">Список пуст. Найдите товар выше и нажмите «Добавить».</p>';
-  return O.lines.map(function (l, i) {
-    var p = prod(l.pid), q = Number(l.qty) || 0, pr = p ? p.price : 0;
-    return '<div class="ln"><div class="ln-main"><div class="ln-name">' + esc(lineLabel(l)) + '</div></div><div class="ln-n">' + q + ' шт</div><div class="ln-n">' + money(pr) +
-      '</div><div class="ln-n s">' + money(q * pr) + '</div><button type="button" class="ghost dg ic" data-a="oDel" data-i="' + i + '" aria-label="Убрать позицию">' + ico('x') + '</button></div>';
-  }).join('');
+  return '<div class="tbw"><table class="tb ot"><tr><th>№</th><th>Наименование</th><th>Вариация</th><th class="r">Кол-во</th><th class="r">Цена</th><th class="r">Сумма</th><th></th></tr>' +
+    O.lines.map(function (l, i) {
+      var p = prod(l.pid), v = p && p.vars.filter(function (x) { return x.id === l.vid; })[0], q = Number(l.qty) || 0, pr = p ? p.price : 0;
+      return '<tr><td>' + (i + 1) + '</td><td>' + esc(p ? p.name : 'Товар удален') + '</td><td>' + (v && v.value !== 'Без вариации' ? esc(vname(v)) : '—') + '</td>' +
+        '<td class="r">' + q + ' шт</td><td class="r">' + money(pr) + '</td><td class="r"><b>' + money(q * pr) + '</b></td>' +
+        '<td class="r ta"><button type="button" class="ghost dg ic" data-a="oDel" data-i="' + i + '" aria-label="Убрать позицию">' + ico('trash') + '</button>' +
+        '<button type="button" class="ghost ic" data-a="oEditLine" data-i="' + i + '" aria-label="Изменить позицию">' + ico('edit') + '</button></td></tr>';
+    }).join('') + '</table></div>';
 }
 function oDisc() {
-  var c = oCalc(), cl = client(O.cid), h = '';
-  if (cl && cl.pct > 0) {
-    h += '<div class="ln"><div class="ln-main">' + (O.autoOff ? '<span class="mu"><s>Постоянный клиент −' + cl.pct + '%</s> (снята)</span>' : 'Постоянный клиент −' + cl.pct + '%') +
-      '</div><div class="ln-n s">' + (O.autoOff ? '—' : '−' + money(c.dA)) + '</div><button type="button" class="ghost ic" data-a="oAuto" aria-label="' +
-      (O.autoOff ? 'Вернуть скидку' : 'Убрать скидку') + '">' + ico(O.autoOff ? 'check' : 'x') + '</button></div>';
+  var c = oCalc(), cl = client(O.cid), h = '', defP = cl ? cl.pct : 0;
+  // скидка постоянного клиента добавляется сама, ее можно изменить или снять
+  if (cl && (defP > 0 || O.autoPct !== '')) {
+    h += '<div class="ln dl"><div class="ln-main">' + (O.autoOff ? '<span class="mu"><s>Постоянный клиент</s> (снята)</span>' : 'Постоянный клиент') + '</div>' +
+      (O.autoOff ? '' : '<div class="dp"><input data-o="ap" type="number" inputmode="decimal" step="any" min="0" max="100" placeholder="' + defP + '" value="' + esc(O.autoPct) + '" aria-label="Процент скидки клиента"><span class="mu">%</span></div>') +
+      '<div class="ln-n s" id="oaa">' + (O.autoOff ? '—' : '−' + money(c.dA)) + '</div>' +
+      '<button type="button" class="ghost ' + (O.autoOff ? '' : 'dg ') + 'ic" data-a="oAuto" aria-label="' + (O.autoOff ? 'Вернуть скидку' : 'Убрать скидку') + '">' + ico(O.autoOff ? 'check' : 'x') + '</button></div>';
   }
   if (O.man) {
-    h += '<div class="ln" style="align-items:flex-start"><div style="display:flex;gap:8px;flex-wrap:wrap;flex:1;min-width:0">' +
+    h += '<div class="ln dl2"><div class="dmw">' +
+      '<input data-o="mv" type="number" inputmode="decimal" step="any" min="0" placeholder="Размер" value="' + esc(O.man.value) + '" style="width:140px;margin:0">' +
       '<select data-o="mk" style="width:90px;margin:0"><option value="sum"' + (O.man.kind === 'sum' ? ' selected' : '') + '>грн</option><option value="pct"' + (O.man.kind === 'pct' ? ' selected' : '') + '>%</option></select>' +
-      '<input data-o="mv" type="number" inputmode="decimal" step="any" min="0" placeholder="Размер скидки" value="' + esc(O.man.value) + '" style="width:140px;margin:0">' +
       '<select data-o="mr" style="flex:1;min-width:150px;margin:0"><option value="">Причина не выбрана</option>' +
       opts(dn('discount_reason', O.man.reason).map(function (x) { return [x, x]; }), O.man.reason) + '</select></div>' +
       '<button type="button" class="ghost dg ic" data-a="oMan" aria-label="Убрать скидку">' + ico('x') + '</button></div>';
@@ -564,35 +819,50 @@ function oDisc() {
   return h;
 }
 function oSel(k, label, type, cur) {
-  return '<div class="hd"><label>' + label + '</label><select data-o="' + k + '"><option value="">Не выбрано</option>' +
+  return '<div><label>' + label + '</label><select data-o="' + k + '"><option value="">Не выбрано</option>' +
     opts(dn(type, cur).map(function (x) { return [x, x]; }), cur) + '</select></div>';
 }
 function oBody() {
-  var cls = S.clients.filter(function (c) { return !c.archived || c.id === O.cid; }).sort(byName);
-  return '<div class="rw dh"><h3>' + (O.id ? 'Заказ №' + O.num + ' (редактирование)' : 'Новый заказ') + '</h3></div>' +
-    '<div class="hd"><label>Клиент</label><div class="rw g8"><select data-o="cid" style="margin:0;flex:1"><option value="">Не выбрано</option>' +
-    opts(cls.map(function (c) { return [c.id, c.name + (c.phone ? ' · ' + c.phone : '')]; }), O.cid) + '</select><button type="button" class="ghost" data-a="oNewC">Новый клиент</button></div></div>' +
-    oSel('src', 'Источник', 'source', O.src) + oSel('pay', 'Способ оплаты', 'payment', O.pay) + oSel('del', 'Способ доставки', 'delivery', O.del) +
-    '<div class="lb"><label>Наименование</label><div class="sgw"><input data-o="q" placeholder="Введите название или артикул" autocomplete="off" value="' + esc(O.q) + '"><div id="osug">' + oSug() + '</div></div>' +
-    '<div id="ovar">' + oVar() + '</div><label>Количество</label><input data-o="qty" type="number" inputmode="numeric" min="1" step="1" placeholder="Введите количество" value="' + esc(O.qty) + '">' +
-    '<button type="button" class="pri" data-a="oAdd" style="width:100%">Добавить</button><p class="er" id="oper" style="margin:8px 0 0"></p></div>' +
-    '<div id="olines">' + oLines() + '</div><label style="margin-top:10px">Скидки</label><div id="odisc">' + oDisc() + '</div>' +
+  return '<div class="rw dh"><h3>' + (O.id ? 'Заказ №' + O.num + ' (редактирование)' : 'Новый заказ') + '</h3><span id="ohb">' + oHeadBtns() + '</span></div>' +
+    '<div class="og">' +
+    '<div class="oga"><div class="gh">Клиент</div><div class="cs"><div class="sgw"><input data-o="cq" placeholder="Введите имя, телефон или номер" autocomplete="off" value="' + esc(O.cq) + '"><div id="ocsug">' + oCsug() + '</div></div><span id="ocx">' + oClr() + '</span></div></div>' +
+    '<div class="ogb grp"><div class="gh">Заказ</div><div class="two">' + oSel('src', 'Источник', 'source', O.src) + oSel('pay', 'Способ оплаты', 'payment', O.pay) + '</div>' +
+    '<div class="two">' + oSel('del', 'Способ доставки', 'delivery', O.del) +
+    '<div><label>Адрес доставки</label><input id="oaddr" data-o="addr" placeholder="Город, отделение или адрес" autocomplete="off" value="' + esc(O.addr) + '"></div></div></div>' +
+    '<aside class="ogi cd" id="oinfo">' + oInfoHtml() + '</aside></div>' +
+    '<div class="lb"><div class="er1">' +
+    '<div class="f nm"><label>Наименование</label><div class="sgw"><input data-o="q" placeholder="Введите название или артикул" autocomplete="off" value="' + esc(O.q) + '"><div id="osug">' + oSug() + '</div></div></div>' +
+    '<div class="f vr" id="ovar">' + oVar() + '</div>' +
+    '<div class="f qy"><label>Количество</label><input data-o="qty" type="number" inputmode="numeric" min="1" step="1" placeholder="Кол-во" value="' + esc(O.qty) + '"></div>' +
+    '<div class="f pz"><label>В наличии</label><input id="oav" readonly tabindex="-1" value="' + esc(oAvVal()) + '"></div>' +
+    '<div class="f bt"><button type="button" class="pri" data-a="oAdd">Добавить</button></div></div>' +
+    '<p class="er" id="oper" style="margin:8px 0 0"></p></div>' +
+    '<div id="olines">' + oLines() + '</div>' +
     '<label style="margin-top:10px">Комментарий</label><input data-o="cm" autocomplete="off" placeholder="Введите комментарий (необязательно)" value="' + esc(O.cm) + '">' +
+    '<div class="grp"><div class="gh">Скидки</div><div id="odisc">' + oDisc() + '</div></div>' +
     '<div id="otot"></div><p class="er" id="oer"></p><div class="rw"><button class="ghost" data-a="oClose">Отмена</button><button class="pri" data-a="oSave">Сохранить заказ</button></div>';
 }
 function oTot() {
-  var e = document.getElementById('otot'), d = document.getElementById('odisc'); if (!e) return;
-  var c = oCalc();
+  var e = document.getElementById('otot'); if (!e) return;
+  var c = oCalc(), aa = document.getElementById('oaa');
   e.innerHTML = '<p class="mu" style="margin:6px 0 0;text-align:right">Сумма: ' + money(c.sub) + (c.dA + c.dM > 0 ? ' · Скидки: −' + money(c.dA + c.dM) : '') + '</p><p class="tot">Итого: ' + money(c.total) + '</p>';
-  if (d && O.autoOff !== undefined) { var f = d.querySelector('.ln-n.s'); if (f && client(O.cid) && client(O.cid).pct > 0 && !O.autoOff) f.textContent = '−' + money(c.dA); }
+  if (aa && !O.autoOff) aa.textContent = '−' + money(c.dA);
 }
 function oRedraw() {
   var el = document.getElementById('odlg'); if (!el) return;
   var sc = el.scrollTop; el.innerHTML = oBody(); el.scrollTop = sc; oTot();
 }
+// обновить только блоки, зависящие от клиента, чтобы не сбивать ввод в поле поиска
+function oPart() {
+  var m = {ocsug: oCsug, oinfo: oInfoHtml, odisc: oDisc, ohb: oHeadBtns, ocx: oClr};
+  Object.keys(m).forEach(function (k) { var e = document.getElementById(k); if (e) e.innerHTML = m[k](); });
+  var ad = document.getElementById('oaddr'); if (ad && ad.value !== O.addr) ad.value = O.addr;
+  oTot();
+}
 function oDlg() {
   var el = document.createElement('dialog'), mine = O;
   el.id = 'odlg'; el.className = 'xl'; el.innerHTML = oBody();
+  el.addEventListener('cancel', function (e) { if (mine && mine.saving) e.preventDefault(); });
   el.addEventListener('close', function () { el.remove(); if (O === mine) O = null; });
   openD(el); oTot();
 }
@@ -605,12 +875,48 @@ function oSync(e) {
     O.q = v; if (O.pid) { O.pid = ''; O.vid = ''; }
     var s = document.getElementById('osug'), r = document.getElementById('ovar');
     if (s) s.innerHTML = oSug(); if (r) r.innerHTML = oVar();
+    oAv();
+    return;
+  }
+  if (k === 'cq') {
+    if (O.cq === v) return;
+    O.cq = v;
+    if (O.cid) { O.cid = ''; O.autoOff = false; O.autoPct = ''; oAddrFill(null); oPart(); }
+    else { var cs = document.getElementById('ocsug'); if (cs) cs.innerHTML = oCsug(); }
     return;
   }
   if (k === 'mk' || k === 'mv' || k === 'mr') { O.man[{mk: 'kind', mv: 'value', mr: 'reason'}[k]] = v; oTot(); return; }
+  if (k === 'ap') { O.autoPct = v; oTot(); return; }
   if (O[k] === v) return;
   O[k] = v;
-  if (k === 'cid') { O.autoOff = false; oRedraw(); } else if (k === 'qty') { /* без перерисовки */ }
+  if (k === 'vid') oAv();
+}
+
+// окно изменения одной позиции заказа
+function oLineDlg(i) {
+  var l = O.lines[i], p = prod(l.pid), d = document.createElement('dialog');
+  d.innerHTML = '<form method="dialog" novalidate><h3>' + esc(p ? p.name : 'Позиция') + '</h3>' +
+    (p && needVar(p) ? '<label>Вариация</label><select name="lv">' + opts(activeVars(p).map(function (v) { return [v.id, vname(v)]; }), l.vid) + '</select>' : '') +
+    '<label>Количество</label><input name="lq" type="number" inputmode="numeric" min="1" step="1" value="' + esc(l.qty) + '">' +
+    '<p class="mu" data-av style="margin:-4px 0 8px"></p><p class="er"></p>' +
+    '<div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">Сохранить</button></div></form>';
+  var f = d.querySelector('form'), er = d.querySelector('.er'), av = d.querySelector('[data-av]');
+  var cur = function () { return f.elements.lv ? f.elements.lv.value : l.vid; };
+  var upd = function () { var v = oVarObj(cur()); av.textContent = v ? 'Доступно: ' + Math.max(0, oAvail(v, i)) + ' шт' : ''; };
+  d.querySelector('[data-c]').onclick = function () { d.close(); };
+  f.addEventListener('input', function (e) { e.target.classList.remove('bad'); });
+  f.addEventListener('change', upd); upd();
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var q = Number(f.elements.lq.value), vid = cur(), v = oVarObj(vid);
+    if (!vid) { er.textContent = 'Выберите вариацию'; return; }
+    if (!f.elements.lq.value.trim() || !isFinite(q) || q <= 0 || Math.floor(q) !== q) { f.elements.lq.classList.add('bad'); er.textContent = 'Введите целое количество больше 0'; return; }
+    if (v && q > oAvail(v, i)) { f.elements.lq.classList.add('bad'); er.textContent = 'Доступно только ' + Math.max(0, oAvail(v, i)) + ' шт.'; return; }
+    if (O.lines.some(function (x, j) { return j !== i && x.vid === vid; })) { er.textContent = 'Эта позиция уже есть в списке'; return; }
+    l.vid = vid; l.qty = String(q); d.close(); oRedraw();
+  });
+  d.addEventListener('close', function () { d.remove(); });
+  openD(d);
 }
 
 var D = null;
@@ -648,6 +954,8 @@ var IC = {
   'circle-x': '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M10 10l4 4m0 -4l-4 4"/>',
   sun: '<path d="M8 12a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/>',
   moon: '<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/>',
+  trash: '<path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/>',
+  'chevron-down': '<path d="M6 9l6 6l6 -6"/>',
   'alert-triangle': '<path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"/><path d="M12 16h.01"/>'
 };
 function ico(n) {
@@ -694,13 +1002,13 @@ function cardHtml(p) {
     (p.photo ? '<img src="' + esc(p.photo) + '" alt="">' : ico('photo')) + '</div>';
   var head = photo + '<div class="pc-main"><p class="pc-name" title="' + esc(p.name) + '">' + esc(p.name) + '</p>' +
     (meta ? '<p class="pc-meta">' + esc(meta) + '</p>' : '') + '</div>';
-  var m = menu(mn, p.id, ico('dots')), price = priceHtml(p);
+  var m = menu(mn, p.id, ico('dots')), price = priceHtml(p), sg = function (c, x) { return '<div class="sg ' + c + '">' + x + '</div>'; };
   if (single) {
     var q = vs.length ? vs[0].stock : 0;
-    return '<div class="pc single"><div class="pc-head">' + head + '<div class="stock-row">' + price + qtyBox(q) + badge(q, p.min) + '</div>' + m + '</div></div>';
+    return '<div class="pc single"><div class="pc-head">' + head + '<div class="stock-row">' + sg('sp', price) + sg('sq', qtyBox(q)) + sg('ss', badge(q, p.min)) + '</div>' + sg('so', m) + '</div></div>';
   }
-  return '<div class="pc"><div class="pc-head">' + head + price + m + '</div><div class="pc-vars">' + vs.map(function (v) {
-    return '<div class="pc-var"><div class="pc-vrow"><span class="vl">' + vlabel(v) + '</span>' + qtyBox(v.stock) + '</div>' + badge(v.stock, p.min) + '</div>';
+  return '<div class="pc"><div class="pc-head">' + head + sg('sp', price) + sg('so', m) + '</div><div class="pc-vars">' + vs.map(function (v) {
+    return '<div class="pc-var">' + sg('sv', '<span class="vl">' + vlabel(v) + '</span>') + sg('sq', qtyBox(v.stock)) + sg('ss', badge(v.stock, p.min)) + '</div>';
   }).join('') + '</div></div>';
 }
 
@@ -764,7 +1072,8 @@ function docsPage() {
           var sum = x.type === 'pricing' ? '—' : money(x.total);
           return '<div class="dr"><div class="dc dn"><b>№' + x.num + '</b><small>' + fdt(x.created) + '</small></div><div class="dc ds">' + esc(s2 || '—') + '</div>' +
             '<div class="dc dm">' + sum + '</div><div class="dc du">' + esc(x.seller) + '</div><div class="dc dk">' + esc(x.comment || '') + '</div>' +
-            '<div class="de"><button class="ghost ic" data-a="openDoc" data-id="' + esc(x.id) + '" aria-label="Открыть документ">' + ico('eye') + '</button></div></div>';
+            '<div class="de"><button class="ghost ic" data-a="openDoc" data-id="' + esc(x.id) + '" aria-label="Открыть документ">' + ico('eye') + '</button>' +
+            '<button class="ghost dg ic" data-a="delDoc" data-id="' + esc(x.id) + '" aria-label="Удалить документ">' + ico('trash') + '</button></div></div>';
         }).join('')
       : '<p class="mu">Документов этого типа пока нет. Нажмите «Создать».</p>');
 }
@@ -1091,6 +1400,31 @@ function confirmAct(title, text, okLabel, kind, cb) {
   d.addEventListener('close', function () { d.remove(); });
   openD(d);
 }
+// Удаление заказов и документов: пароль проверяет сервер, окно ждет ответа
+function delGate(o) {
+  var d = document.createElement('dialog'), saving = false;
+  d.innerHTML = '<form method="dialog" novalidate><h3>Удалить ' + esc(o.what) + '?</h3>' +
+    '<p class="wt">Для удаления введите пароль или обратитесь к администратору.</p>' +
+    (o.note ? '<p class="mu">' + esc(o.note) + '</p>' : '') + '<p class="mu">Это действие нельзя отменить.</p>' +
+    '<label>Пароль</label><input name="pw" type="password" autocomplete="off" placeholder="Введите пароль">' +
+    '<p class="er"></p><div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="dgb">Удалить</button></div></form>';
+  var f = d.querySelector('form'), er = d.querySelector('.er'), sb = f.querySelector('.dgb'), cb = f.querySelector('[data-c]'), pw = f.elements.pw;
+  cb.onclick = function () { d.close(); };
+  d.addEventListener('cancel', function (e) { if (saving) e.preventDefault(); });
+  pw.addEventListener('input', function () { pw.classList.remove('bad'); });
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (saving) return;
+    if (!pw.value) { pw.classList.add('bad'); er.textContent = 'Введите пароль'; return; }
+    saving = true; er.textContent = ''; sb.disabled = true; cb.disabled = true; S.btn = sb;
+    call(o.action, {id: o.id, password: pw.value}).then(function (j) { d.close(); o.done(j); }, function (err) {
+      saving = false; sb.disabled = false; cb.disabled = false; er.textContent = err.message;
+      if (/пароль/i.test(err.message)) { pw.value = ''; pw.classList.add('bad'); pw.focus(); }
+    });
+  });
+  d.addEventListener('close', function () { d.remove(); });
+  openD(d);
+}
 function confirmDel(text, cb) { confirmAct('Удалить навсегда?', text, 'Удалить навсегда', 'dg', cb); }
 
 function vrowState(row, arc) {
@@ -1359,21 +1693,55 @@ var A = {
   },
   ordSt: function (d) {
     var o = ord(d.id), s = d.s;
+    if (!o || o.status === s) return;
     var go = function () {
       return call('orders.status', {id: o.id, status: s}).then(function (j) { var m = document.getElementById('ovdlg'); if (m) m.close(); ordDone(j); });
     };
+    var fail = function (e) { var er = document.getElementById('oer'); if (er) er.textContent = e.message; else toast(e.message); };
     if (s === 'done') confirmAct('Завершить заказ?', 'Товар спишется со склада по партиям, после этого заказ изменить нельзя.', 'Завершить', 'ok', go);
     else if (s === 'cancelled') confirmAct('Отменить заказ?', 'Резерв товара будет снят.', 'Отменить заказ', 'dg', go);
-    else go().catch(function (e) { var er = document.getElementById('oer'); if (er) er.textContent = e.message; });
+    else go().catch(fail);
+  },
+  cancelOrd: function (d) { A.ordSt({id: d.id, s: 'cancelled'}); },
+  delOrd: function (d) {
+    var o = ord(d.id); if (!o) return;
+    S.btn = null;
+    delGate({what: 'заказ №' + o.num, action: 'orders.delete', id: o.id,
+      note: o.status === 'done' ? 'Заказ завершен: товары из него вернутся на склад.' : o.status === 'cancelled' ? '' : 'Резерв товара по этому заказу будет снят.',
+      done: function (j) { ordDone(j); toast('Заказ удален'); }});
+  },
+  oTog: function (d) {
+    S.btn = null;
+    var el = document.querySelector('.oc[data-id="' + d.id + '"]'); if (!el) return;
+    if (el.classList.toggle('open')) S.oo[d.id] = 1; else delete S.oo[d.id];
+  },
+  ttnEdit: function (d) { S.btn = null; S.te[d.id] = 1; ordRepaint(); },
+  ttnSave: function (d) {
+    var o = ord(d.id), inp = document.querySelector('.ttn-i[data-ttn="' + d.id + '"]');
+    if (!o || !inp) return;
+    var er = inp.closest('.ttn').querySelector('.ttn-e'), v = inp.value.replace(/\D/g, ''), len = oTtnLen(o);
+    er.textContent = '';
+    if (!v && !o.ttn) { S.btn = null; er.textContent = 'Введите номер ТТН'; return; }
+    if (v && v.length !== len) {
+      S.btn = null;
+      er.textContent = 'Введено ' + v.length + ' из ' + len + ' цифр: не хватает ' + (len - v.length) + '. ТТН состоит из ' + len + ' цифр.';
+      return;
+    }
+    call('orders.ttn', {id: o.id, ttn: v}).then(function (j) {
+      o.ttn = j.ttn; delete S.te[o.id]; ordRepaint(); toast(j.ttn ? 'ТТН сохранен' : 'ТТН удален');
+    }).catch(function (e) { er.textContent = e.message; });
   },
   newOrd: function () {
-    O = {id: '', num: 0, cid: '', src: '', pay: '', del: '', cm: '', lines: [], q: '', pid: '', vid: '', qty: '', autoOff: false, man: null};
+    O = {id: '', num: 0, cid: '', cq: '', src: '', pay: '', del: '', addr: '', addrAuto: '', cm: '', lines: [], q: '', pid: '', vid: '', qty: '',
+      autoOff: false, autoPct: '', man: null};
     oDlg();
   },
   editOrd: function (d) {
     var o = ord(d.id); if (!o) return;
     var m = document.getElementById('ovdlg'); if (m) m.close();
-    O = {id: o.id, num: o.num, cid: o.clientId, src: o.source, pay: o.payment, del: o.delivery, cm: o.comment, q: '', pid: '', vid: '', qty: '', autoOff: o.autoOff,
+    var cl = client(o.clientId);
+    O = {id: o.id, num: o.num, cid: cl ? cl.id : '', cq: cl ? cl.name : o.clientName, src: o.source, pay: o.payment, del: o.delivery, addr: o.address || '', addrAuto: '',
+      cm: o.comment, q: '', pid: '', vid: '', qty: '', autoOff: o.autoOff, autoPct: (!o.autoOff && o.autoPct > 0) ? String(o.autoPct) : '',
       man: o.manual ? {kind: o.manual.kind, value: String(o.manual.value), reason: o.manual.reason} : null,
       lines: o.lines.map(function (l) { return {pid: l.productId, vid: l.varId, qty: String(l.qty)}; })};
     oDlg();
@@ -1383,32 +1751,48 @@ var A = {
     O.pid = p.id; O.q = p.name; O.vid = needVar(p) ? '' : (activeVars(p)[0] || {}).id || '';
     oRedraw();
   },
+  oCPick: function (d) {
+    var c = client(d.id); if (!c) return;
+    O.cid = c.id; O.cq = c.name; O.autoOff = false; O.autoPct = '';
+    oAddrFill(c); oRedraw();
+  },
+  oClrC: function () { O.cid = ''; O.cq = ''; O.autoOff = false; O.autoPct = ''; oAddrFill(null); oRedraw(); },
+  oInfo: function () { var c = client(O.cid); if (c) view('Информация о клиенте', cinfo(c)); },
   oAdd: function () {
     var p = prod(O.pid), er = document.getElementById('oper'), q = Number(O.qty);
     var bad = function (m) { if (er) er.textContent = m; };
     if (!p) return bad('Выберите товар из списка');
     if (!O.vid) return bad('Выберите вариацию');
-    if (!isFinite(q) || q <= 0 || Math.floor(q) !== q) return bad('Введите целое количество больше 0');
+    if (!O.qty || !isFinite(q) || q <= 0 || Math.floor(q) !== q) return bad('Введите целое количество больше 0');
     var v = p.vars.filter(function (x) { return x.id === O.vid; })[0];
-    var ex = O.lines.filter(function (l) { return l.vid === O.vid; })[0], have = ex ? Number(ex.qty) : 0;
-    if (!O.id && have + q > oFree(v)) return bad('Доступно только ' + oFree(v) + ' шт.');
+    if (q > oAvail(v)) return bad('Доступно только ' + Math.max(0, oAvail(v)) + ' шт.');
     if (!(p.price > 0)) return bad('У товара не задана цена. Задайте ее документом «Ценообразование»');
-    if (ex) ex.qty = String(have + q); else O.lines.push({pid: p.id, vid: O.vid, qty: String(q)});
+    var ex = O.lines.filter(function (l) { return l.vid === O.vid; })[0];
+    if (ex) ex.qty = String((Number(ex.qty) || 0) + q); else O.lines.push({pid: p.id, vid: O.vid, qty: String(q)});
     O.pid = ''; O.vid = ''; O.q = ''; O.qty = ''; oRedraw();
   },
+  oEditLine: function (d) { oLineDlg(+d.i); },
   oDel: function (d) { O.lines.splice(+d.i, 1); oRedraw(); },
   oAuto: function () { O.autoOff = !O.autoOff; oRedraw(); },
   oMan: function () { O.man = O.man ? null : {kind: 'sum', value: '', reason: ''}; oRedraw(); },
-  oNewC: function () { clientForm(null, function (j) { if (j.id) O.cid = j.id; oRedraw(); }); },
-  oClose: function () { var el = document.getElementById('odlg'); if (el) el.close(); },
+  oNewC: function () {
+    clientForm(null, function (j) {
+      var c = j.id && client(j.id);
+      if (O && c) { O.cid = c.id; O.cq = c.name; O.autoOff = false; O.autoPct = ''; oAddrFill(c); oRedraw(); }
+    });
+  },
+  oClose: function () { if (O && O.saving) return; var el = document.getElementById('odlg'); if (el) el.close(); },
   oSave: function () {
     var er = document.getElementById('oer'); er.textContent = '';
-    call('orders.save', {id: O.id, clientId: O.cid, source: O.src, payment: O.pay, delivery: O.del, comment: O.cm, autoOff: O.autoOff,
-      manual: O.man ? {kind: O.man.kind, value: O.man.value, reason: O.man.reason} : null,
+    if (O.saving) return;
+    var mine = O; mine.saving = true;
+    call('orders.save', {id: O.id, clientId: O.cid, source: O.src, payment: O.pay, delivery: O.del, address: O.addr, comment: O.cm, autoOff: O.autoOff,
+      autoPct: O.autoPct, manual: O.man ? {kind: O.man.kind, value: O.man.value, reason: O.man.reason} : null,
       lines: O.lines.map(function (l) { return {varId: l.vid, qty: l.qty}; })}).then(function (j) {
+      mine.saving = false;
       var el = document.getElementById('odlg'); if (el) el.close();
       ordDone(j); toast('Заказ сохранен');
-    }).catch(function (e) { er.textContent = e.message; });
+    }).catch(function (e) { mine.saving = false; var x = document.getElementById('oer'); if (x) x.textContent = e.message; });
   },
   df: function (d) { S.df = d.k; render(); },
   newDoc: function (d) {
@@ -1540,6 +1924,16 @@ var A = {
       var vb = el.querySelector('.vb'); if (vb) vb.innerHTML = docHtml(doc, ls);
     }).catch(function (e) { el.close(); toast(e.message); });
   },
+  delDoc: function (d) {
+    var x = S.docs.filter(function (z) { return z.id === d.id; })[0]; if (!x) return;
+    S.btn = null;
+    var notes = {receipt: 'Товар из этого поступления будет убран со склада. Если часть уже продана, списана или лежит в резерве заказа, удалить документ не получится.',
+      writeoff: 'Списанный товар вернется на склад.',
+      adjust: 'Изменения остатков по этой корректировке будут отменены, если товар еще не использован.',
+      pricing: 'Цены товаров останутся прежними: исчезнет только запись о документе.'};
+    delGate({what: 'документ «' + DOC[x.type] + ' №' + x.num + '»', action: 'docs.delete', id: x.id, note: notes[x.type],
+      done: function (j) { delete S.dl[x.id]; keepLines(j.items); S.docs = j.items; S.products = j.products; S.dict = j.dict; render(); toast('Документ удален'); }});
+  },
   dt: function (d) { S.dt = d.k; render(); },
   addDict: function () {
     ask('Добавить: ' + DT[S.dt], [{l: 'Название'}], 'Добавить', function (v) {
@@ -1604,6 +1998,22 @@ document.addEventListener('change', oSync);
 document.addEventListener('input', function (e) {
   if (e.target.id === 'cq') { S.cq = e.target.value; document.getElementById('clist').innerHTML = clist(); }
   if (e.target.id === 'oq') { S.oq = e.target.value; document.getElementById('olist').innerHTML = olist(); }
+});
+
+// ТТН: только цифры, счетчик символов, Enter сохраняет
+document.addEventListener('input', function (e) {
+  var t = e.target;
+  if (!t.classList || !t.classList.contains('ttn-i')) return;
+  var o = ord(t.dataset.ttn), len = o ? oTtnLen(o) : 14, box = t.closest('.ttn');
+  var v = t.value.replace(/\D/g, '').slice(0, len);
+  if (t.value !== v) t.value = v;
+  box.querySelector('.ttn-c').textContent = v.length + '/' + len;
+  box.querySelector('.ttn-e').textContent = '';
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('ttn-i')) {
+    e.preventDefault(); S.btn = null; A.ttnSave({id: e.target.dataset.ttn});
+  }
 });
 
 init();
