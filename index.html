@@ -171,7 +171,7 @@ button.dg:disabled{cursor:default}
 .vrow input{margin:0;flex:1;min-width:0}
 .vrow.off input{text-decoration:line-through;opacity:.5}
 /* документы */
-.dr{display:grid;grid-template-columns:150px minmax(0,1.3fr) 130px minmax(0,1fr) minmax(0,1.6fr) 108px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:6px 6px 6px 0}
+.dr{display:grid;grid-template-columns:150px minmax(0,1.3fr) 130px minmax(0,1fr) minmax(0,1.6fr) 60px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:6px 6px 6px 0}
 .dr.hd0{background:none;border:0;margin-top:12px;padding-top:0;padding-bottom:0}
 .dr.hd0 .dc{font-size:12px;color:var(--mu)}
 .dc{padding:2px 12px;border-left:1px solid var(--bd);min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -252,7 +252,7 @@ nav .nt{display:none}
 .pl{flex-wrap:wrap}
 .pl-n{flex:1 1 100%}
 .pl input{flex:1;width:auto}
-.dr{grid-template-columns:auto minmax(0,1fr) auto 106px;grid-template-areas:"n s m e" "u u k k";row-gap:4px;padding:8px 6px 8px 0}
+.dr{grid-template-columns:auto minmax(0,1fr) auto 60px;grid-template-areas:"n s m e" "u u k k";row-gap:4px;padding:8px 6px 8px 0}
 .dr.hd0{display:none}
 .dr .dn{grid-area:n}.dr .ds{grid-area:s}.dr .dm{grid-area:m}.dr .du{grid-area:u}.dr .dk{grid-area:k}.dr .de{grid-area:e}
 .dr .du,.dr .dk{border-left:0;padding-top:0;font-size:13px}
@@ -263,6 +263,11 @@ nav .nt{display:none}
 @media(max-width:420px){nav button{font-size:13px;padding:15px 2px}}
 
 /* ===== версия 8 ===== */
+:root{--ib:#dbe9fb;--it:#14478f;--pb:#ebe0fa;--pt:#5b2a99}
+:root[data-theme=dark]{--ib:#1c2f4a;--it:#8fbcf2;--pb:#35244f;--pt:#cdb0f2}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--ib:#1c2f4a;--it:#8fbcf2;--pb:#35244f;--pt:#cdb0f2}}
+.bdg.bl{background:var(--ib);color:var(--it)}
+.bdg.pu{background:var(--pb);color:var(--pt)}
 textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;margin:0 0 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);resize:vertical;box-sizing:border-box}
 textarea:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 input[readonly]{background:var(--bg);color:var(--mu);cursor:default}
@@ -302,8 +307,7 @@ dialog.cf{width:min(94vw,420px)}
 .ofoot .of b{color:var(--tx);font-weight:500}
 .ofoot .std{margin-left:auto}
 .ttn{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.ttn-i{width:180px;margin:0;padding:6px 10px;letter-spacing:.5px}
-.ttn-c{font-size:12px;min-width:34px}
+.ttn-i{width:300px;max-width:100%;margin:0;padding:6px 10px;letter-spacing:.5px}
 .ttn .er{flex:0 0 100%;margin:0;font-size:13px}
 .ttn b{font-variant-numeric:tabular-nums}
 /* окно заказа */
@@ -363,7 +367,12 @@ dialog.cf{width:min(94vw,780px)}
 .oc.open .otg svg{transform:rotate(180deg)}
 .omore{display:none}
 .oc.open .omore{display:block}
-.ofoot{flex-direction:column;align-items:flex-start;margin:8px 0 0;gap:8px}
+.ofoot{flex-direction:column;align-items:stretch;margin:8px 0 0;gap:8px}
+.ttn{width:100%;flex-wrap:nowrap}
+.ttn-i{flex:1;width:auto;min-width:0}
+.ttn .er{flex:0 0 100%}
+.ttn{flex-wrap:wrap}
+.ttn-i{flex:1 1 0}
 .ofoot .std{display:none}
 .omob{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
 .mshow{display:inline-block}.mhide{display:none}
@@ -387,8 +396,8 @@ dialog.cf{width:min(94vw,780px)}
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
 var NEED = 8; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var VER = 'ver0.3.3'; // 0 = бета, 3 = этап разработки, 3 = номер правки
-var BUILD = '2026-10-06';
+var VER = 'ver0.3.4'; // 0 = бета, 3 = этап разработки, 3 = номер правки
+var BUILD = '2026-10-07';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
 var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category',
@@ -543,7 +552,7 @@ function page() {
     var act = items.filter(function (x) { return !x.archived; });
     var arc = items.filter(function (x) { return x.archived; });
     return '<h2>Справочники</h2><div class="chips">' + chips + '</div>' +
-      '<div class="rw"><h3>' + DT[S.dt] + '</h3><button class="pri" data-a="addDict">Добавить</button></div>' +
+      '<div class="rw"><h3>' + DT[S.dt] + '</h3><div class="rw g8"><button class="' + (S.dirty ? 'warn' : 'ghost') + '" data-a="refDict" title="Подтянуть новые названия во все разделы">' + (S.dirty ? '● ' : '') + 'Обновить</button><button class="pri" data-a="addDict">Добавить</button></div></div>' +
       (act.length ? act.map(function (x) {
         return '<div class="cd rw"><span>' + esc(x.name) + '</span>' + menu([['renDict', 'Переименовать'], ['arcDict', 'В архив']], x.id) + '</div>';
       }).join('') : '<p class="mu">Здесь пока пусто. Нажмите «Добавить».</p>') +
@@ -557,7 +566,7 @@ function page() {
 
 // ---------- клиенты ----------
 var OST = {new: 'Новый', paid: 'Оплачен', sent: 'Отправлен', done: 'Завершен', cancelled: 'Отменен'};
-var OCL = {new: 'bdg nw', paid: 'bdg low', sent: 'bdg low', done: 'bdg ok', cancelled: 'bdg no'};
+var OCL = {new: 'bdg bl', paid: 'bdg low', sent: 'bdg pu', done: 'bdg ok', cancelled: 'bdg no'};
 function byName(a, b) { return String(a.name).localeCompare(String(b.name), 'ru'); }
 function ostat(s) { return '<span class="' + OCL[s] + '">' + OST[s] + '</span>'; }
 function client(id) { return S.clients.filter(function (c) { return c.id === id; })[0]; }
@@ -662,7 +671,6 @@ function ttnHtml(o) {
     return '<div class="ttn"><span class="mu">ТТН:</span> <b>' + esc(o.ttn) + '</b><button class="ghost ic" data-a="ttnEdit" data-id="' + id + '" aria-label="Изменить ТТН">' + ico('edit') + '</button></div>';
   }
   return '<div class="ttn"><input class="ttn-i" data-ttn="' + id + '" inputmode="numeric" maxlength="' + len + '" placeholder="ТТН, ' + len + ' цифр" value="' + esc(o.ttn) + '" autocomplete="off" aria-label="ТТН">' +
-    '<span class="ttn-c mu">' + String(o.ttn || '').length + '/' + len + '</span>' +
     '<button class="okb ic" data-a="ttnSave" data-id="' + id + '" aria-label="Сохранить ТТН">' + ico('check') + '</button><p class="er ttn-e"></p></div>';
 }
 // статус меняется нажатием на него (пока заказ активен)
@@ -677,13 +685,17 @@ function stMenu(o) {
 function oMenu(o) {
   var it = [['openOrd', 'Просмотр']];
   if (oAct(o)) it.push(['editOrd', 'Редактировать'], ['cancelOrd', 'Отменить заказ', 'dg']);
-  it.push(['delOrd', 'Удалить', 'dg']);
   return menu(it, o.id);
+}
+// имя и фамилия клиента (без отчества)
+function ocName(o) {
+  var c = client(o.clientId);
+  return c ? [c.firstName, c.lastName].filter(Boolean).join(' ') || c.name : (o.clientName || '');
 }
 function ocHtml(o) {
   var id = esc(o.id), st = stMenu(o), mn = oMenu(o);
   return '<div class="oc' + (S.oo[o.id] ? ' open' : '') + '" data-id="' + id + '"><div class="or">' +
-    '<div class="dc dn"><button class="lk" data-a="openOrd" data-id="' + id + '"><b>№' + o.num + '</b>' + (o.clientName ? ' · ' + esc(o.clientName) : '') + '</button><small>' + fdt(o.created) + '</small></div>' +
+    '<div class="dc dn"><button class="lk" data-a="openOrd" data-id="' + id + '"><b>№' + o.num + '</b></button><small>' + fdt(o.created) + (ocName(o) ? ' · ' + esc(ocName(o)) : '') + '</small></div>' +
     '<div class="dc ocp"><button class="lk" data-a="openOrd" data-id="' + id + '">' + o.lines.length + ' поз.</button></div>' +
     '<div class="dc dm ocs">' + money(o.total) + '</div>' +
     '<div class="dc du ocu">' + esc(o.seller || '—') + '</div>' +
@@ -927,6 +939,33 @@ function oSync(e) {
   if (k === 'vid') oAv();
 }
 
+// окно изменения одной позиции заказа (на телефоне)
+function oLineDlg(i) {
+  var l = O.lines[i], p = prod(l.pid), d = document.createElement('dialog');
+  d.innerHTML = '<form method="dialog" novalidate><h3>' + esc(p ? p.name : 'Позиция') + '</h3>' +
+    (p && needVar(p) ? '<label>Вариация</label><select name="lv">' + opts(activeVars(p).map(function (v) { return [v.id, vname(v)]; }), l.vid) + '</select>' : '') +
+    '<label>Количество</label><input name="lq" type="number" inputmode="numeric" min="1" step="1" value="' + esc(l.qty) + '">' +
+    '<p class="mu" data-av style="margin:-4px 0 8px"></p><p class="er"></p>' +
+    '<div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">Сохранить</button></div></form>';
+  var f = d.querySelector('form'), er = d.querySelector('.er'), av = d.querySelector('[data-av]');
+  var cur = function () { return f.elements.lv ? f.elements.lv.value : l.vid; };
+  var upd = function () { var v = oVarObj(cur()); av.textContent = v ? 'Доступно: ' + Math.max(0, oAvail(v, i)) + ' шт' : ''; };
+  d.querySelector('[data-c]').onclick = function () { d.close(); };
+  f.addEventListener('input', function (e) { e.target.classList.remove('bad'); });
+  f.addEventListener('change', upd); upd();
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var q = Number(f.elements.lq.value), vid = cur(), v = oVarObj(vid);
+    if (!vid) { er.textContent = 'Выберите вариацию'; return; }
+    if (!f.elements.lq.value.trim() || !isFinite(q) || q <= 0 || Math.floor(q) !== q) { f.elements.lq.classList.add('bad'); er.textContent = 'Введите целое количество больше 0'; return; }
+    if (v && q > oAvail(v, i)) { f.elements.lq.classList.add('bad'); er.textContent = 'Доступно только ' + Math.max(0, oAvail(v, i)) + ' шт.'; return; }
+    if (O.lines.some(function (x, j) { return j !== i && x.vid === vid; })) { er.textContent = 'Эта позиция уже есть в списке'; return; }
+    l.vid = vid; l.qty = String(q); d.close(); oRedraw();
+  });
+  d.addEventListener('close', function () { d.remove(); });
+  openD(d);
+}
+
 var D = null;
 var DOC = {receipt: 'Поступление', pricing: 'Ценообразование', writeoff: 'Списание', adjust: 'Корректировка'};
 var DOCS = {receipt: 'Поступления', pricing: 'Ценообразование', writeoff: 'Списания', adjust: 'Корректировки'};
@@ -1090,8 +1129,7 @@ function docsPage() {
           var sum = x.type === 'pricing' ? '—' : money(x.total);
           return '<div class="dr"><div class="dc dn"><b>№' + x.num + '</b><small>' + fdt(x.created) + '</small></div><div class="dc ds">' + esc(s2 || '—') + '</div>' +
             '<div class="dc dm">' + sum + '</div><div class="dc du">' + esc(x.seller) + '</div><div class="dc dk">' + esc(x.comment || '') + '</div>' +
-            '<div class="de"><button class="ghost ic" data-a="openDoc" data-id="' + esc(x.id) + '" aria-label="Открыть документ">' + ico('eye') + '</button>' +
-            '<button class="ghost dg ic" data-a="delDoc" data-id="' + esc(x.id) + '" aria-label="Удалить документ">' + ico('trash') + '</button></div></div>';
+            '<div class="de"><button class="ghost ic" data-a="openDoc" data-id="' + esc(x.id) + '" aria-label="Открыть документ">' + ico('eye') + '</button></div></div>';
         }).join('')
       : '<p class="mu">Документов этого типа пока нет. Нажмите «Создать».</p>');
 }
@@ -1603,7 +1641,7 @@ function ask(title, fields, okLabel, cb) {
 
 function seller(id) { return S.sellers.filter(function (s) { return s.id === id; })[0]; }
 function ditem(id) { return S.dict.filter(function (s) { return s.id === id; })[0]; }
-function dictDone(j) { S.dict = j.items; render(); }
+function dictDone(j) { S.dict = j.items; S.dirty = 1; render(); }
 function productsDone(j) { S.products = j.items; S.dict = j.dict; render(); }
 function sellersDone(j) { S.sellers = j.items; render(); }
 
@@ -1701,7 +1739,7 @@ var A = {
     var el = document.createElement('dialog');
     el.id = 'ovdlg'; el.className = 'md';
     el.innerHTML = '<h3>Заказ №' + o.num + ' (просмотр)</h3><div class="vb">' + ordHtml(o) + '</div>' +
-      '<div class="rw"><button class="ghost" data-c>Закрыть</button></div>';
+      '<div class="rw" style="justify-content:space-between"><button class="ghost dg" data-a="delOrd" data-id="' + esc(o.id) + '">Удалить</button><button class="ghost" data-c>Закрыть</button></div>';
     el.querySelector('[data-c]').onclick = function () { el.close(); };
     el.addEventListener('close', function () { el.remove(); });
     openD(el);
@@ -1723,7 +1761,7 @@ var A = {
     S.btn = null;
     delGate({what: 'заказ №' + o.num, action: 'orders.delete', id: o.id,
       note: o.status === 'done' ? 'Заказ завершен: товары из него вернутся на склад.' : o.status === 'cancelled' ? '' : 'Резерв товара по этому заказу будет снят.',
-      done: function (j) { ordDone(j); toast('Заказ удален'); }});
+      done: function (j) { var m = document.getElementById('ovdlg'); if (m) m.close(); ordDone(j); toast('Заказ удален'); }});
   },
   oTog: function (d) {
     S.btn = null;
@@ -1788,6 +1826,7 @@ var A = {
   },
   oEditLine: function (d) {
     var i = +d.i, l = O.lines[i]; if (!l) return;
+    if (window.matchMedia('(max-width:799px)').matches) { S.btn = null; return oLineDlg(i); }
     O.ei = i; O.eb = {vid: l.vid, qty: String(l.qty)}; oRedraw();
     var el = document.querySelector('#odlg .eq'); if (el) { el.focus(); el.select(); }
   },
@@ -1950,6 +1989,9 @@ var A = {
     if (!doc) return;
     S.btn = null;
     var el = view(DOC[doc.type] + ' №' + doc.num, docHtml(doc, S.dl[d.id]));
+    el.id = 'dvdlg';
+    var rw = el.querySelector('.rw'); rw.style.justifyContent = 'space-between';
+    rw.insertAdjacentHTML('afterbegin', '<button class="ghost dg" data-a="delDoc" data-id="' + esc(doc.id) + '">Удалить</button>');
     if (S.dl[d.id]) return;
     docLines(d.id, true).then(function (ls) {
       var vb = el.querySelector('.vb'); if (vb) vb.innerHTML = docHtml(doc, ls);
@@ -1963,7 +2005,7 @@ var A = {
       adjust: 'Изменения остатков по этой корректировке будут отменены, если товар еще не использован.',
       pricing: 'Цены товаров останутся прежними: исчезнет только запись о документе.'};
     delGate({what: 'документ «' + DOC[x.type] + ' №' + x.num + '»', action: 'docs.delete', id: x.id, note: notes[x.type],
-      done: function (j) { delete S.dl[x.id]; keepLines(j.items); S.docs = j.items; S.products = j.products; S.dict = j.dict; render(); toast('Документ удален'); }});
+      done: function (j) { var m = document.getElementById('dvdlg'); if (m) m.close(); delete S.dl[x.id]; keepLines(j.items); S.docs = j.items; S.products = j.products; S.dict = j.dict; render(); toast('Документ удален'); }});
   },
   dt: function (d) { S.dt = d.k; render(); },
   addDict: function () {
@@ -1976,6 +2018,12 @@ var A = {
     ask('Переименовать', [{l: 'Название', v: x.name}], 'Сохранить', function (v) {
       return call('dict.rename', {id: x.id, name: v[0]}).then(dictDone);
     });
+  },
+  refDict: function () {
+    call('dict.list').then(function (j) {
+      S.dict = j.items; S.dirty = 0; S.ts = {}; S.sig = {};
+      toast('Справочники обновлены'); render();
+    }).catch(function (e) { toast(e.message); });
   },
   arcDict: function (d) { call('dict.archive', {id: d.id}).then(dictDone).catch(function (e) { toast(e.message); }); },
   resDict: function (d) { call('dict.restore', {id: d.id}).then(dictDone).catch(function (e) { toast(e.message); }); },
@@ -1996,6 +2044,11 @@ var A = {
   copyInfo: function () { copy(diag(), 'Диагностика скопирована'); }
 };
 
+function closeMenus(e) {
+  document.querySelectorAll('details.menu[open]').forEach(function (m) { if (!m.contains(e.target)) m.open = false; });
+}
+document.addEventListener('pointerdown', closeMenus, true);
+document.addEventListener('touchstart', closeMenus, {capture: true, passive: true});
 document.addEventListener('click', function (e) {
   document.querySelectorAll('details.menu[open]').forEach(function (m) { if (!m.contains(e.target)) m.open = false; });
   if (S.more && !e.target.closest('.more') && !e.target.closest('[data-a="more"]')) { S.more = false; render(); }
@@ -2038,7 +2091,6 @@ document.addEventListener('input', function (e) {
   var o = ord(t.dataset.ttn), len = o ? oTtnLen(o) : 14, box = t.closest('.ttn');
   var v = t.value.replace(/\D/g, '').slice(0, len);
   if (t.value !== v) t.value = v;
-  box.querySelector('.ttn-c').textContent = v.length + '/' + len;
   box.querySelector('.ttn-e').textContent = '';
 });
 document.addEventListener('keydown', function (e) {
