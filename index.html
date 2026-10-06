@@ -31,6 +31,7 @@ nav{display:flex;flex-direction:column;gap:4px}
 nav button{text-align:left;border-color:transparent;background:none}
 nav button.on{background:var(--acbg);color:var(--ac);font-weight:600}
 nav .mb,.more{display:none}
+.ni{display:none}
 .rw{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .g8{gap:8px}
 .cd{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-top:8px}
@@ -170,7 +171,7 @@ button.dg:disabled{cursor:default}
 .vrow input{margin:0;flex:1;min-width:0}
 .vrow.off input{text-decoration:line-through;opacity:.5}
 /* документы */
-.dr{display:grid;grid-template-columns:150px minmax(0,1.3fr) 130px minmax(0,1fr) minmax(0,1.6fr) 92px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:6px 6px 6px 0}
+.dr{display:grid;grid-template-columns:150px minmax(0,1.3fr) 130px minmax(0,1fr) minmax(0,1.6fr) 108px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:6px 6px 6px 0}
 .dr.hd0{background:none;border:0;margin-top:12px;padding-top:0;padding-bottom:0}
 .dr.hd0 .dc{font-size:12px;color:var(--mu)}
 .dc{padding:2px 12px;border-left:1px solid var(--bd);min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -180,7 +181,9 @@ button.dg:disabled{cursor:default}
 .dn small{display:block;color:var(--mu);font-size:11px}
 .dm{font-weight:600;white-space:nowrap}
 .dk{color:var(--mu)}
-.de{justify-self:end;display:flex;gap:4px}
+.de{justify-self:end;display:flex;gap:6px}
+.de .ic{width:44px;height:44px}
+.de .ic svg{width:22px;height:22px}
 .tbw{overflow-x:auto;margin:6px 0}
 .tb{width:100%;border-collapse:collapse}
 .tb th,.tb td{padding:8px 10px;border-bottom:1px solid var(--bd);text-align:left}
@@ -201,7 +204,12 @@ button.dg:disabled{cursor:default}
 nav{position:fixed;left:0;right:0;bottom:0;flex-direction:row;background:var(--card);border-top:1px solid var(--bd);padding:8px 8px calc(8px + env(safe-area-inset-bottom));gap:6px;z-index:5}
 nav button{flex:1;text-align:center;padding:15px 4px;min-height:54px;font-size:15px;border-radius:12px}
 nav .xt{display:none}
-nav .mb{display:block;font-size:22px;line-height:1;flex:0 0 64px}
+nav .mb{display:block;line-height:1;flex:0 0 64px}
+nav .ni,.more .ni{display:flex;align-items:center;justify-content:center}
+nav .ni svg{width:27px;height:27px}
+nav .nt{display:none}
+.more button{display:flex;align-items:center;gap:14px}
+.more .ni svg{width:24px;height:24px}
 .more{display:flex;flex-direction:column;position:fixed;left:8px;right:8px;bottom:88px;z-index:6;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:6px;box-shadow:0 8px 28px rgba(0,0,0,.22)}
 .more button{border:0;background:none;text-align:left;padding:16px 14px;font-size:16px;border-radius:10px}
 .more button.on{background:var(--acbg);color:var(--ac);font-weight:600}
@@ -244,7 +252,7 @@ nav .mb{display:block;font-size:22px;line-height:1;flex:0 0 64px}
 .pl{flex-wrap:wrap}
 .pl-n{flex:1 1 100%}
 .pl input{flex:1;width:auto}
-.dr{grid-template-columns:auto minmax(0,1fr) auto 88px;grid-template-areas:"n s m e" "u u k k";row-gap:4px;padding:8px 6px 8px 0}
+.dr{grid-template-columns:auto minmax(0,1fr) auto 106px;grid-template-areas:"n s m e" "u u k k";row-gap:4px;padding:8px 6px 8px 0}
 .dr.hd0{display:none}
 .dr .dn{grid-area:n}.dr .ds{grid-area:s}.dr .dm{grid-area:m}.dr .du{grid-area:u}.dr .dk{grid-area:k}.dr .de{grid-area:e}
 .dr .du,.dr .dk{border-left:0;padding-top:0;font-size:13px}
@@ -263,10 +271,12 @@ input[readonly]{background:var(--bg);color:var(--mu);cursor:default}
 .menu>div button.on{background:var(--acbg);color:var(--ac);font-weight:600}
 .menu.st summary,.menu.st summary:hover{border:0;padding:0;background:none}
 .menu.st summary span{cursor:pointer}
+.oc .bdg{font-size:15px;padding:7px 14px;border-radius:9px}
+.oc .bdg svg{width:18px;height:18px}
 button.lk{border:0;background:none;padding:0;text-align:left;color:inherit;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;font-size:15px}
 button.lk:not(:disabled):hover,button.lk:active{background:none;border-color:transparent;text-decoration:underline}
 /* клиенты: сегменты */
-.cr{display:grid;grid-template-columns:90px minmax(0,1.6fr) 110px 160px minmax(0,1.2fr) 46px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:8px 6px 8px 0;max-width:1000px}
+.cr{display:grid;grid-template-columns:90px minmax(0,1.6fr) 110px 160px minmax(0,1.2fr) 46px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:8px 6px 8px 0}
 .cr.hd0{background:none;border:0;margin-top:12px;padding-top:0;padding-bottom:0}
 .cr.hd0 .dc{font-size:12px;color:var(--mu);border-left-color:transparent}
 .cr .cn{font-weight:600;color:var(--mu)}
@@ -279,7 +289,6 @@ button.lk:not(:disabled):hover,button.lk:active{background:none;border-color:tra
 dialog.cf{width:min(94vw,420px)}
 .cg,.cg2{display:block}
 /* заказы: сегменты */
-.oc,.oh0{max-width:1000px}
 .oc{background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:8px 6px 8px 0}
 .oh0{margin-top:12px;padding:0 7px 0 1px}
 .oh0 .dc{font-size:12px;color:var(--mu);border-left-color:transparent}
@@ -307,6 +316,10 @@ dialog.cf{width:min(94vw,420px)}
 .og .two>*{flex:1 1 200px}
 .mshow{display:none}
 .ot td.ta{white-space:nowrap}
+.ot input,.ot select{margin:0;padding:6px 8px;font-size:15px}
+.ot input.eq{width:84px;text-align:right}
+.ot .oe td{background:var(--acbg)}
+.ot .oe .mu{font-size:12px;margin-top:2px}
 .ot .ta .ic{display:inline-flex;vertical-align:middle;margin-left:4px}
 .dp{display:flex;align-items:center;gap:6px;flex:0 0 auto}
 .dp input{width:90px;margin:0}
@@ -319,21 +332,19 @@ dialog.cf{width:min(94vw,780px)}
 .cg2{display:grid;grid-template-columns:1fr 1fr;column-gap:12px}
 .og{display:grid;grid-template-columns:minmax(0,500px) minmax(0,1fr);grid-template-areas:"a i" "b i";column-gap:28px;align-items:start}
 .oga{grid-area:a}.ogb{grid-area:b}
+.og{padding-bottom:18px;margin-bottom:16px;border-bottom:1px solid var(--bd)}
 .ogi{grid-area:i;display:block;margin-top:0;position:sticky;top:0}
+.ogi.cd{border:0;border-left:1px solid var(--bd);border-radius:0;background:none;padding:0 0 0 28px}
+.ogi.cd:hover{border-color:var(--bd)}
 /* склад: сегменты */
 .stock-row{display:contents}
 .sg{display:flex;align-items:center;justify-content:center;align-self:stretch;padding:0 12px;border-left:1px solid var(--bd)}
 .sg.sp{flex:0 0 150px}.sg.sq{flex:0 0 120px}.sg.ss{flex:0 0 190px}
 .sg.so{flex:0 0 54px;padding:0 0 0 10px}
-.sg.sv{flex:1 1 auto;justify-content:flex-start;border-left:0;padding-left:0}
 .pc-main{padding-right:14px}
-.pc-vars{display:block;margin-top:10px;padding-top:0;border-top:1px solid var(--bd)}
-.pc-var{display:flex;flex-direction:row;align-items:stretch;gap:0;border:0;border-bottom:.5px solid var(--bd);border-radius:0;padding:6px 0}
-.pc-var:last-child{border-bottom:0;padding-bottom:0}
-.pc-var .sg{padding-top:2px;padding-bottom:2px}
-.pc-var .sg.sq{flex:0 0 150px}
 }
 @media(max-width:799px){
+.sg.sa{display:none}
 .cr{grid-template-columns:minmax(0,1fr) auto 44px;grid-template-areas:"m n e" "p p p" "o s s";row-gap:4px;padding:8px 6px 8px 12px;max-width:none}
 .cr.hd0,.oh0{display:none}
 .cr .dc{border-left:0;padding:0}
@@ -359,6 +370,13 @@ dialog.cf{width:min(94vw,780px)}
 .ot th,.ot td{padding:6px 5px;font-size:13px}
 .ot th:last-child,.ot td.ta{position:sticky;right:0;background:var(--card)}
 .ot .ta .ic{margin-left:2px}
+.ot .hm{display:none}
+.ot select{max-width:92px;padding:4px 4px;font-size:14px}
+.ot input.eq{width:54px;padding:4px 4px}
+.ot .ta .ic{width:30px;height:30px}
+.ot .ta .ic svg{width:16px;height:16px}
+.ot th,.ot td{padding:6px 3px}
+.ot .oe .mu{white-space:nowrap;font-size:11px}
 }
 </style>
 </head>
@@ -369,7 +387,8 @@ dialog.cf{width:min(94vw,780px)}
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
 var NEED = 8; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var BUILD = '2026-10-05b';
+var VER = 'ver0.3.3'; // 0 = бета, 3 = этап разработки, 3 = номер правки
+var BUILD = '2026-10-06';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
 var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category',
@@ -379,7 +398,7 @@ var DT = {category: 'Категории', material: 'Материалы', vartyp
   payment: 'Способы оплаты', delivery: 'Способы доставки', discount_reason: 'Причины скидок',
   writeoff_reason: 'Причины списания', return_reason: 'Причины возврата'};
 // третий элемент: 1 = на телефоне прячется за кнопку «⋯»
-var NAV = [['home', 'Главная'], ['orders', 'Заказы'], ['products', 'Склад'], ['docs', 'Документы'], ['clients', 'Клиенты', 1], ['settings', 'Справочники', 1], ['sellers', 'Пользователи', 1], ['info', 'Инфо', 1]];
+var NAV = [['home', 'Главная', 0, 'home'], ['orders', 'Заказы', 0, 'cart'], ['products', 'Склад', 0, 'box'], ['docs', 'Документы', 0, 'file'], ['clients', 'Клиенты', 1, 'users'], ['settings', 'Справочники', 1, 'book'], ['sellers', 'Пользователи', 1, 'user'], ['info', 'Инфо', 1, 'info']];
 
 function themeNow() {
   return document.documentElement.getAttribute('data-theme') || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -656,7 +675,7 @@ function stMenu(o) {
     }).join('') + '</div></details>';
 }
 function oMenu(o) {
-  var it = [['openOrd', 'Открыть']];
+  var it = [['openOrd', 'Просмотр']];
   if (oAct(o)) it.push(['editOrd', 'Редактировать'], ['cancelOrd', 'Отменить заказ', 'dg']);
   it.push(['delOrd', 'Удалить', 'dg']);
   return menu(it, o.id);
@@ -788,13 +807,27 @@ function oAvVal() {
   return v ? Math.max(0, oAvail(v)) + ' шт' : '—';
 }
 function oAv() { var e = document.getElementById('oav'); if (e) e.value = oAvVal(); }
+function oeAvText() {
+  var v = O.eb ? oVarObj(O.eb.vid) : null;
+  return v ? 'доступно ' + Math.max(0, oAvail(v, O.ei)) + ' шт' : '';
+}
 function oLines() {
   if (!O.lines.length) return '<p class="mu">Список пуст. Найдите товар выше и нажмите «Добавить».</p>';
-  return '<div class="tbw"><table class="tb ot"><tr><th>№</th><th>Наименование</th><th>Вариация</th><th class="r">Кол-во</th><th class="r">Цена</th><th class="r">Сумма</th><th></th></tr>' +
+  return '<div class="tbw"><table class="tb ot"><tr><th class="hm">№</th><th>Наименование</th><th>Вариация</th><th class="r">Кол-во</th><th class="r hm">Цена</th><th class="r hm">Сумма</th><th></th></tr>' +
     O.lines.map(function (l, i) {
-      var p = prod(l.pid), v = p && p.vars.filter(function (x) { return x.id === l.vid; })[0], q = Number(l.qty) || 0, pr = p ? p.price : 0;
-      return '<tr><td>' + (i + 1) + '</td><td>' + esc(p ? p.name : 'Товар удален') + '</td><td>' + (v && v.value !== 'Без вариации' ? esc(vname(v)) : '—') + '</td>' +
-        '<td class="r">' + q + ' шт</td><td class="r">' + money(pr) + '</td><td class="r"><b>' + money(q * pr) + '</b></td>' +
+      var p = prod(l.pid), v = p && p.vars.filter(function (x) { return x.id === l.vid; })[0], pr = p ? p.price : 0;
+      if (O.ei === i && O.eb) {
+        var q2 = Number(O.eb.qty) || 0;
+        return '<tr class="oe"><td class="hm">' + (i + 1) + '</td><td>' + esc(p ? p.name : 'Товар удален') + '</td><td>' +
+          (p && needVar(p) ? '<select data-o="ev" aria-label="Вариация">' + opts(activeVars(p).map(function (x) { return [x.id, vname(x)]; }), O.eb.vid) + '</select>' : '—') + '</td>' +
+          '<td class="r"><input class="eq" data-o="eq" type="number" inputmode="numeric" min="1" step="1" value="' + esc(O.eb.qty) + '" aria-label="Количество"><div class="mu" id="oeav">' + oeAvText() + '</div></td>' +
+          '<td class="r hm">' + money(pr) + '</td><td class="r hm"><b>' + money(q2 * pr) + '</b></td>' +
+          '<td class="r ta"><button type="button" class="okb ic" data-a="oLineOk" aria-label="Сохранить позицию">' + ico('check') + '</button>' +
+          '<button type="button" class="ghost ic" data-a="oLineNo" aria-label="Отменить изменение">' + ico('x') + '</button></td></tr>';
+      }
+      var q = Number(l.qty) || 0;
+      return '<tr><td class="hm">' + (i + 1) + '</td><td>' + esc(p ? p.name : 'Товар удален') + '</td><td>' + (v && v.value !== 'Без вариации' ? esc(vname(v)) : '—') + '</td>' +
+        '<td class="r">' + q + ' шт</td><td class="r hm">' + money(pr) + '</td><td class="r hm"><b>' + money(q * pr) + '</b></td>' +
         '<td class="r ta"><button type="button" class="ghost dg ic" data-a="oDel" data-i="' + i + '" aria-label="Убрать позицию">' + ico('trash') + '</button>' +
         '<button type="button" class="ghost ic" data-a="oEditLine" data-i="' + i + '" aria-label="Изменить позицию">' + ico('edit') + '</button></td></tr>';
     }).join('') + '</table></div>';
@@ -887,36 +920,11 @@ function oSync(e) {
   }
   if (k === 'mk' || k === 'mv' || k === 'mr') { O.man[{mk: 'kind', mv: 'value', mr: 'reason'}[k]] = v; oTot(); return; }
   if (k === 'ap') { O.autoPct = v; oTot(); return; }
+  if (k === 'ev' && O.eb) { O.eb.vid = v; var ae = document.getElementById('oeav'); if (ae) ae.textContent = oeAvText(); return; }
+  if (k === 'eq' && O.eb) { O.eb.qty = v; return; }
   if (O[k] === v) return;
   O[k] = v;
   if (k === 'vid') oAv();
-}
-
-// окно изменения одной позиции заказа
-function oLineDlg(i) {
-  var l = O.lines[i], p = prod(l.pid), d = document.createElement('dialog');
-  d.innerHTML = '<form method="dialog" novalidate><h3>' + esc(p ? p.name : 'Позиция') + '</h3>' +
-    (p && needVar(p) ? '<label>Вариация</label><select name="lv">' + opts(activeVars(p).map(function (v) { return [v.id, vname(v)]; }), l.vid) + '</select>' : '') +
-    '<label>Количество</label><input name="lq" type="number" inputmode="numeric" min="1" step="1" value="' + esc(l.qty) + '">' +
-    '<p class="mu" data-av style="margin:-4px 0 8px"></p><p class="er"></p>' +
-    '<div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">Сохранить</button></div></form>';
-  var f = d.querySelector('form'), er = d.querySelector('.er'), av = d.querySelector('[data-av]');
-  var cur = function () { return f.elements.lv ? f.elements.lv.value : l.vid; };
-  var upd = function () { var v = oVarObj(cur()); av.textContent = v ? 'Доступно: ' + Math.max(0, oAvail(v, i)) + ' шт' : ''; };
-  d.querySelector('[data-c]').onclick = function () { d.close(); };
-  f.addEventListener('input', function (e) { e.target.classList.remove('bad'); });
-  f.addEventListener('change', upd); upd();
-  f.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var q = Number(f.elements.lq.value), vid = cur(), v = oVarObj(vid);
-    if (!vid) { er.textContent = 'Выберите вариацию'; return; }
-    if (!f.elements.lq.value.trim() || !isFinite(q) || q <= 0 || Math.floor(q) !== q) { f.elements.lq.classList.add('bad'); er.textContent = 'Введите целое количество больше 0'; return; }
-    if (v && q > oAvail(v, i)) { f.elements.lq.classList.add('bad'); er.textContent = 'Доступно только ' + Math.max(0, oAvail(v, i)) + ' шт.'; return; }
-    if (O.lines.some(function (x, j) { return j !== i && x.vid === vid; })) { er.textContent = 'Эта позиция уже есть в списке'; return; }
-    l.vid = vid; l.qty = String(q); d.close(); oRedraw();
-  });
-  d.addEventListener('close', function () { d.remove(); });
-  openD(d);
 }
 
 var D = null;
@@ -955,6 +963,14 @@ var IC = {
   sun: '<path d="M8 12a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/>',
   moon: '<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/>',
   trash: '<path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/>',
+  home: '<path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/>',
+  cart: '<path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"/><path d="M17 17h-11v-14h-2"/><path d="M6 5l14 1l-1 7h-13"/>',
+  box: '<path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"/><path d="M12 12l8 -4.5"/><path d="M12 12l0 9"/><path d="M12 12l-8 -4.5"/>',
+  file: '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M9 17h6"/><path d="M9 13h6"/>',
+  users: '<path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0 -3 -3.85"/>',
+  book: '<path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6l0 13"/><path d="M12 6l0 13"/><path d="M21 6l0 13"/>',
+  user: '<path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/>',
+  info: '<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/><path d="M12 9h.01"/><path d="M11 12h1v4h1"/>',
   'chevron-down': '<path d="M6 9l6 6l6 -6"/>',
   'alert-triangle': '<path d="M12 9v4"/><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"/><path d="M12 16h.01"/>'
 };
@@ -1007,8 +1023,12 @@ function cardHtml(p) {
     var q = vs.length ? vs[0].stock : 0;
     return '<div class="pc single"><div class="pc-head">' + head + '<div class="stock-row">' + sg('sp', price) + sg('sq', qtyBox(q)) + sg('ss', badge(q, p.min)) + '</div>' + sg('so', m) + '</div></div>';
   }
-  return '<div class="pc"><div class="pc-head">' + head + sg('sp', price) + sg('so', m) + '</div><div class="pc-vars">' + vs.map(function (v) {
-    return '<div class="pc-var">' + sg('sv', '<span class="vl">' + vlabel(v) + '</span>') + sg('sq', qtyBox(v.stock)) + sg('ss', badge(v.stock, p.min)) + '</div>';
+  var tot = vs.reduce(function (a, v) { return a + v.stock; }, 0);
+  var ag = tot === 0 ? ['no', 'circle-x', 'Нет в наличии']
+    : vs.some(function (v) { return status(v.stock, p.min)[0] !== 'ok'; }) ? ['low', 'alert-triangle', 'Заканчивается'] : ['ok', 'circle-check', 'В наличии'];
+  return '<div class="pc"><div class="pc-head">' + head + sg('sp', price) + sg('sq sa', qtyBox(tot)) +
+    sg('ss sa', '<span class="bdg ' + ag[0] + '" title="Итог по всем вариациям">' + ico(ag[1]) + ag[2] + '</span>') + sg('so', m) + '</div><div class="pc-vars">' + vs.map(function (v) {
+    return '<div class="pc-var"><div class="pc-vrow"><span class="vl">' + vlabel(v) + '</span>' + qtyBox(v.stock) + '</div>' + badge(v.stock, p.min) + '</div>';
   }).join('') + '</div></div>';
 }
 
@@ -1062,9 +1082,7 @@ function docsPage() {
   }).join('');
   var items = S.docs.filter(function (x) { return x.type === S.df; });
   var sec = {receipt: 'Поставщик', writeoff: 'Причина', pricing: 'Позиций', adjust: 'Позиций'}[S.df];
-  return '<div class="rw"><h2>Документы</h2><details class="menu"><summary class="pri">Создать</summary><div>' +
-    ['receipt', 'pricing', 'writeoff', 'adjust'].map(function (t) { return '<button data-a="newDoc" data-t="' + t + '">' + DOC[t] + '</button>'; }).join('') +
-    '</div></details></div><div class="chips">' + chips + '</div>' +
+  return '<div class="rw"><h2>Документы</h2><button class="pri" data-a="newDoc" data-t="' + S.df + '" title="Создать: ' + DOC[S.df] + '">Создать</button></div><div class="chips">' + chips + '</div>' +
     (items.length
       ? '<div class="dr hd0"><div class="dc">№</div><div class="dc">' + sec + '</div><div class="dc">Сумма</div><div class="dc">Создатель</div><div class="dc">Комментарий</div><div></div></div>' +
         items.map(function (x) {
@@ -1507,7 +1525,7 @@ function infoPage() {
   var kv = function (k, v) { return '<div class="kv"><span class="mu">' + k + '</span><span>' + v + '</span></div>'; };
   var counts = Object.keys(i.counts || {}).map(function (k) { return kv(esc(k), i.counts[k]); }).join('');
   return '<h2>Инфо</h2>' +
-    '<div class="cd"><h3>Версии</h3>' + kv('Страница (index.html)', NEED + ' · сборка ' + BUILD) + kv('Скрипт (Code.gs)', i.ver) +
+    '<div class="cd"><h3>Версии</h3>' + kv('Версия', VER) + kv('Страница (index.html)', 'протокол ' + NEED + ' · сборка ' + BUILD) + kv('Скрипт (Code.gs)', 'протокол ' + i.ver + (i.release ? ' · ' + esc(i.release) : '')) +
     kv('Совпадение', same ? 'да ✓' : '<b style="color:var(--dg)">нет: обновите ' + (i.ver < NEED ? 'Code.gs и новую версию развертывания' : 'index.html') + '</b>') + '</div>' +
     '<div class="cd"><h3>Подключение</h3>' + kv('Ссылка скрипта', esc(url())) + kv('Таблица', '<a href="' + esc(i.sheetUrl) + '" target="_blank" rel="noopener">' + esc(i.sheetName) + '</a>') +
     kv('Проверка скрипта', '<a href="' + esc(url()) + '?check=1" target="_blank" rel="noopener">открыть ?check=1</a>') +
@@ -1525,7 +1543,7 @@ function infoPage() {
 }
 function diag() {
   var i = S.info || {};
-  return JSON.stringify({page: NEED, build: BUILD, script: i.ver, api: url(), tz: i.tz, counts: i.counts, ua: navigator.userAgent,
+  return JSON.stringify({ver: VER, page: NEED, build: BUILD, script: i.ver, api: url(), tz: i.tz, counts: i.counts, ua: navigator.userAgent,
     viewport: innerWidth + 'x' + innerHeight, user: S.me && S.me.login, products: S.products.length, docs: S.docs.length}, null, 2);
 }
 function copy(text, okMsg) {
@@ -1547,13 +1565,13 @@ function render() {
       '<button class="pri" data-a="login">' + (S.first ? 'Создать и войти' : 'Войти') + '</button>');
   } else if (S.view === 'app' && S.me) {
     var extra = NAV.filter(function (n) { return n[2]; });
-    h = '<div class="top"><b>Hoolshop StockUp</b><div class="rw g8"><button class="ghost ic" data-a="theme" aria-label="Сменить тему" title="Сменить тему">' + ico(themeNow() === 'dark' ? 'sun' : 'moon') + '</button><span class="sess">Текущий сеанс:</span><details class="menu"><summary>' + esc(S.me.name) + ' ▾</summary><div><button data-a="myPw">Сменить пароль</button><button class="dg" data-a="logout">Выйти</button></div></details></div></div>' +
+    h = '<div class="top"><div class="rw g8" style="justify-content:flex-start"><b>Hoolshop StockUp</b><span class="mu">' + VER + '</span></div><div class="rw g8"><button class="ghost ic" data-a="theme" aria-label="Сменить тему" title="Сменить тему">' + ico(themeNow() === 'dark' ? 'sun' : 'moon') + '</button><span class="sess">Текущий сеанс:</span><details class="menu"><summary>' + esc(S.me.name) + ' ▾</summary><div><button data-a="myPw">Сменить пароль</button><button class="dg" data-a="logout">Выйти</button></div></details></div></div>' +
       '<div class="wrap"><nav>' + NAV.map(function (n) {
-        return '<button class="' + (S.page === n[0] ? 'on' : '') + (n[2] ? ' xt' : '') + '" data-a="nav" data-p="' + n[0] + '">' + n[1] + '</button>';
-      }).join('') + '<button class="mb ' + (extra.some(function (n) { return n[0] === S.page; }) ? 'on' : '') + '" data-a="more" aria-label="Еще разделы">⋯</button></nav>' +
+        return '<button class="' + (S.page === n[0] ? 'on' : '') + (n[2] ? ' xt' : '') + '" data-a="nav" data-p="' + n[0] + '" aria-label="' + n[1] + '" title="' + n[1] + '"><span class="ni">' + ico(n[3]) + '</span><span class="nt">' + n[1] + '</span></button>';
+      }).join('') + '<button class="mb ' + (extra.some(function (n) { return n[0] === S.page; }) ? 'on' : '') + '" data-a="more" aria-label="Еще разделы" title="Еще"><span class="ni">' + ico('dots') + '</span></button></nav>' +
       '<main' + (S.fx ? ' class="fx"' : '') + '>' + page() + '</main></div>' +
       (S.more ? '<div class="more">' + extra.map(function (n) {
-        return '<button class="' + (S.page === n[0] ? 'on' : '') + '" data-a="nav" data-p="' + n[0] + '">' + n[1] + '</button>';
+        return '<button class="' + (S.page === n[0] ? 'on' : '') + '" data-a="nav" data-p="' + n[0] + '"><span class="ni">' + ico(n[3]) + '</span><span class="nt">' + n[1] + '</span></button>';
       }).join('') + '</div>' : '');
   } else { h = ''; }
   var ae = document.activeElement, keep = ae && ae.id === 'q' && ae.selectionStart != null ? [ae.selectionStart, ae.selectionEnd] : null;
@@ -1680,12 +1698,9 @@ var A = {
   os: function (d) { S.os = d.k; render(); },
   openOrd: function (d) {
     var o = ord(d.id); if (!o) return;
-    var el = document.createElement('dialog'), id = esc(o.id), b = function (s, label, cls) { return '<button class="' + cls + '" data-a="ordSt" data-id="' + id + '" data-s="' + s + '">' + label + '</button>'; };
+    var el = document.createElement('dialog');
     el.id = 'ovdlg'; el.className = 'md';
-    el.innerHTML = '<h3>Заказ №' + o.num + '</h3><div class="vb">' + ordHtml(o) + '</div><p class="er" id="oer"></p>' +
-      (oAct(o) ? '<div class="rw" style="flex-wrap:wrap;gap:8px;margin:10px 0"><button class="ghost" data-a="editOrd" data-id="' + id + '">Редактировать</button>' +
-        (o.status === 'new' ? b('paid', 'Оплачен', 'ghost') : '') + (o.status !== 'sent' ? b('sent', 'Отправлен', 'ghost') : '') +
-        b('done', 'Завершить', 'pri') + b('cancelled', 'Отменить заказ', 'ghost dg') + '</div>' : '') +
+    el.innerHTML = '<h3>Заказ №' + o.num + ' (просмотр)</h3><div class="vb">' + ordHtml(o) + '</div>' +
       '<div class="rw"><button class="ghost" data-c>Закрыть</button></div>';
     el.querySelector('[data-c]').onclick = function () { el.close(); };
     el.addEventListener('close', function () { el.remove(); });
@@ -1771,8 +1786,24 @@ var A = {
     if (ex) ex.qty = String((Number(ex.qty) || 0) + q); else O.lines.push({pid: p.id, vid: O.vid, qty: String(q)});
     O.pid = ''; O.vid = ''; O.q = ''; O.qty = ''; oRedraw();
   },
-  oEditLine: function (d) { oLineDlg(+d.i); },
-  oDel: function (d) { O.lines.splice(+d.i, 1); oRedraw(); },
+  oEditLine: function (d) {
+    var i = +d.i, l = O.lines[i]; if (!l) return;
+    O.ei = i; O.eb = {vid: l.vid, qty: String(l.qty)}; oRedraw();
+    var el = document.querySelector('#odlg .eq'); if (el) { el.focus(); el.select(); }
+  },
+  oLineNo: function () { O.ei = null; O.eb = null; oRedraw(); },
+  oLineOk: function () {
+    var i = O.ei, l = O.lines[i], er = document.getElementById('oper'), qi = document.querySelector('#odlg .eq');
+    if (!l || !O.eb) return;
+    var q = Number(O.eb.qty), vid = O.eb.vid, v = oVarObj(vid);
+    var bad = function (m) { if (er) er.textContent = m; if (qi) qi.classList.add('bad'); };
+    if (!vid) return bad('Выберите вариацию');
+    if (!String(O.eb.qty).trim() || !isFinite(q) || q <= 0 || Math.floor(q) !== q) return bad('Введите целое количество больше 0');
+    if (v && q > oAvail(v, i)) return bad('Доступно только ' + Math.max(0, oAvail(v, i)) + ' шт.');
+    if (O.lines.some(function (x, j) { return j !== i && x.vid === vid; })) return bad('Эта позиция уже есть в списке');
+    l.vid = vid; l.qty = String(q); O.ei = null; O.eb = null; oRedraw();
+  },
+  oDel: function (d) { O.ei = null; O.eb = null; O.lines.splice(+d.i, 1); oRedraw(); },
   oAuto: function () { O.autoOff = !O.autoOff; oRedraw(); },
   oMan: function () { O.man = O.man ? null : {kind: 'sum', value: '', reason: ''}; oRedraw(); },
   oNewC: function () {
@@ -2011,6 +2042,7 @@ document.addEventListener('input', function (e) {
   box.querySelector('.ttn-e').textContent = '';
 });
 document.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter' && O && e.target.dataset && e.target.dataset.o === 'eq') { e.preventDefault(); S.btn = null; A.oLineOk(); return; }
   if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('ttn-i')) {
     e.preventDefault(); S.btn = null; A.ttnSave({id: e.target.dataset.ttn});
   }
