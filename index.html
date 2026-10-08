@@ -485,6 +485,16 @@ button.rvok{padding:0;cursor:pointer}
 .more{animation:moreIn .2s ease both;transform-origin:bottom right}
 .more.out{animation:moreOut .14s ease both}
 }
+
+/* ===== версия 0.5.4 ===== */
+.ovh{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 14px;padding-bottom:12px;margin-bottom:10px;border-bottom:1px solid var(--bd)}
+.ovh b{font-weight:500;overflow-wrap:anywhere}
+.ovh .mu{font-size:12px}
+.ovg{padding-bottom:6px;margin-bottom:12px;border-bottom:1px solid var(--bd)}
+.rtb{border:.5px solid var(--bd);border-radius:10px;background:var(--card);padding:0 12px;margin-top:6px}
+.rtb .tbw{margin:0}
+.rtb .tb tr:last-child td{border-bottom:0}
+.rgc{font-weight:400;font-size:13px;margin-left:6px}
 </style>
 </head>
 <body>
@@ -495,7 +505,7 @@ button.rvok{padding:0;cursor:pointer}
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
 var NEED = 11; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var VER = 'ver0.5.3'; // 0 = бета, 5 = этап разработки, 1 = номер правки
+var VER = 'ver0.5.4'; // 0 = бета, 5 = этап разработки, 1 = номер правки
 var BUILD = '2026-10-08';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
@@ -929,10 +939,14 @@ function ordersPage() {
     '<div id="olist">' + olist() + '</div>';
 }
 function ordHtml(o) {
-  var meta = '<div class="dmeta"><span>Дата: ' + fdt(o.created) + '</span><span>Статус: ' + OST[o.status] + '</span><span>Создал: ' + esc(o.seller) + '</span>' +
-    (o.clientName ? '<span>Клиент: ' + esc(o.clientName) + '</span>' : '') + (o.source ? '<span>Источник: ' + esc(o.source) + '</span>' : '') +
-    (o.payment ? '<span>Оплата: ' + esc(o.payment) + (payNeed(o) ? (o.payOk ? ' (оплачено)' : ' (не оплачено)') : '') + '</span>' : '') + (o.delivery ? '<span>Доставка: ' + esc(o.delivery) + '</span>' : '') + (o.address ? '<span>Адрес: ' + esc(o.address) + '</span>' : '') +
-    (o.ttn ? '<span>ТТН: ' + esc(o.ttn) + '</span>' : '') + '</div>';
+  var cl = client(o.clientId);
+  var it = function (k, v) { return '<div><div class="mu">' + k + '</div><b>' + v + '</b></div>'; };
+  var kv = function (k, v) { return '<div class="kv"><span class="mu">' + k + '</span><span>' + v + '</span></div>'; };
+  var dash = function (v) { return v ? esc(v) : '—'; };
+  var meta = '<div class="ovh">' + it('Дата', fdt(o.created)) + it('Статус', OST[o.status]) + it('Создал', dash(o.seller)) + '</div>' +
+    '<div class="ovg">' + kv('Клиент', dash(cl ? cfio(cl) : o.clientName)) + kv('Номер телефона', dash(cl && cl.phone)) + kv('Доставка', dash(o.delivery)) +
+    kv('Адрес', dash(o.address)) + kv('Оплата', o.payment ? esc(o.payment) + (payNeed(o) ? (o.payOk ? ' (оплачено)' : ' (не оплачено)') : '') : '—') +
+    (o.source ? kv('Источник', esc(o.source)) : '') + (o.ttn ? kv('ТТН', esc(o.ttn)) : '') + '</div>';
   var tbl = '<tr><th>Наименование</th><th class="r">Кол-во</th><th class="r">Цена</th><th class="r">Сумма</th></tr>' + o.lines.map(function (l) {
     return '<tr><td>' + esc(l.label) + '</td><td class="r">' + l.qty + ' шт</td><td class="r">' + money(l.price) + '</td><td class="r">' + money(l.qty * l.price) + '</td></tr>';
   }).join('');
@@ -1439,20 +1453,20 @@ function csvDownload(name, head, rows) {
 }
 function sumHtml() {
   var R = S.rep, s = R.sum, c = function (l, v, cls) { return '<div class="rc ' + (cls || '') + '"><p class="mu">' + l + '</p><b>' + v + '</b></div>'; };
-  var grp = function (t, body) { return '<div class="rgrp"><h3 class="rgh">' + t + '</h3>' + body + '</div>'; };
+  var grp = function (t, body, cap) { return '<div class="rgrp"><h3 class="rgh">' + t + (cap ? ' <span class="mu rgc">' + cap + '</span>' : '') + '</h3>' + body + '</div>'; };
   var top = R.products.filter(function (p) { return p.qty > 0; }).sort(function (a, b) { return b.qty - a.qty || b.revenue - a.revenue || a.name.localeCompare(b.name, 'ru'); }).slice(0, 10);
-  var topH = top.length ? top.map(function (p, i) {
-    return '<div class="kv"><span><span class="mu">' + (i + 1) + '.</span> ' + esc(p.name) + '</span><span>' + p.qty + ' шт · ' + money(p.revenue) + '</span></div>';
-  }).join('') : '<p class="mu" style="margin:0">За период продаж не было.</p>';
+  var topH = top.length ? '<div class="rtb">' + tableHtml({cols: [['№', 't'], ['Товар', 't'], ['Продано, шт', 'n'], ['Выручка', 'm']],
+    rows: top.map(function (p, i) { return [i + 1, p.name, p.qty, p.revenue]; })}) + '</div>' : '<p class="mu" style="margin:0">За период продаж не было.</p>';
   var sq = s.stockQty == null ? '—' : s.stockQty + ' шт', sc = s.stockCost == null ? '—' : money(s.stockCost);
   return '<div class="rgs">' +
-    grp('Продажи', '<div class="rg">' + c('Заказов', s.orders) + c('Выручка', money(s.revenue)) + c('Скидки', money(s.discounts)) + c('Прибыль', money(s.profit), s.profit < 0 ? 'bad' : 'good') + '</div>') +
+    grp('Продажи', '<div class="rg">' + c('Заказов', s.orders) + c('Выручка', money(s.revenue)) + c('Скидки', money(s.discounts)) + c('Прибыль', money(s.profit), s.profit < 0 ? 'bad' : 'good') +
+      c('Прибыль после рекламы', money(s.profitAfterAd), s.profitAfterAd < 0 ? 'bad' : 'good') + '</div>') +
+    grp('Расходы', '<div class="rg">' + c('Закупки', money(s.purchases)) + c('Потрачено на рекламу', money(s.ad)) + c('Подарки', s.gifts == null ? '—' : money(s.gifts)) + '</div>') +
     grp('Популярные товары', topH) +
-    grp('Склад', '<div class="rg">' + c('Товаров на складе', sq) + c('Себестоимость склада', sc) + c('Закупки', money(s.purchases)) + '</div>') +
-    grp('Реклама', '<div class="rg">' + c('Потрачено на рекламу', money(s.ad)) + c('Прибыль после рекламы', money(s.profitAfterAd), s.profitAfterAd < 0 ? 'bad' : 'good') + '</div>') +
-    grp('Возвраты / списания', '<div class="rg">' + c('Возвраты от клиентов', money(s.refunds)) + c('Списания со склада', money(s.writeoff)) + '</div>') + '</div>' +
+    grp('Возвраты / списания', '<div class="rg">' + c('Возвраты от клиентов', money(s.refunds)) + c('Списания со склада', money(s.writeoff)) + '</div>') +
+    grp('Склад', '<div class="rg">' + c('Товаров на складе', sq) + c('Себестоимость склада', sc) + '</div>', 'от периода не зависит') + '</div>' +
     '<p class="mu" style="margin:12px 0 0">Выручка: завершенные заказы за период с учетом скидок. Возвраты вычитаются в день возврата. Прибыль = выручка − возвраты − себестоимость проданного (себестоимость товара, вернувшегося на склад, возвращается). ' +
-    'Реклама, закупки и списания в прибыль заказов не входят. Популярные товары: по числу проданных штук за период. Количество и себестоимость склада показаны на сегодня и от периода не зависят.</p>';
+    'Закупки, реклама и списания в прибыль заказов не входят. Подарки: списания с причиной «Подарок» (они же входят в списания). Популярные товары: по числу проданных штук за период.</p>';
 }
 function reportsPage() {
   if (!S.rp) rpSet('month');
