@@ -343,7 +343,7 @@ dialog.cf{width:min(94vw,780px)}
 /* склад: сегменты */
 .stock-row{display:contents}
 .sg{display:flex;align-items:center;justify-content:center;align-self:stretch;padding:0 12px;border-left:1px solid var(--bd)}
-.sg.sp{flex:0 0 150px}.sg.sq{flex:0 0 120px}.sg.ss{flex:0 0 190px}
+.sg.sp{flex:0 0 150px}.sg.sq{flex:0 0 120px}.sg.ss{flex:0 0 225px}
 .sg.so{flex:0 0 54px;padding:0 0 0 10px}
 .pc-main{padding-right:14px}
 }
@@ -445,22 +445,42 @@ nav .mb:active{transform:scale(.92)}
 .cr .cv{grid-area:v;padding-top:2px}
 .pbn{margin-left:6px}
 }
+
+/* ===== версия 0.5.2 ===== */
+#gs{position:fixed;inset:auto;top:60px;right:16px;left:auto;bottom:auto;margin:0;width:auto;height:auto;z-index:95;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:5px 12px 5px 10px;font-size:13px;color:var(--mu);box-shadow:0 4px 14px rgba(0,0,0,.14);overflow:visible;pointer-events:none}
+#gs[hidden]{display:none}
+#gs i{display:block;width:14px;height:14px;border:2px solid var(--ac);border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+.chk{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:15px;color:var(--tx);cursor:pointer}
+.chk input[type=checkbox]{width:18px;height:18px;margin:0;padding:0;accent-color:var(--ac)}
+.pfx{position:relative}
+.pfx>span{position:absolute;left:12px;top:0;height:calc(100% - 10px);display:flex;align-items:center;color:var(--mu);font-size:16px;pointer-events:none}
+.pfx>input{padding-left:30px}
+#oav{font-weight:600}
+#oav.av-ok{color:var(--gt)}
+#oav.av-low{color:var(--wt)}
+#oav.av-no{color:var(--dt)}
+.gdisc{color:var(--gt);font-weight:600}
+.gdot{display:inline-block;width:9px;height:9px;margin-left:8px;border-radius:50%;background:#26a65b;vertical-align:1px}
+@media(max-width:799px){
+dialog.cf textarea{height:44px;min-height:0;resize:none;overflow-y:auto}
+}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <div id="gl" popover="manual" hidden><div class="glc"><i></i><b>Загрузка...</b><span id="glp"></span></div></div>
+<div id="gs" popover="manual" hidden><i></i><span>Сохранение…</span></div>
 <div id="toast" role="status"></div>
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
 var NEED = 11; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var VER = 'ver0.5.1'; // 0 = бета, 5 = этап разработки, 1 = номер правки
+var VER = 'ver0.5.2'; // 0 = бета, 5 = этап разработки, 1 = номер правки
 var BUILD = '2026-10-08';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
 var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category',
   ld: {}, ts: {}, sig: {}, dl: {}, lerr: {}, fx: 0, products: [], docs: [], df: 'receipt', q: '', tab: 'all', cat: '', more: false, busy: 0, info: null,
-  sort: localStorage.getItem('sort') || 'name', orders: [], clients: [], loy: [], promos: [], promoAll: [], reviewAmt: 0, pa: 0, rep: null, rp: null, rv: 'sum', rt: 'qty', ads: [], aa: 0, os: 'act', oq: '', ca: 0, cq: '', oo: {}, te: {}};
+  sort: localStorage.getItem('sort') || 'name', orders: [], clients: [], loy: [], promos: [], promoAll: [], reviewAmt: 0, pa: 0, rep: null, rp: null, rv: 'sum', rt: 'qty', ads: [], aa: 0, os: 'new', oq: '', ca: 0, cq: '', oo: {}, te: {}};
 var DT = {category: 'Категории', material: 'Материалы', vartype: 'Типы вариаций', supplier: 'Поставщики', source: 'Источники заказов',
   payment: 'Способы оплаты', delivery: 'Способы доставки', discount_reason: 'Причины скидок',
   writeoff_reason: 'Причины списания', return_reason: 'Причины возврата'};
@@ -503,7 +523,6 @@ function busy(n) {
       if (!S.busy) return;
       glPhrase(); g.hidden = false;
       try { if (g.showPopover) g.showPopover(); } catch (e) {}
-      S.bi = setInterval(glPhrase, 2600);
     }, 250);
   } else if (!S.busy) {
     clearTimeout(S.bt); clearInterval(S.bi);
@@ -512,13 +531,34 @@ function busy(n) {
   }
 }
 
-async function call(a, d, silent) {
+// big = true: большая анимация по центру (только загрузка страницы/вкладки и смена статуса заказа).
+// Остальные действия: крутится кнопка, а если кнопки не видно (пункт закрытого меню), показывается маленький индикатор справа вверху.
+function mini(n) {
+  var was = S.sb || 0;
+  S.sb = Math.max(0, was + n);
+  var g = document.getElementById('gs'); if (!g) return;
+  if (S.sb && !was) {
+    clearTimeout(S.st);
+    S.st = setTimeout(function () {
+      if (!S.sb) return;
+      g.hidden = false;
+      try { if (g.showPopover) g.showPopover(); } catch (e) {}
+    }, 250);
+  } else if (!S.sb) {
+    clearTimeout(S.st);
+    try { if (g.hidePopover) g.hidePopover(); } catch (e) {}
+    g.hidden = true;
+  }
+}
+async function call(a, d, silent, big) {
   var el = S.btn; S.btn = null;
   if (silent) el = null;
   if (el) el.classList.add('ld');
-  if (!silent) busy(1);
+  var sm = !big && !silent && !(el && el.offsetParent !== null);
+  if (big) busy(1);
+  if (sm) mini(1);
   try { return await call0(a, d); }
-  finally { if (!silent) busy(-1); if (el) el.classList.remove('ld'); }
+  finally { if (big) busy(-1); if (sm) mini(-1); if (el) el.classList.remove('ld'); }
 }
 var RO = {status: 1, me: 1, 'sellers.list': 1, 'dict.list': 1, 'products.list': 1, 'docs.list': 1, 'docs.get': 1, 'clients.list': 1, 'orders.list': 1, info: 1};
 function pause(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
@@ -547,8 +587,8 @@ async function init() {
   if (!url()) { S.view = 'setup'; return render(); }
   try {
     var j;
-    if (S.tk) { try { j = await call('me'); S.me = j.me; } catch (e) { S.me = null; } }
-    if (!S.me) { j = await call('status'); S.first = !j.hasSellers; }
+    if (S.tk) { try { j = await call('me', null, false, true); S.me = j.me; } catch (e) { S.me = null; } }
+    if (!S.me) { j = await call('status', null, false, true); S.first = !j.hasSellers; }
     if (!j || j.ver !== NEED) {
       var sv = j && j.ver ? j.ver : 'нет номера (старый скрипт)';
       throw new Error(j && j.ver > NEED
@@ -581,7 +621,7 @@ async function load() {
   var have = !!S.ld[L[1]];
   if (have && Date.now() - (S.ts[pg] || 0) < 30000) return;
   try {
-    var j = await call(L[0], L[3] ? L[3]() : null, have), sg = JSON.stringify(j);
+    var j = await call(L[0], L[3] ? L[3]() : null, have, !have), sg = JSON.stringify(j);
     S.ts[pg] = Date.now();
     delete S.lerr[pg];
     if (have && S.sig[pg] === sg) return;
@@ -678,8 +718,8 @@ function cinfo(c) {
   var next = (S.loy || []).filter(function (t) { return t[0] > c.n; }).sort(function (a, b) { return a[0] - b[0]; })[0];
   return '<h4 class="ci-h">' + esc(cfio(c)) + '</h4>' +
     kv('Клиент', '№' + c.num) + kv('Телефон', c.phone ? esc(c.phone) : '—') + kv('Адрес доставки', c.address ? esc(c.address) : '—') +
-    kv('Соцсеть', link) + kv('Статус', c.pct > 0 ? 'Постоянный клиент, скидка ' + c.pct + '%' : 'Обычный клиент') +
-    kv('Скидка за отзыв', c.reviewOk ? 'доступна, −' + money(S.reviewAmt) : c.review ? 'уже использована' : 'нет') +
+    kv('Соцсеть', link) + kv('Статус', c.pct > 0 ? '<span class="gdisc">Постоянный клиент, скидка ' + c.pct + '%</span>' : 'Обычный клиент') +
+    kv('Скидка за отзыв', c.reviewOk ? '<span class="gdisc">доступна, −' + money(S.reviewAmt) + '</span>' : c.review ? 'уже использована' : 'нет') +
     kv('Заказов', c.n) + kv('Сумма заказов', money(c.sum)) +
     (next ? kv('До скидки ' + next[1] + '%', 'ещё ' + (next[0] - c.n) + ' ' + plural(next[0] - c.n, ['заказ', 'заказа', 'заказов'])) : '') +
     (c.note ? kv('Заметка', esc(c.note)) : '');
@@ -694,16 +734,15 @@ function clist() {
   if (!items.length) return '<p class="mu">' + (S.clients.length ? 'Ничего не найдено.' : 'Клиентов пока нет. Нажмите «Новый клиент».') + '</p>';
   return '<div class="cr hd0"><div class="dc">Клиент</div><div class="dc">Имя, фамилия</div><div class="dc">Заказов</div><div class="dc">Сумма заказов</div><div class="dc">Телефон</div><div class="dc">Отзыв</div><div></div></div>' +
     items.map(function (c) {
-      var op = menu(c.archived ? [['resC', 'Восстановить'], ['delC', 'Удалить навсегда', 'dg']] : [['editC', 'Редактировать'], ['revC', c.review ? 'Снять отметку об отзыве' : 'Отметить: оставил отзыв'], ['arcC', 'В архив']], c.id);
+      var op = menu(c.archived ? [['resC', 'Восстановить'], ['delC', 'Удалить навсегда', 'dg']] : [['editC', 'Редактировать'], ['arcC', 'В архив']], c.id);
       return '<div class="cr' + (c.archived ? ' arc' : '') + '">' +
         '<div class="dc cn">№' + c.num + '</div>' +
-        '<div class="dc cm"><b title="' + esc(c.name) + '">' + esc(c.name) + '</b>' + (c.pct > 0 ? '<small class="cpt">Постоянный −' + c.pct + '%</small>' : '') + (c.reviewOk ? '<small class="cpt">Отзыв −' + S.reviewAmt + '</small>' : '') + '</div>' +
+        '<div class="dc cm"><b title="' + esc(c.name) + '">' + esc(c.name) + '</b>' + (c.pct > 0 ? '<small class="cpt">Постоянный −' + c.pct + '%</small>' : '') + '</div>' +
         '<div class="dc co"><span class="sl">Заказов: </span>' + c.n + '</div>' +
         '<div class="dc cs"><span class="sl">Сумма: </span>' + money(c.sum) + '</div>' +
         '<div class="dc cp">' + (c.phone ? esc(c.phone) : '—') + '</div>' +
-        '<div class="dc cv"><span class="mu">Отзыв в стори:</span>' + (c.review
-          ? '<span class="rvok" title="Отзыв оставлен">' + ico('check') + '</span>'
-          : '<button class="ghost ic" data-a="revAsk" data-id="' + esc(c.id) + '" aria-label="Отметить отзыв">' + ico('dots') + '</button>') + '</div>' +
+        '<div class="dc cv"><span class="mu">Отзыв в стори:</span>' + (c.review ? '<span class="rvok" title="Отзыв оставлен">' + ico('check') + '</span>' : '') +
+          '<button class="ghost ic" data-a="revAsk" data-id="' + esc(c.id) + '" aria-label="' + (c.review ? 'Снять отметку об отзыве' : 'Отметить отзыв') + '">' + ico('dots') + '</button></div>' +
         '<div class="ce">' + op + '</div></div>';
     }).join('');
 }
@@ -714,6 +753,14 @@ function clientsPage() {
     '<div id="clist">' + clist() + '</div>';
 }
 // окно клиента: остается открытым, пока идет сохранение
+// телефон: всегда +380 и 9 цифр; «+380» стереть нельзя
+function phRest(v) {
+  var d = String(v || '').replace(/\D/g, '');
+  if (d.indexOf('380') === 0) d = d.slice(3);
+  else if ('380'.indexOf(d) === 0) d = '';
+  else if (d.charAt(0) === '0') d = d.slice(1);
+  return d.slice(0, 9);
+}
 function clientForm(c, done) {
   var d = document.createElement('dialog'), saving = false;
   d.className = 'cf';
@@ -722,7 +769,7 @@ function clientForm(c, done) {
     '<div class="cg"><div><label>Фамилия *</label><input name="ln" placeholder="Введите фамилию" autocomplete="off" value="' + v('lastName') + '"></div>' +
     '<div><label>Имя *</label><input name="fn" placeholder="Введите имя" autocomplete="off" value="' + esc(c ? (c.firstName || c.name) : '') + '"></div>' +
     '<div><label>Отчество</label><input name="mn" placeholder="Необязательно" autocomplete="off" value="' + v('middleName') + '"></div></div>' +
-    '<div class="cg2"><div><label>Телефон *</label><input name="ph" type="tel" inputmode="tel" placeholder="+380…" autocomplete="off" value="' + v('phone') + '"></div>' +
+    '<div class="cg2"><div><label>Телефон *</label><input name="ph" type="tel" inputmode="tel" autocomplete="off" maxlength="13" style="margin-bottom:4px" value="+380' + phRest(c && c.phone) + '"><p class="mu phc" data-phc style="margin:0 0 10px"></p></div>' +
     '<div><label>Ссылка на соцсеть</label><input name="ct" placeholder="Например: https://instagram.com/nick" autocomplete="off" value="' + v('contact') + '"></div></div>' +
     '<label>Адрес доставки</label><input name="ad" placeholder="Город, отделение или адрес" autocomplete="off" value="' + v('address') + '">' +
     '<label>Заметка</label><textarea name="nt" rows="3" placeholder="Введите заметку">' + v('note') + '</textarea>' +
@@ -731,20 +778,36 @@ function clientForm(c, done) {
   cb.onclick = function () { d.close(); };
   d.addEventListener('cancel', function (e) { if (saving) e.preventDefault(); });
   f.addEventListener('input', function (e) { e.target.classList.remove('bad'); });
+  var ph = f.elements.ph, phc = f.querySelector('[data-phc]');
+  var phSync = function () {
+    var r = phRest(ph.value), nv = '+380' + r;
+    if (ph.value !== nv) { ph.value = nv; try { ph.setSelectionRange(nv.length, nv.length); } catch (x) {} }
+    phc.textContent = r.length === 9 ? 'Номер введен полностью' : 'Введено цифр: ' + r.length + ' из 9';
+    phc.style.color = r.length === 9 ? 'var(--gt)' : '';
+  };
+  ph.addEventListener('input', phSync);
+  ph.addEventListener('focus', function () { setTimeout(function () { if (ph.selectionStart < 4) ph.setSelectionRange(ph.value.length, ph.value.length); }, 0); });
+  ph.addEventListener('keydown', function (e) {
+    var a = ph.selectionStart, b = ph.selectionEnd;
+    if (e.key === 'Backspace' && b <= 4) e.preventDefault();
+    else if (e.key === 'Delete' && b <= 4) e.preventDefault();
+    else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && b <= 4) ph.setSelectionRange(ph.value.length, ph.value.length);
+  });
+  phSync();
   f.addEventListener('submit', function (e) {
     e.preventDefault();
     if (saving) return;
     var g = function (n) { return f.elements[n].value.trim(); }, bad = [];
     if (!g('ln')) bad.push('ln');
     if (!g('fn')) bad.push('fn');
-    if (g('ph').replace(/\D/g, '').length < 10) bad.push('ph');
+    if (phRest(g('ph')).length !== 9) bad.push('ph');
     if (bad.length) {
       bad.forEach(function (n) { f.elements[n].classList.add('bad'); });
-      er.textContent = (bad.length === 1 && bad[0] === 'ph' && g('ph')) ? 'Номер телефона: минимум 10 цифр' : 'Заполните выделенные поля';
+      er.textContent = (bad.length === 1 && bad[0] === 'ph') ? 'Номер телефона: после +380 нужно ввести 9 цифр (сейчас ' + phRest(g('ph')).length + ')' : 'Заполните выделенные поля';
       return;
     }
     saving = true; er.textContent = ''; sb.disabled = true; cb.disabled = true; S.btn = sb;
-    call('clients.save', {id: c ? c.id : '', lastName: g('ln'), firstName: g('fn'), middleName: g('mn'), phone: g('ph'),
+    call('clients.save', {id: c ? c.id : '', lastName: g('ln'), firstName: g('fn'), middleName: g('mn'), phone: '+380' + phRest(g('ph')),
       contact: g('ct'), address: g('ad'), note: g('nt')}).then(function (j) {
       d.close(); S.clients = j.items; if (done) done(j); render();
     }, function (err) { saving = false; sb.disabled = false; cb.disabled = false; er.textContent = err.message; });
@@ -812,15 +875,15 @@ function ocHtml(o) {
 function olist() {
   var q = S.oq.trim().toLowerCase();
   var items = S.orders.filter(function (o) {
-    var okS = S.os === 'act' ? oAct(o) : o.status === S.os;
+    var okS = o.status === S.os;
     return okS && (!q || String(o.num) === q.replace('№', '') || (o.clientName || '').toLowerCase().indexOf(q) >= 0);
   });
-  if (!items.length) return '<p class="mu">Заказов здесь пока нет.</p>';
+  if (!items.length) return '<p class="mu">Заказов в этом статусе пока нет.</p>';
   return '<div class="oh0"><div class="or"><div class="dc">Заказ</div><div class="dc">Позиций</div><div class="dc">Сумма</div><div class="dc">Создал</div><div></div></div></div>' +
     items.map(ocHtml).join('');
 }
 function ordersPage() {
-  var chips = [['act', 'Активные'], ['done', 'Завершенные'], ['cancelled', 'Отмененные']].map(function (c) {
+  var chips = [['new', 'Новые'], ['paid', 'Собранные'], ['sent', 'Отправленные'], ['done', 'Завершенные'], ['cancelled', 'Отмененные']].map(function (c) {
     return '<button class="' + (S.os === c[0] ? 'on' : '') + '" data-a="os" data-k="' + c[0] + '">' + c[1] + '</button>';
   }).join('');
   return '<div class="rw"><h2>Заказы</h2><button class="pri" data-a="newOrd">Новый заказ</button></div>' +
@@ -889,8 +952,31 @@ function oCalc() {
   return {sub: sub, dA: dA, dP: dP, dM: dM, total: sub - dA - dP - dM, items: e.items};
 }
 // адрес клиента подставляется сам, пока вы не поменяли его вручную
+// адрес доставки: почта = город/село + номер отделения; «Курьер» = один адрес. Хранится одной строкой, поэтому сервер менять не нужно.
+function oMail() { return /почт|пошт/i.test(O.del || ''); }
+function oAddrStr() {
+  if (!oMail()) return O.keep || '';
+  if (O.cour) return O.addr.trim() ? 'Курьер, ' + O.addr.trim() : 'Курьер';
+  return [O.city.trim(), O.br ? '№' + O.br : ''].filter(Boolean).join(', ');
+}
+function oAddrSet(str) {
+  var t = String(str || '').trim(), m;
+  O.city = ''; O.br = ''; O.cour = false; O.addr = ''; O.keep = '';
+  if (!t) return;
+  if ((m = t.match(/^Курьер(?:,\s*(.*))?$/i))) { O.cour = true; O.addr = m[1] || ''; return; }
+  if ((m = t.match(/^(.*?),?\s*№\s*(\d+)$/))) { O.city = m[1].trim(); O.br = m[2]; return; }
+  O.city = t; O.keep = t;
+}
 function oAddrFill(cl) {
-  if (!O.addr || O.addr === O.addrAuto) { O.addr = cl ? cl.address || '' : ''; O.addrAuto = O.addr; }
+  var cur = oAddrStr();
+  if (!cur || cur === O.addrAuto) { oAddrSet(cl ? cl.address || '' : ''); O.addrAuto = oAddrStr(); }
+}
+function oAddrHtml() {
+  if (!oMail()) return '';
+  var cb = '<label class="chk"><input type="checkbox" data-o="cour"' + (O.cour ? ' checked' : '') + '> Курьер</label>';
+  if (O.cour) return '<label>Адрес доставки</label><input data-o="addr" placeholder="Введите адрес доставки" autocomplete="off" value="' + esc(O.addr) + '">' + cb;
+  return '<div class="two"><div><label>Город/село</label><input data-o="city" placeholder="Введите город или село" autocomplete="off" value="' + esc(O.city) + '"></div>' +
+    '<div><label>Номер отделения/почтомата</label><div class="pfx"><span>№</span><input data-o="br" inputmode="numeric" maxlength="6" placeholder="Введите номер" autocomplete="off" value="' + esc(O.br) + '"></div></div></div>' + cb;
 }
 function oSug() {
   var q = O.q.trim();
@@ -921,7 +1007,7 @@ function oInfoHtml() {
 function oHeadBtns() {
   var cl = client(O.cid);
   return '<button type="button" class="ghost' + (cl ? ' mhide' : '') + '" data-a="oNewC">Новый клиент</button>' +
-    (cl ? '<button type="button" class="ghost mshow" data-a="oInfo">Инфо о клиенте</button>' : '');
+    (cl ? '<button type="button" class="ghost mshow" data-a="oInfo">Инфо о клиенте' + (cl.pct > 0 || cl.reviewOk ? '<span class="gdot" title="У клиента есть скидка"></span>' : '') + '</button>' : '');
 }
 function oVar() {
   var p = prod(O.pid);
@@ -934,7 +1020,11 @@ function oAvVal() {
   var p = prod(O.pid), v = p && O.vid ? p.vars.filter(function (x) { return x.id === O.vid; })[0] : null;
   return v ? Math.max(0, oAvail(v)) + ' шт' : '—';
 }
-function oAv() { var e = document.getElementById('oav'); if (e) e.value = oAvVal(); }
+function oAvCls() {
+  var p = prod(O.pid), v = p && O.vid ? p.vars.filter(function (x) { return x.id === O.vid; })[0] : null;
+  return v ? 'av-' + status(Math.max(0, oAvail(v)), p.min)[0] : '';
+}
+function oAv() { var e = document.getElementById('oav'); if (e) { e.value = oAvVal(); e.className = oAvCls(); } }
 function oeAvText() {
   var v = O.eb ? oVarObj(O.eb.vid) : null;
   return v ? 'доступно ' + Math.max(0, oAvail(v, O.ei)) + ' шт' : '';
@@ -998,14 +1088,13 @@ function oBody() {
     '<div class="og">' +
     '<div class="oga"><div class="gh">Клиент</div><div class="cs"><div class="sgw"><input data-o="cq" placeholder="Введите имя, телефон или номер" autocomplete="off" value="' + esc(O.cq) + '"><div id="ocsug">' + oCsug() + '</div></div><span id="ocx">' + oClr() + '</span></div></div>' +
     '<div class="ogb grp"><div class="gh">Заказ</div><div class="two">' + oSel('src', 'Источник', 'source', O.src) + oSel('pay', 'Способ оплаты', 'payment', O.pay) + '</div>' +
-    '<div class="two">' + oSel('del', 'Способ доставки', 'delivery', O.del) +
-    '<div><label>Адрес доставки</label><input id="oaddr" data-o="addr" placeholder="Город, отделение или адрес" autocomplete="off" value="' + esc(O.addr) + '"></div></div></div>' +
+    '<div class="two">' + oSel('del', 'Способ доставки', 'delivery', O.del) + '</div><div id="oadr">' + oAddrHtml() + '</div></div>' +
     '<aside class="ogi cd" id="oinfo">' + oInfoHtml() + '</aside></div>' +
     '<div class="lb"><div class="er1">' +
     '<div class="f nm"><label>Наименование</label><div class="sgw"><input data-o="q" placeholder="Введите название или артикул" autocomplete="off" value="' + esc(O.q) + '"><div id="osug">' + oSug() + '</div></div></div>' +
     '<div class="f vr" id="ovar">' + oVar() + '</div>' +
     '<div class="f qy"><label>Количество</label><input data-o="qty" type="number" inputmode="numeric" min="1" step="1" placeholder="Кол-во" value="' + esc(O.qty) + '"></div>' +
-    '<div class="f pz"><label>В наличии</label><input id="oav" readonly tabindex="-1" value="' + esc(oAvVal()) + '"></div>' +
+    '<div class="f pz"><label>В наличии</label><input id="oav" class="' + oAvCls() + '" readonly tabindex="-1" value="' + esc(oAvVal()) + '"></div>' +
     '<div class="f bt"><button type="button" class="pri" data-a="oAdd">Добавить</button></div></div>' +
     '<p class="er" id="oper" style="margin:8px 0 0"></p></div>' +
     '<div id="olines">' + oLines() + '</div>' +
@@ -1027,7 +1116,7 @@ function oRedraw() {
 function oPart() {
   var m = {ocsug: oCsug, oinfo: oInfoHtml, odisc: oDisc, ohb: oHeadBtns, ocx: oClr};
   Object.keys(m).forEach(function (k) { var e = document.getElementById(k); if (e) e.innerHTML = m[k](); });
-  var ad = document.getElementById('oaddr'); if (ad && ad.value !== O.addr) ad.value = O.addr;
+  var oa = document.getElementById('oadr'); if (oa) oa.innerHTML = oAddrHtml();
   oTot();
 }
 function oDlg() {
@@ -1058,11 +1147,14 @@ function oSync(e) {
   }
   if (k === 'mk' || k === 'mv' || k === 'mr') { O.man[{mk: 'kind', mv: 'value', mr: 'reason'}[k]] = v; oTot(); return; }
   if (k === 'ap') { O.autoPct = v; oTot(); return; }
+  if (k === 'cour') { O.cour = t.checked; var oa = document.getElementById('oadr'); if (oa) oa.innerHTML = oAddrHtml(); return; }
+  if (k === 'br') { v = v.replace(/\D/g, '').slice(0, 6); if (t.value !== v) t.value = v; }
   if (k === 'ev' && O.eb) { O.eb.vid = v; var ae = document.getElementById('oeav'); if (ae) ae.textContent = oeAvText(); return; }
   if (k === 'eq' && O.eb) { O.eb.qty = v; return; }
   if (O[k] === v) return;
   O[k] = v;
   if (k === 'vid') oAv();
+  if (k === 'del') { var od = document.getElementById('oadr'); if (od) od.innerHTML = oAddrHtml(); }
 }
 
 // окно изменения одной позиции заказа (на телефоне)
@@ -1204,7 +1296,7 @@ function exchangeFor(o) {
   if (!O) return;
   if (c) { O.cid = c.id; O.cq = c.name; O.autoOff = false; O.autoPct = ''; oAddrFill(c); }
   O.src = o.source; O.pay = o.payment; O.del = o.delivery;
-  if (!O.addr) O.addr = o.address || '';
+  if (!oAddrStr()) oAddrSet(o.address);
   O.cm = 'Обмен по заказу №' + o.num;
   oRedraw();
 }
@@ -1467,7 +1559,7 @@ function cardHtml(p) {
   var mn = p.archived
     ? [['resP', 'Восстановить'], ['delP', 'Удалить навсегда', 'dg']]
     : [['editP', 'Редактировать'], ['minP', 'Изменить минимальный остаток']].concat(single ? [] : [['varsP', 'Изменить вариации']], [['arcP', 'В архив']]);
-  var photo = '<div class="pc-photo"' + (p.archived && !p.photo ? '' : ' role="button" tabindex="0" aria-label="' + (p.photo ? 'Увеличить фото' : 'Редактировать товар') + '" data-a="' + (p.photo ? 'zoomP' : 'editP') + '" data-id="' + esc(p.id) + '"') + '>' +
+  var photo = '<div class="pc-photo"' + (p.archived && !p.photo ? '' : ' role="button" tabindex="0" aria-label="' + (p.photo ? 'Увеличить фото' : 'Добавить фото') + '" data-a="' + (p.photo ? 'zoomP' : 'addPhoto') + '" data-id="' + esc(p.id) + '"') + '>' +
     (p.photo ? '<img src="' + esc(p.photo) + '" alt="">' : ico('photo')) + '</div>';
   var head = photo + '<div class="pc-main"><p class="pc-name" title="' + esc(p.name) + '">' + esc(p.name) + '</p>' +
     (meta ? '<p class="pc-meta">' + esc(meta) + '</p>' : '') + '</div>';
@@ -1477,10 +1569,11 @@ function cardHtml(p) {
     return '<div class="pc single"><div class="pc-head">' + head + '<div class="stock-row">' + sg('sp', price) + sg('sq', qtyBox(q)) + sg('ss', badge(q, p.min)) + '</div>' + sg('so', m) + '</div></div>';
   }
   var tot = vs.reduce(function (a, v) { return a + v.stock; }, 0);
+  var nl = vs.filter(function (v) { return status(v.stock, p.min)[0] !== 'ok'; }).length;
   var ag = tot === 0 ? ['no', 'circle-x', 'Нет в наличии']
     : vs.some(function (v) { return status(v.stock, p.min)[0] !== 'ok'; }) ? ['low', 'alert-triangle', 'Заканчивается'] : ['ok', 'circle-check', 'В наличии'];
   return '<div class="pc"><div class="pc-head">' + head + sg('sp', price) + sg('sq sa', qtyBox(tot)) +
-    sg('ss sa', '<span class="bdg ' + ag[0] + '" title="Итог по всем вариациям">' + ico(ag[1]) + ag[2] + '</span>') + sg('so', m) + '</div><div class="pc-vars">' + vs.map(function (v) {
+    sg('ss sa', '<span class="bdg ' + ag[0] + '" title="Итог по всем вариациям">' + ico(ag[1]) + ag[2] + (ag[0] === 'low' ? ' · ' + nl + ' поз.' : '') + '</span>') + sg('so', m) + '</div><div class="pc-vars">' + vs.map(function (v) {
     return '<div class="pc-var"><div class="pc-vrow"><span class="vl">' + vlabel(v) + '</span>' + qtyBox(v.stock) + '</div>' + badge(v.stock, p.min) + '</div>';
   }).join('') + '</div></div>';
 }
@@ -2163,6 +2256,30 @@ var A = {
     openD(el);
   },
   editP: function (d) { var p = prod(d.id); if (p) prodForm(p, productsDone); },
+  addPhoto: function (d) {
+    var p = prod(d.id); if (!p || p.photo) return;
+    S.btn = null;
+    var el = document.createElement('dialog'), saving = false;
+    el.innerHTML = '<h3>Добавить фото?</h3><p style="margin:0 0 10px">У товара «' + esc(p.name) + '» пока нет фото. Хотите добавить?</p>' +
+      '<input type="file" accept="image/*" hidden><p class="er"></p><div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="button" class="pri" data-pick>Выбрать фото</button></div>';
+    var fi = el.querySelector('input'), er = el.querySelector('.er'), pb = el.querySelector('[data-pick]'), cb = el.querySelector('[data-c]');
+    cb.onclick = function () { el.close(); };
+    pb.onclick = function () { fi.click(); };
+    el.addEventListener('cancel', function (e) { if (saving) e.preventDefault(); });
+    fi.onchange = function () {
+      var file = fi.files && fi.files[0]; fi.value = '';
+      if (!file || saving) return;
+      shrink(file, function (s) {
+        if (!s) { er.textContent = 'Не удалось обработать фото. Выберите другой файл.'; return; }
+        saving = true; er.textContent = ''; pb.disabled = true; cb.disabled = true; S.btn = pb;
+        call('products.save', {id: p.id, name: p.name, sku: p.sku, category: p.category, material: p.material, photo: s}).then(function (j) {
+          el.close(); productsDone(j); toast('Фото добавлено');
+        }, function (err) { saving = false; pb.disabled = false; cb.disabled = false; er.textContent = err.message; });
+      });
+    };
+    el.addEventListener('close', function () { el.remove(); });
+    openD(el);
+  },
   minP: function (d) {
     var p = prod(d.id);
     ask('Минимальный остаток: ' + p.name, [{l: 'Минимальный остаток (пусто, чтобы убрать)', t: 'number', v: p.min, p: 'Введите число'}], 'Сохранить', function (v) {
@@ -2204,7 +2321,7 @@ var A = {
     var o = ord(d.id), s = d.s;
     if (!o || o.status === s) return;
     var go = function () {
-      return call('orders.status', {id: o.id, status: s}).then(function (j) { var m = document.getElementById('ovdlg'); if (m) m.close(); ordDone(j); });
+      return call('orders.status', {id: o.id, status: s}, false, true).then(function (j) { var m = document.getElementById('ovdlg'); if (m) m.close(); ordDone(j); });
     };
     var fail = function (e) { var er = document.getElementById('oer'); if (er) er.textContent = e.message; else toast(e.message); };
     if (s === 'done') confirmAct('Завершить заказ?', 'Товар спишется со склада по партиям, после этого заказ изменить нельзя.', 'Завершить', 'ok', go);
@@ -2241,7 +2358,7 @@ var A = {
     }).catch(function (e) { er.textContent = e.message; });
   },
   newOrd: function () {
-    O = {id: '', num: 0, cid: '', cq: '', src: '', pay: '', del: '', addr: '', addrAuto: '', cm: '', lines: [], q: '', pid: '', vid: '', qty: '',
+    O = {id: '', num: 0, cid: '', cq: '', src: '', pay: '', del: '', addr: '', city: '', br: '', cour: false, keep: '', addrAuto: '', cm: '', lines: [], q: '', pid: '', vid: '', qty: '1',
       autoOff: false, autoPct: '', man: null, off: []};
     oDlg();
   },
@@ -2249,15 +2366,17 @@ var A = {
     var o = ord(d.id); if (!o) return;
     var m = document.getElementById('ovdlg'); if (m) m.close();
     var cl = client(o.clientId);
-    O = {id: o.id, num: o.num, cid: cl ? cl.id : '', cq: cl ? cl.name : o.clientName, src: o.source, pay: o.payment, del: o.delivery, addr: o.address || '', addrAuto: '',
-      cm: o.comment, q: '', pid: '', vid: '', qty: '', autoOff: o.autoOff, autoPct: (!o.autoOff && o.autoPct > 0) ? String(o.autoPct) : '',
+    O = {id: o.id, num: o.num, cid: cl ? cl.id : '', cq: cl ? cl.name : o.clientName, src: o.source, pay: o.payment, del: o.delivery, addr: '', city: '', br: '', cour: false, keep: '', addrAuto: '',
+      cm: o.comment, q: '', pid: '', vid: '', qty: '1', autoOff: o.autoOff, autoPct: (!o.autoOff && o.autoPct > 0) ? String(o.autoPct) : '',
       man: o.manual ? {kind: o.manual.kind, value: String(o.manual.value), reason: o.manual.reason} : null, off: (o.offKeys || []).slice(),
       lines: o.lines.map(function (l) { return {pid: l.productId, vid: l.varId, qty: String(l.qty)}; })};
+    oAddrSet(o.address);
     oDlg();
   },
   oPick: function (d) {
     var p = prod(d.id); if (!p) return;
     O.pid = p.id; O.q = p.name; O.vid = needVar(p) ? '' : (activeVars(p)[0] || {}).id || '';
+    if (!O.qty) O.qty = '1';
     oRedraw();
   },
   oCPick: function (d) {
@@ -2278,7 +2397,7 @@ var A = {
     if (!(p.price > 0)) return bad('У товара не задана цена. Задайте ее документом «Ценообразование»');
     var ex = O.lines.filter(function (l) { return l.vid === O.vid; })[0];
     if (ex) ex.qty = String((Number(ex.qty) || 0) + q); else O.lines.push({pid: p.id, vid: O.vid, qty: String(q)});
-    O.pid = ''; O.vid = ''; O.q = ''; O.qty = ''; oRedraw();
+    O.pid = ''; O.vid = ''; O.q = ''; O.qty = '1'; oRedraw();
   },
   oEditLine: function (d) {
     var i = +d.i, l = O.lines[i]; if (!l) return;
@@ -2312,7 +2431,7 @@ var A = {
     var er = document.getElementById('oer'); er.textContent = '';
     if (O.saving) return;
     var mine = O; mine.saving = true;
-    call('orders.save', {id: O.id, clientId: O.cid, source: O.src, payment: O.pay, delivery: O.del, address: O.addr, comment: O.cm, autoOff: O.autoOff,
+    call('orders.save', {id: O.id, clientId: O.cid, source: O.src, payment: O.pay, delivery: O.del, address: oAddrStr(), comment: O.cm, autoOff: O.autoOff,
       autoPct: O.autoPct, offKeys: O.off, manual: O.man ? {kind: O.man.kind, value: O.man.value, reason: O.man.reason} : null,
       lines: O.lines.map(function (l) { return {varId: l.vid, qty: l.qty}; })}).then(function (j) {
       mine.saving = false;
@@ -2340,13 +2459,11 @@ var A = {
   revAsk: function (d) {
     var c = client(d.id); if (!c) return;
     S.btn = null;
-    yesNo('Отзыв оставлен?', 'Клиент «' + esc(c.name) + '» оставил отзыв в сторис?', function () {
-      return call('clients.review', {id: c.id, value: true}).then(function (j) { S.clients = j.items; S.reviewAmt = j.reviewAmt; render(); toast('Отзыв отмечен'); });
+    var on = !c.review;
+    yesNo(on ? 'Отзыв оставлен?' : 'Снять отметку об отзыве?',
+      on ? 'Клиент «' + esc(c.name) + '» оставил отзыв в сторис?' : 'У клиента «' + esc(c.name) + '» отметка об отзыве будет снята.', function () {
+      return call('clients.review', {id: c.id, value: on}).then(function (j) { S.clients = j.items; S.reviewAmt = j.reviewAmt; render(); toast(on ? 'Отзыв отмечен' : 'Отметка об отзыве снята'); });
     });
-  },
-  revC: function (d) {
-    var c = client(d.id); if (!c) return;
-    call('clients.review', {id: c.id, value: !c.review}).then(function (j) { S.clients = j.items; S.reviewAmt = j.reviewAmt; render(); }).catch(function (e) { toast(e.message); });
   },
   payOrd: function (d) {
     var o = ord(d.id); if (!o) return;
