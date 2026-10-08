@@ -387,6 +387,15 @@ dialog.cf{width:min(94vw,780px)}
 .ot th,.ot td{padding:6px 3px}
 .ot .oe .mu{white-space:nowrap;font-size:11px}
 }
+.rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.rc{background:var(--card);border:.5px solid var(--bd);border-radius:10px;padding:10px 12px}
+.rc .mu{margin:0}
+.rc b{display:block;font-size:18px;font-weight:500;margin-top:2px;overflow-wrap:anywhere}
+.rc.good b{color:var(--gt)}
+.rc.bad b{color:var(--dt)}
+.rpb{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-top:10px}
+.rpb>div{min-width:140px;flex:1}
+.rpb>button{margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -395,19 +404,19 @@ dialog.cf{width:min(94vw,780px)}
 <div id="toast" role="status"></div>
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
-var NEED = 8; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var VER = 'ver0.3.4'; // 0 = бета, 3 = этап разработки, 3 = номер правки
-var BUILD = '2026-10-07';
+var NEED = 10; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
+var VER = 'ver0.5.0'; // 0 = бета, 5 = этап разработки, 0 = номер правки
+var BUILD = '2026-10-09';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
 var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category',
   ld: {}, ts: {}, sig: {}, dl: {}, lerr: {}, fx: 0, products: [], docs: [], df: 'receipt', q: '', tab: 'all', cat: '', more: false, busy: 0, info: null,
-  sort: localStorage.getItem('sort') || 'name', orders: [], clients: [], loy: [], os: 'act', oq: '', ca: 0, cq: '', oo: {}, te: {}};
+  sort: localStorage.getItem('sort') || 'name', orders: [], clients: [], loy: [], promos: [], promoAll: [], reviewAmt: 0, pa: 0, rep: null, rp: null, rv: 'sum', rt: 'qty', ads: [], aa: 0, os: 'act', oq: '', ca: 0, cq: '', oo: {}, te: {}};
 var DT = {category: 'Категории', material: 'Материалы', vartype: 'Типы вариаций', supplier: 'Поставщики', source: 'Источники заказов',
   payment: 'Способы оплаты', delivery: 'Способы доставки', discount_reason: 'Причины скидок',
   writeoff_reason: 'Причины списания', return_reason: 'Причины возврата'};
 // третий элемент: 1 = на телефоне прячется за кнопку «⋯»
-var NAV = [['home', 'Главная', 0, 'home'], ['orders', 'Заказы', 0, 'cart'], ['products', 'Склад', 0, 'box'], ['docs', 'Документы', 0, 'file'], ['clients', 'Клиенты', 1, 'users'], ['settings', 'Справочники', 1, 'book'], ['sellers', 'Пользователи', 1, 'user'], ['info', 'Инфо', 1, 'info']];
+var NAV = [['home', 'Главная', 0, 'home'], ['orders', 'Заказы', 0, 'cart'], ['products', 'Склад', 0, 'box'], ['docs', 'Документы', 0, 'file'], ['clients', 'Клиенты', 1, 'users'], ['promos', 'Акции', 1, 'percent'], ['reports', 'Отчёты', 1, 'chart'], ['ads', 'Реклама', 1, 'megaphone'], ['settings', 'Справочники', 1, 'book'], ['sellers', 'Пользователи', 1, 'user'], ['info', 'Инфо', 1, 'info']];
 
 function themeNow() {
   return document.documentElement.getAttribute('data-theme') || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -487,8 +496,11 @@ var LOADS = {
   info: ['info', 'info', function (j) { S.info = j; }],
   products: ['products.list', 'products', function (j) { S.products = j.items; S.dict = j.dict; S.ld.dict = 1; }],
   docs: ['docs.list', 'docs', function (j) { S.docs = j.items; S.products = j.products; S.dict = j.dict; S.ld.products = 1; S.ld.dict = 1; keepLines(j.items); }],
-  orders: ['orders.list', 'orders', function (j) { S.orders = j.items; S.clients = j.clients; S.products = j.products; S.dict = j.dict; S.loy = j.loyalty; S.ld.products = 1; S.ld.dict = 1; S.ld.clients = 1; }],
-  clients: ['clients.list', 'clients', function (j) { S.clients = j.items; }]
+  orders: ['orders.list', 'orders', function (j) { S.orders = j.items; S.clients = j.clients; S.products = j.products; S.dict = j.dict; S.loy = j.loyalty; S.promos = j.promos; S.reviewAmt = j.reviewAmt; S.ld.products = 1; S.ld.dict = 1; S.ld.clients = 1; }],
+  clients: ['clients.list', 'clients', function (j) { S.clients = j.items; S.reviewAmt = j.reviewAmt; }],
+  promos: ['promos.list', 'promos', function (j) { S.promoAll = j.items; S.dict = j.dict; S.ld.dict = 1; }],
+  ads: ['ads.list', 'ads', function (j) { S.ads = j.items; S.dict = j.dict; S.ld.dict = 1; }],
+  reports: ['reports.get', 'reports', function (j) { S.rep = j; }, function () { if (!S.rp) rpSet('month'); return {from: S.rp.from, to: S.rp.to}; }]
 };
 // Данные уже есть: показываем сразу, без анимации; обновляем тихо в фоне не чаще раза в 30 секунд.
 async function load() {
@@ -497,7 +509,7 @@ async function load() {
   var have = !!S.ld[L[1]];
   if (have && Date.now() - (S.ts[pg] || 0) < 30000) return;
   try {
-    var j = await call(L[0], null, have), sg = JSON.stringify(j);
+    var j = await call(L[0], L[3] ? L[3]() : null, have), sg = JSON.stringify(j);
     S.ts[pg] = Date.now();
     delete S.lerr[pg];
     if (have && S.sig[pg] === sg) return;
@@ -532,6 +544,9 @@ function page() {
   if (S.page === 'docs') return S.ld.docs ? docsPage() : wait('Документы');
   if (S.page === 'orders') return S.ld.orders ? ordersPage() : wait('Заказы');
   if (S.page === 'clients') return S.ld.clients ? clientsPage() : wait('Клиенты');
+  if (S.page === 'promos') return S.ld.promos ? promosPage() : wait('Акции');
+  if (S.page === 'reports') return S.ld.reports ? reportsPage() : wait('Отчёты');
+  if (S.page === 'ads') return S.ld.ads ? adsPage() : wait('Реклама');
   if (S.page === 'info') return S.ld.info ? infoPage() : wait('Инфо');
   if (S.page === 'sellers' && !S.ld.sellers) return wait('Пользователи');
   if (S.page === 'settings' && !S.ld.dict) return wait('Справочники');
@@ -561,7 +576,7 @@ function page() {
           '<button class="ghost dg" data-a="delDict" data-id="' + esc(x.id) + '">Удалить</button></div></div>';
       }).join('') : '');
   }
-  return '<h2>Главная</h2><div class="cd"><p style="margin:0">Готовы: вход, пользователи, справочники, склад, документы, клиенты и заказы с резервом и скидками. Акции, возвраты и отчеты появятся на следующих этапах.</p></div>';
+  return '<h2>Главная</h2><div class="cd"><p style="margin:0">Готовы: вход, пользователи, справочники, склад, документы, клиенты, заказы с резервом, скидки, акции, возвраты, отчеты, реклама и резервные копии.</p></div>';
 }
 
 // ---------- клиенты ----------
@@ -592,6 +607,7 @@ function cinfo(c) {
   return '<h4 class="ci-h">' + esc(cfio(c)) + '</h4>' +
     kv('Клиент', '№' + c.num) + kv('Телефон', c.phone ? esc(c.phone) : '—') + kv('Адрес доставки', c.address ? esc(c.address) : '—') +
     kv('Соцсеть', link) + kv('Статус', c.pct > 0 ? 'Постоянный клиент, скидка ' + c.pct + '%' : 'Обычный клиент') +
+    kv('Скидка за отзыв', c.reviewOk ? 'доступна, −' + money(S.reviewAmt) : c.review ? 'уже использована' : 'нет') +
     kv('Заказов', c.n) + kv('Сумма заказов', money(c.sum)) +
     (next ? kv('До скидки ' + next[1] + '%', 'ещё ' + (next[0] - c.n) + ' ' + plural(next[0] - c.n, ['заказ', 'заказа', 'заказов'])) : '') +
     (c.note ? kv('Заметка', esc(c.note)) : '');
@@ -606,10 +622,10 @@ function clist() {
   if (!items.length) return '<p class="mu">' + (S.clients.length ? 'Ничего не найдено.' : 'Клиентов пока нет. Нажмите «Новый клиент».') + '</p>';
   return '<div class="cr hd0"><div class="dc">Клиент</div><div class="dc">Имя, фамилия</div><div class="dc">Заказов</div><div class="dc">Сумма заказов</div><div class="dc">Телефон</div><div></div></div>' +
     items.map(function (c) {
-      var op = menu(c.archived ? [['resC', 'Восстановить'], ['delC', 'Удалить навсегда', 'dg']] : [['editC', 'Редактировать'], ['arcC', 'В архив']], c.id);
+      var op = menu(c.archived ? [['resC', 'Восстановить'], ['delC', 'Удалить навсегда', 'dg']] : [['editC', 'Редактировать'], ['revC', c.review ? 'Снять отметку об отзыве' : 'Отметить: оставил отзыв'], ['arcC', 'В архив']], c.id);
       return '<div class="cr' + (c.archived ? ' arc' : '') + '">' +
         '<div class="dc cn">№' + c.num + '</div>' +
-        '<div class="dc cm"><b title="' + esc(c.name) + '">' + esc(c.name) + '</b>' + (c.pct > 0 ? '<small class="cpt">Постоянный −' + c.pct + '%</small>' : '') + '</div>' +
+        '<div class="dc cm"><b title="' + esc(c.name) + '">' + esc(c.name) + '</b>' + (c.pct > 0 ? '<small class="cpt">Постоянный −' + c.pct + '%</small>' : '') + (c.reviewOk ? '<small class="cpt">Отзыв −' + S.reviewAmt + '</small>' : '') + '</div>' +
         '<div class="dc co"><span class="sl">Заказов: </span>' + c.n + '</div>' +
         '<div class="dc cs"><span class="sl">Сумма: </span>' + money(c.sum) + '</div>' +
         '<div class="dc cp">' + (c.phone ? esc(c.phone) : '—') + '</div>' +
@@ -685,6 +701,7 @@ function stMenu(o) {
 function oMenu(o) {
   var it = [['openOrd', 'Просмотр']];
   if (oAct(o)) it.push(['editOrd', 'Редактировать'], ['cancelOrd', 'Отменить заказ', 'dg']);
+  if (o.status === 'done' && oRetLeft(o) > 0) it.push(['retOrd', 'Оформить возврат']);
   return menu(it, o.id);
 }
 // имя и фамилия клиента (без отчества)
@@ -695,7 +712,7 @@ function ocName(o) {
 function ocHtml(o) {
   var id = esc(o.id), st = stMenu(o), mn = oMenu(o);
   return '<div class="oc' + (S.oo[o.id] ? ' open' : '') + '" data-id="' + id + '"><div class="or">' +
-    '<div class="dc dn"><button class="lk" data-a="openOrd" data-id="' + id + '"><b>№' + o.num + '</b></button><small>' + fdt(o.created) + (ocName(o) ? ' · ' + esc(ocName(o)) : '') + '</small></div>' +
+    '<div class="dc dn"><button class="lk" data-a="openOrd" data-id="' + id + '"><b>№' + o.num + '</b></button><small>' + fdt(o.created) + (ocName(o) ? ' · ' + esc(ocName(o)) : '') + (o.returns && o.returns.length ? ' · есть возврат' : '') + '</small></div>' +
     '<div class="dc ocp"><button class="lk" data-a="openOrd" data-id="' + id + '">' + o.lines.length + ' поз.</button></div>' +
     '<div class="dc dm ocs">' + money(o.total) + '</div>' +
     '<div class="dc du ocu">' + esc(o.seller || '—') + '</div>' +
@@ -735,11 +752,12 @@ function ordHtml(o) {
   var rt = 'style="margin:4px 0 0;text-align:right"';
   return meta + '<div class="tbw"><table class="tb">' + tbl + '</table></div><p class="mu" ' + rt + '>Сумма: ' + money(o.sub) + '</p>' +
     (o.dAuto > 0 ? '<p class="mu" ' + rt + '>Постоянный клиент −' + o.autoPct + '%: −' + money(o.dAuto) + '</p>' : '') +
+    o.promos.map(function (p) { return '<p class="mu" ' + rt + '>' + esc(p.name) + ': −' + money(p.amount) + '</p>'; }).join('') +
     (o.dMan > 0 ? '<p class="mu" ' + rt + '>Скидка (' + esc(o.manual ? o.manual.reason : '') + '): −' + money(o.dMan) + '</p>' : '') +
-    '<p class="tot">Итого: ' + money(o.total) + '</p>' + (o.comment ? '<p class="cmt">Комментарий: ' + esc(o.comment) + '</p>' : '');
+    '<p class="tot">Итого: ' + money(o.total) + '</p>' + (o.comment ? '<p class="cmt">Комментарий: ' + esc(o.comment) + '</p>' : '') + retHtml(o);
 }
 function ordRepaint() { var el = document.getElementById('olist'); if (el) el.innerHTML = olist(); }
-function ordDone(j) { S.orders = j.items; S.clients = j.clients; S.products = j.products; S.dict = j.dict; render(); }
+function ordDone(j) { S.orders = j.items; S.clients = j.clients; S.products = j.products; S.dict = j.dict; S.promos = j.promos || S.promos; S.reviewAmt = j.reviewAmt || S.reviewAmt; render(); }
 
 // ---------- заказы: создание и редактирование ----------
 var O = null;
@@ -764,13 +782,25 @@ function oPct() {
   if (O.autoPct !== '') { var n = Number(String(O.autoPct).replace(',', '.')); return isFinite(n) ? Math.min(100, Math.max(0, n)) : 0; }
   return cl.pct;
 }
+function todayStr() { return new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
+// скидки считаются тем же кодом, что и на сервере (autoDisc): сервер все равно пересчитывает при сохранении
+function oEng() {
+  var cl = client(O.cid), ex = O.id ? ord(O.id) : null;
+  var own = !!(ex && (ex.promos || []).some(function (p) { return p.key === 'review'; }));
+  var lines = O.lines.map(function (l) {
+    var p = prod(l.pid);
+    return {qty: Number(l.qty) || 0, price: p ? p.price : 0, category: p ? p.category : '', sku: p ? p.sku : ''};
+  });
+  return autoDisc({lines: lines, pct: oPct(), reviewOk: !!(cl && (cl.reviewOk || (own && cl.review))), reviewAmt: S.reviewAmt || 0,
+    promos: S.promos || [], off: O.off || [], today: todayStr()});
+}
 function oCalc() {
-  var sub = 0, pct = oPct(), dM = 0;
-  O.lines.forEach(function (l) { var p = prod(l.pid); sub += (Number(l.qty) || 0) * (p ? p.price : 0); });
-  var dA = Math.round(sub * pct) / 100;
+  var e = oEng(), dA = 0, dP = 0, dM = 0, sub = e.sub;
+  e.items.forEach(function (i) { if (i.applied) { if (i.key === 'loyal') dA += i.amount; else dP += i.amount; } });
+  dA = Math.min(dA, sub); dP = Math.min(dP, Math.max(0, sub - dA));
   if (O.man && Number(O.man.value) > 0) dM = O.man.kind === 'pct' ? Math.round(sub * Number(O.man.value)) / 100 : Number(O.man.value);
-  dM = Math.min(dM, Math.max(0, sub - dA));
-  return {sub: sub, dA: dA, dM: dM, total: sub - dA - dM};
+  dM = Math.min(dM, Math.max(0, sub - dA - dP));
+  return {sub: sub, dA: dA, dP: dP, dM: dM, total: sub - dA - dP - dM, items: e.items};
 }
 // адрес клиента подставляется сам, пока вы не поменяли его вручную
 function oAddrFill(cl) {
@@ -846,13 +876,23 @@ function oLines() {
 }
 function oDisc() {
   var c = oCalc(), cl = client(O.cid), h = '', defP = cl ? cl.pct : 0;
+  var li = c.items.filter(function (i) { return i.key === 'loyal'; })[0];
   // скидка постоянного клиента добавляется сама, ее можно изменить или снять
   if (cl && (defP > 0 || O.autoPct !== '')) {
-    h += '<div class="ln dl"><div class="ln-main">' + (O.autoOff ? '<span class="mu"><s>Постоянный клиент</s> (снята)</span>' : 'Постоянный клиент') + '</div>' +
+    h += '<div class="ln dl"><div class="ln-main">' + (O.autoOff ? '<span class="mu"><s>Постоянный клиент</s> (снята)</span>' : 'Постоянный клиент' +
+        (li && !li.applied ? '<div class="mu">' + esc(li.note) + '</div>' : '')) + '</div>' +
       (O.autoOff ? '' : '<div class="dp"><input data-o="ap" type="number" inputmode="decimal" step="any" min="0" max="100" placeholder="' + defP + '" value="' + esc(O.autoPct) + '" aria-label="Процент скидки клиента"><span class="mu">%</span></div>') +
       '<div class="ln-n s" id="oaa">' + (O.autoOff ? '—' : '−' + money(c.dA)) + '</div>' +
       '<button type="button" class="ghost ' + (O.autoOff ? '' : 'dg ') + 'ic" data-a="oAuto" aria-label="' + (O.autoOff ? 'Вернуть скидку' : 'Убрать скидку') + '">' + ico(O.autoOff ? 'check' : 'x') + '</button></div>';
   }
+  // скидка за отзыв и акции: появляются сами, любую можно снять
+  c.items.forEach(function (i) {
+    if (i.key === 'loyal') return;
+    h += '<div class="ln dl"><div class="ln-main">' + (i.off ? '<span class="mu"><s>' + esc(i.name) + '</s> (снята)</span>' : esc(i.name) +
+        (!i.applied ? '<div class="mu">' + esc(i.note) + '</div>' : '')) + '</div>' +
+      '<div class="ln-n s">' + (i.applied ? '−' + money(i.amount) : '—') + '</div>' +
+      (i.applied || i.off ? '<button type="button" class="ghost ' + (i.off ? '' : 'dg ') + 'ic" data-a="oOff" data-k="' + esc(i.key) + '" aria-label="' + (i.off ? 'Вернуть скидку' : 'Убрать скидку') + '">' + ico(i.off ? 'check' : 'x') + '</button>' : '') + '</div>';
+  });
   if (O.man) {
     h += '<div class="ln dl2"><div class="dmw">' +
       '<input data-o="mv" type="number" inputmode="decimal" step="any" min="0" placeholder="Размер" value="' + esc(O.man.value) + '" style="width:140px;margin:0">' +
@@ -889,8 +929,8 @@ function oBody() {
 }
 function oTot() {
   var e = document.getElementById('otot'); if (!e) return;
-  var c = oCalc(), aa = document.getElementById('oaa');
-  e.innerHTML = '<p class="mu" style="margin:6px 0 0;text-align:right">Сумма: ' + money(c.sub) + (c.dA + c.dM > 0 ? ' · Скидки: −' + money(c.dA + c.dM) : '') + '</p><p class="tot">Итого: ' + money(c.total) + '</p>';
+  var c = oCalc(), aa = document.getElementById('oaa'), dd = c.dA + c.dP + c.dM;
+  e.innerHTML = '<p class="mu" style="margin:6px 0 0;text-align:right">Сумма: ' + money(c.sub) + (dd > 0 ? ' · Скидки: −' + money(dd) : '') + '</p><p class="tot">Итого: ' + money(c.total) + '</p>';
   if (aa && !O.autoOff) aa.textContent = '−' + money(c.dA);
 }
 function oRedraw() {
@@ -926,7 +966,7 @@ function oSync(e) {
   if (k === 'cq') {
     if (O.cq === v) return;
     O.cq = v;
-    if (O.cid) { O.cid = ''; O.autoOff = false; O.autoPct = ''; oAddrFill(null); oPart(); }
+    if (O.cid) { O.cid = ''; O.autoOff = false; O.autoPct = ''; O.off = []; oAddrFill(null); oPart(); }
     else { var cs = document.getElementById('ocsug'); if (cs) cs.innerHTML = oCsug(); }
     return;
   }
@@ -966,6 +1006,291 @@ function oLineDlg(i) {
   openD(d);
 }
 
+// Автоматические скидки: постоянный клиент, скидка за отзыв, акции. Один и тот же код в Code.gs и в index.html.
+function autoDisc(x) {
+  var r2 = function (v) { return Math.round(v * 100) / 100; }, sub = 0, items = [];
+  x.lines.forEach(function (l) { sub += l.qty * l.price; });
+  if (x.pct > 0 && sub > 0) items.push({ key: 'loyal', type: 'loyal', name: 'Постоянный клиент −' + x.pct + '%', amount: r2(sub * x.pct / 100) });
+  if (x.reviewOk && x.reviewAmt > 0 && sub > 0) items.push({ key: 'review', type: 'review', name: 'Скидка за отзыв', amount: r2(Math.min(x.reviewAmt, sub)) });
+  (x.promos || []).forEach(function (p) {
+    if ((p.dateFrom && x.today < p.dateFrom) || (p.dateTo && x.today > p.dateTo)) return;
+    var cat = String(p.category || '').toLowerCase();
+    var skus = String(p.skus || '').toLowerCase().split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+    var qq = 0, qs = 0;
+    x.lines.forEach(function (l) {
+      var hit = (!cat && !skus.length) || (cat && String(l.category || '').toLowerCase() === cat) || (skus.length && skus.indexOf(String(l.sku || '').toLowerCase()) >= 0);
+      if (hit) { qq += l.qty; qs += l.qty * l.price; }
+    });
+    if (qs <= 0 || qq < (Number(p.minQty) || 1)) return;
+    items.push({ key: 'promo:' + p.id, type: 'promo', name: 'Акция «' + p.name + '»', stack: !!p.stack,
+                 amount: r2(p.kind === 'sum' ? Math.min(p.value, qs) : qs * p.value / 100) });
+  });
+  var off = x.off || [], best = null;
+  items.forEach(function (it) {
+    it.applied = true; it.note = '';
+    if (off.indexOf(it.key) >= 0) { it.applied = false; it.off = true; it.note = 'снята'; }
+  });
+  items.forEach(function (it) { if (it.type === 'promo' && it.applied && (!best || it.amount > best.amount)) best = it; });
+  items.forEach(function (it) { if (it.type === 'promo' && it.applied && it !== best) { it.applied = false; it.note = 'применена более выгодная акция'; } });
+  if (best && !best.stack) {
+    var others = items.filter(function (it) { return it.type !== 'promo' && it.applied; }), os = 0;
+    others.forEach(function (it) { os += it.amount; });
+    if (others.length) {
+      if (best.amount >= os) others.forEach(function (it) { it.applied = false; it.note = 'не совмещается с акцией'; });
+      else { best.applied = false; best.note = 'не совмещается с другими скидками'; }
+    }
+  }
+  var auto = 0;
+  items.forEach(function (it) { if (it.applied) auto += it.amount; });
+  return { sub: r2(sub), items: items, auto: r2(Math.min(auto, sub)) };
+}
+
+// ---------- акции ----------
+function fdate(s) { var a = String(s).split('-'); return a.length === 3 ? a[2] + '.' + a[1] + '.' + a[0] : s; }
+var PST = {on: ['bdg ok', 'Действует'], off: ['tg', 'Выключена'], soon: ['bdg low', 'Не началась'], ended: ['tg', 'Закончилась'], arc: ['tg', 'В архиве']};
+function pdesc(p) {
+  var sc = (p.category || p.skus) ? [p.category ? 'категория «' + p.category + '»' : '', p.skus ? 'артикулы: ' + p.skus : ''].filter(Boolean).join(', ') : 'все товары';
+  var per = (p.dateFrom ? 'с ' + fdate(p.dateFrom) : '') + (p.dateTo ? ' по ' + fdate(p.dateTo) : '');
+  return [p.kind === 'pct' ? '−' + p.value + '%' : '−' + money(p.value), sc, p.minQty > 1 ? 'от ' + p.minQty + ' шт.' : '', per.trim(),
+    p.stack ? 'совмещается с другими скидками' : 'не совмещается с другими скидками'].filter(Boolean).join(' · ');
+}
+function promosPage() {
+  var items = S.promoAll.filter(function (p) { return !!p.archived === !!S.pa; });
+  return '<div class="rw"><h2>Акции</h2><div class="rw g8"><button class="tbtn ' + (S.pa ? 'on' : '') + '" data-a="pArc">Архив</button>' +
+    '<button class="pri" data-a="newPromo">Новая акция</button></div></div>' +
+    '<p class="mu" style="margin:8px 0 0">Акции применяются к заказу сами. Если подходят несколько, действует самая выгодная.</p>' +
+    (items.length ? items.map(function (p) {
+      var mn = p.archived ? [['resPromo', 'Восстановить'], ['delPromo', 'Удалить навсегда', 'dg']] :
+        [['editPromo', 'Редактировать'], ['togPromo', p.active ? 'Выключить' : 'Включить'], ['arcPromo', 'В архив']], st = PST[p.status];
+      return '<div class="cd rw"><div style="min-width:0"><b>' + esc(p.name) + '</b><div class="mu">' + esc(pdesc(p)) + '</div></div>' +
+        '<div class="rw g8"><span class="' + st[0] + '">' + st[1] + '</span>' + menu(mn, p.id) + '</div></div>';
+    }).join('') : '<p class="mu">' + (S.pa ? 'В архиве пусто.' : 'Акций пока нет. Нажмите «Новая акция».') + '</p>');
+}
+function pDone(j) { S.promoAll = j.items; render(); }
+function promoForm(p) {
+  var d = document.createElement('dialog'), saving = false;
+  d.className = 'cf';
+  var v = function (k) { return esc(p && p[k] != null && p[k] !== '' ? p[k] : ''); };
+  d.innerHTML = '<form method="dialog" novalidate><h3>' + (p ? 'Редактировать акцию' : 'Новая акция') + '</h3>' +
+    '<label>Название *</label><input name="nm" placeholder="Например: 2 кулона −15%" autocomplete="off" value="' + v('name') + '">' +
+    '<div class="cg2"><div><label>Тип скидки</label><select name="kd"><option value="pct"' + (!p || p.kind === 'pct' ? ' selected' : '') + '>Процент</option><option value="sum"' + (p && p.kind === 'sum' ? ' selected' : '') + '>Гривны</option></select></div>' +
+    '<div><label>Размер скидки *</label><input name="vl" type="number" inputmode="decimal" step="any" min="0" placeholder="Введите размер" value="' + v('value') + '"></div></div>' +
+    '<div class="cg2"><div><label>Категория</label><select name="ct"><option value="">Все категории</option>' + opts(dn('category', p && p.category).map(function (x) { return [x, x]; }), p && p.category) + '</select></div>' +
+    '<div><label>Артикулы товаров</label><input name="sk" placeholder="Через запятую, необязательно" autocomplete="off" value="' + v('skus') + '"></div></div>' +
+    '<div class="cg2"><div><label>Минимум штук</label><input name="mq" type="number" inputmode="numeric" min="1" step="1" placeholder="1" value="' + (p && p.minQty > 1 ? p.minQty : '') + '"></div>' +
+    '<div><label>Совмещается с другими скидками</label><select name="sc"><option value="1"' + (!p || p.stack ? ' selected' : '') + '>Да</option><option value="0"' + (p && !p.stack ? ' selected' : '') + '>Нет</option></select></div></div>' +
+    '<div class="cg2"><div><label>Действует с</label><input name="df" type="date" value="' + v('dateFrom') + '"></div><div><label>Действует по</label><input name="dt" type="date" value="' + v('dateTo') + '"></div></div>' +
+    '<p class="mu" style="margin:0 0 8px">Если указаны категория и артикулы, акция действует на товары из любого из условий. Пустые поля: все товары, без срока.</p>' +
+    '<p class="er"></p><div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">' + (p ? 'Сохранить' : 'Создать') + '</button></div></form>';
+  var f = d.querySelector('form'), er = d.querySelector('.er'), sb = f.querySelector('.pri'), cb = f.querySelector('[data-c]');
+  cb.onclick = function () { d.close(); };
+  d.addEventListener('cancel', function (e) { if (saving) e.preventDefault(); });
+  f.addEventListener('input', function (e) { e.target.classList.remove('bad'); });
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (saving) return;
+    var g = function (n) { return f.elements[n].value.trim(); }, bad = [];
+    if (!g('nm')) bad.push('nm');
+    if (!(Number(g('vl').replace(',', '.')) > 0)) bad.push('vl');
+    if (bad.length) { bad.forEach(function (n) { f.elements[n].classList.add('bad'); }); er.textContent = 'Заполните выделенные поля'; return; }
+    saving = true; er.textContent = ''; sb.disabled = true; cb.disabled = true; S.btn = sb;
+    call('promos.save', {id: p ? p.id : '', name: g('nm'), kind: g('kd'), value: g('vl'), category: g('ct'), skus: g('sk'), minQty: g('mq'),
+      stack: g('sc') === '1', dateFrom: g('df'), dateTo: g('dt')}).then(function (j) { d.close(); pDone(j); },
+      function (err) { saving = false; sb.disabled = false; cb.disabled = false; er.textContent = err.message; });
+  });
+  d.addEventListener('close', function () { d.remove(); });
+  openD(d);
+}
+
+// ---------- возвраты и обмен ----------
+function oRetLeft(o) { return o.lines.reduce(function (a, l) { return a + l.qty; }, 0) - (o.retQty || 0); }
+function retHtml(o) {
+  if (!o.returns || !o.returns.length) return '';
+  return '<h4 class="ci-h" style="margin:14px 0 6px">Возвраты</h4>' + o.returns.map(function (r) {
+    return '<div class="cd"><div class="rw"><b>Возврат №' + r.num + '</b><b>−' + money(r.total) + '</b></div><div class="mu">' + fdt(r.created) + ' · ' + esc(r.seller) + ' · ' + esc(r.reason) +
+      ' · ' + (r.action === 'stock' ? 'на склад' : 'списано') + (r.comment ? ' · ' + esc(r.comment) : '') + '</div>' +
+      r.lines.map(function (l) { return '<div class="mu">' + esc(l.label) + ' × ' + l.qty + ' шт · ' + money(l.unit) + '</div>'; }).join('') + '</div>';
+  }).join('');
+}
+function exchangeFor(o) {
+  var c = client(o.clientId);
+  A.newOrd();
+  if (!O) return;
+  if (c) { O.cid = c.id; O.cq = c.name; O.autoOff = false; O.autoPct = ''; oAddrFill(c); }
+  O.src = o.source; O.pay = o.payment; O.del = o.delivery;
+  if (!O.addr) O.addr = o.address || '';
+  O.cm = 'Обмен по заказу №' + o.num;
+  oRedraw();
+}
+function retDlg(o) {
+  var d = document.createElement('dialog'), saving = false, back = {};
+  d.className = 'md';
+  (o.returns || []).forEach(function (r) { r.lines.forEach(function (l) { back[l.varId] = (back[l.varId] || 0) + l.qty; }); });
+  var rows = o.lines.map(function (l, i) {
+    var left = l.qty - (back[l.varId] || 0);
+    return left > 0 ? '<tr><td>' + esc(l.label) + '</td><td class="r">' + left + ' шт</td><td class="r"><input class="eq" name="q' + i + '" type="number" inputmode="numeric" min="0" max="' + left + '" step="1" placeholder="0" aria-label="Вернуть, шт"></td></tr>' : '';
+  }).join('');
+  d.innerHTML = '<form method="dialog" novalidate><h3>Возврат по заказу №' + o.num + '</h3>' +
+    '<div class="tbw"><table class="tb"><tr><th>Наименование</th><th class="r">Можно вернуть</th><th class="r">Вернуть</th></tr>' + rows + '</table></div>' +
+    '<label style="margin-top:10px">Причина возврата *</label><select name="rs"><option value="">Не выбрано</option>' + opts(dn('return_reason').map(function (x) { return [x, x]; })) + '</select>' +
+    '<label>Что сделать с товаром</label><select name="ac"><option value="stock">Вернуть на склад</option><option value="writeoff">Списать (брак)</option></select>' +
+    '<label>Комментарий</label><input name="cm" placeholder="Введите комментарий (необязательно)" autocomplete="off">' +
+    '<p class="mu" style="margin:0 0 8px">Сумма возврата считается по цене товара с учетом скидок заказа.</p><p class="er"></p>' +
+    '<div class="rw" style="flex-wrap:wrap;gap:8px"><button type="button" class="ghost" data-c>Отмена</button><span class="rw g8"><button type="submit" class="ghost" data-x="1">Возврат и обмен</button><button type="submit" class="pri">Оформить возврат</button></span></div></form>';
+  var f = d.querySelector('form'), er = d.querySelector('.er'), cb = f.querySelector('[data-c]');
+  cb.onclick = function () { d.close(); };
+  d.addEventListener('cancel', function (e) { if (saving) e.preventDefault(); });
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (saving) return;
+    var ex = !!(e.submitter && e.submitter.dataset && e.submitter.dataset.x), sb = e.submitter || f.querySelector('.pri');
+    var lines = o.lines.map(function (l, i) { return {varId: l.varId, qty: f.elements['q' + i] ? f.elements['q' + i].value : ''}; });
+    saving = true; er.textContent = ''; sb.disabled = true; cb.disabled = true; S.btn = sb;
+    call('returns.save', {orderId: o.id, reason: f.elements.rs.value, toStock: f.elements.ac.value === 'stock', comment: f.elements.cm.value, lines: lines}).then(function (j) {
+      d.close(); var m = document.getElementById('ovdlg'); if (m) m.close();
+      ordDone(j); toast('Возврат оформлен');
+      if (ex) exchangeFor(o);
+    }, function (err) { saving = false; sb.disabled = false; cb.disabled = false; er.textContent = err.message; });
+  });
+  d.addEventListener('close', function () { d.remove(); });
+  openD(d);
+}
+function todayStr_() { return todayStr(); }
+
+// ---------- отчеты ----------
+var RTABS = [['sum', 'Сводка'], ['products', 'Товары'], ['clients', 'Клиенты'], ['sources', 'Источники'], ['sellers', 'Продавцы'], ['discounts', 'Скидки'], ['purchases', 'Закупки'], ['returns', 'Возвраты'], ['ads', 'Реклама']];
+function iso(d) { return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
+function rpSet(k) {
+  var n = new Date(), t = iso(n), f = t;
+  if (k === 'week') { var w = new Date(n.getTime()); w.setDate(w.getDate() - 6); f = iso(w); }
+  if (k === 'month') f = t.slice(0, 8) + '01';
+  if (k === 'year') f = t.slice(0, 5) + '01-01';
+  S.rp = {k: k, from: f, to: t};
+}
+function repTable(k) {
+  var R = S.rep, T = 't', N = 'n', M = 'm';
+  var two = function (h, list) { return {cols: [[h, T], ['Заказов', N], ['Выручка', M]], rows: list.map(function (e) { return [e.name, e.orders, e.revenue]; })}; };
+  if (k === 'products') {
+    var key = {qty: 'qty', rev: 'revenue', profit: 'profit'}[S.rt] || 'qty';
+    var tot = R.products.reduce(function (a, p) { return a + Math.max(0, p.revenue); }, 0);
+    var list = R.products.slice().sort(function (a, b) { return b[key] - a[key] || a.name.localeCompare(b.name, 'ru'); });
+    return {cols: [['Товар', T], ['Категория', T], ['Продано, шт', N], ['Выручка', M], ['Себестоимость', M], ['Прибыль', M], ['Доля выручки', 'p'], ['Вариации', T]],
+      rows: list.map(function (p) {
+        return [p.name, p.category, p.qty, p.revenue, p.cost, p.profit, tot > 0 ? Math.round(Math.max(0, p.revenue) / tot * 1000) / 10 : 0,
+          p.vars.map(function (v) { return v.label + ' — ' + v.qty; }).join('; ')];
+      })};
+  }
+  if (k === 'clients') return two('Клиент', R.clients);
+  if (k === 'sources') return two('Источник', R.sources);
+  if (k === 'sellers') return two('Продавец', R.sellers);
+  if (k === 'discounts') return {cols: [['Скидка', T], ['Заказов', N], ['Сумма', M]], rows: R.discounts.map(function (e) { return [e.name, e.count, e.sum]; })};
+  if (k === 'purchases') return {cols: [['Товар', T], ['Принято, шт', N], ['Сумма', M], ['Средняя цена', M]], rows: R.purchases.map(function (e) { return [e.name, e.qty, e.sum, e.avg]; })};
+  if (k === 'returns') return {cols: [['№', N], ['Заказ', N], ['Дата', T], ['Причина', T], ['Куда', T], ['Сумма', M]],
+    rows: R.returns.map(function (e) { return [e.num, e.orderNum, fdate(e.date), e.reason, e.action === 'stock' ? 'на склад' : 'списано', e.total]; })};
+  if (k === 'ads') return {cols: [['Дата', T], ['Описание', T], ['Канал', T], ['Сумма', M]], rows: R.ads.map(function (e) { return [fdate(e.date), e.name, e.channel, e.amount]; })};
+  return null;
+}
+function tableHtml(t) {
+  if (!t.rows.length) return '<p class="mu">За выбранный период данных нет.</p>';
+  var fm = function (v, ty) { return ty === 'm' ? money(v) : ty === 'p' ? v + '%' : ty === 'n' ? String(v) : esc(v); };
+  return '<div class="tbw"><table class="tb"><tr>' + t.cols.map(function (c) { return '<th' + (c[1] === 't' ? '' : ' class="r"') + '>' + esc(c[0]) + '</th>'; }).join('') + '</tr>' +
+    t.rows.map(function (r) {
+      return '<tr>' + r.map(function (v, i) { return '<td' + (t.cols[i][1] === 't' ? '' : ' class="r"') + '>' + fm(v, t.cols[i][1]) + '</td>'; }).join('') + '</tr>';
+    }).join('') + '</table></div>';
+}
+function csvDownload(name, head, rows) {
+  var q = function (v) {
+    var s = typeof v === 'number' ? String(v).replace('.', ',') : String(v == null ? '' : v);
+    return /[;"\r\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  var text = '\ufeff' + [head].concat(rows).map(function (r) { return r.map(q).join(';'); }).join('\r\n');
+  var a = document.createElement('a'), u = URL.createObjectURL(new Blob([text], {type: 'text/csv;charset=utf-8'}));
+  a.href = u; a.download = name + '.csv'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function () { URL.revokeObjectURL(u); }, 2000);
+}
+function sumHtml() {
+  var s = S.rep.sum, c = function (l, v, cls) { return '<div class="rc ' + (cls || '') + '"><p class="mu">' + l + '</p><b>' + v + '</b></div>'; };
+  return '<div class="rg">' + c('Заказов', s.orders) + c('Выручка', money(s.revenue)) + c('Скидки', money(s.discounts)) + c('Себестоимость', money(s.cost)) +
+    c('Возвраты', money(s.refunds)) + c('Прибыль', money(s.profit), s.profit < 0 ? 'bad' : 'good') + c('Реклама', money(s.ad)) +
+    c('Прибыль после рекламы', money(s.profitAfterAd), s.profitAfterAd < 0 ? 'bad' : 'good') + c('Закупки', money(s.purchases)) + c('Списания', money(s.writeoff)) + '</div>' +
+    '<p class="mu" style="margin:12px 0 0">Выручка: завершенные заказы за период с учетом скидок. Возвраты вычитаются в день возврата. Себестоимость берется по партиям на момент завершения заказа. ' +
+    'Прибыль = выручка − возвраты − себестоимость (себестоимость товара, вернувшегося на склад, возвращается). Реклама, закупки и списания в прибыль заказов не входят.</p>';
+}
+function reportsPage() {
+  if (!S.rp) rpSet('month');
+  var R = S.rep;
+  var pre = [['today', 'Сегодня'], ['week', 'Неделя'], ['month', 'Месяц'], ['year', 'Год'], ['range', 'Период']].map(function (c) {
+    return '<button class="' + (S.rp.k === c[0] ? 'on' : '') + '" data-a="rpre" data-k="' + c[0] + '">' + c[1] + '</button>';
+  }).join('');
+  var rng = S.rp.k === 'range' ? '<div class="rpb"><div><label>С</label><input id="rpf" type="date" value="' + esc(S.rp.from) + '"></div><div><label>По</label><input id="rpt" type="date" value="' + esc(S.rp.to) + '"></div><button class="pri" data-a="rpGo">Показать</button></div>' : '';
+  var tabs = RTABS.map(function (c) { return '<button class="' + (S.rv === c[0] ? 'on' : '') + '" data-a="rtab" data-k="' + c[0] + '">' + c[1] + '</button>'; }).join('');
+  var body = '', t = null, extra = '';
+  if (S.rv === 'sum') body = sumHtml();
+  else {
+    t = repTable(S.rv);
+    if (S.rv === 'products') {
+      body = '<div class="chips" style="margin-top:0">' + [['qty', 'По штукам'], ['rev', 'По выручке'], ['profit', 'По прибыли']].map(function (c) {
+        return '<button class="' + (S.rt === c[0] ? 'on' : '') + '" data-a="rsort" data-k="' + c[0] + '">' + c[1] + '</button>';
+      }).join('') + '</div>';
+      extra = '<h3 style="margin-top:14px">Не продавались за период</h3>' + (R.notSold.length ? '<p class="mu">' + R.notSold.map(function (n) { return esc(n.name) + ' (' + n.stock + ' шт)'; }).join(', ') + '</p>' : '<p class="mu">Все товары, которые есть на складе, продавались.</p>');
+    }
+    if (S.rv === 'returns' && R.returnReasons.length) {
+      extra = '<h3 style="margin-top:14px">По причинам</h3>' + tableHtml({cols: [['Причина', 't'], ['Возвратов', 'n'], ['Сумма', 'm']], rows: R.returnReasons.map(function (e) { return [e.name, e.count, e.sum]; })});
+    }
+    body += tableHtml(t) + extra;
+  }
+  return '<div class="rw"><h2>Отчёты</h2>' + (t && t.rows.length ? '<button class="ghost" data-a="csv">Скачать CSV</button>' : '') + '</div>' +
+    '<div class="chips" style="margin-bottom:0">' + pre + '</div>' + rng +
+    '<p class="mu" style="margin:8px 0 0">Период: с ' + fdate(S.rp.from) + ' по ' + fdate(S.rp.to) + '</p><div class="chips">' + tabs + '</div>' + body;
+}
+
+// ---------- реклама ----------
+function adsPage() {
+  var items = S.ads.filter(function (a) { return !!a.archived === !!S.aa; });
+  var tot = items.reduce(function (s, a) { return s + a.amount; }, 0);
+  return '<div class="rw"><h2>Реклама</h2><div class="rw g8"><button class="tbtn ' + (S.aa ? 'on' : '') + '" data-a="aArc">Архив</button>' +
+    '<button class="pri" data-a="newAd">Новая запись</button></div></div>' +
+    '<p class="mu" style="margin:8px 0 0">' + (S.aa ? 'В архиве: ' : 'Всего потрачено: ') + money(tot) + ' · записей: ' + items.length + '</p>' +
+    (items.length ? items.map(function (a) {
+      var per = fdate(a.date) + (a.dateTo ? ' — ' + fdate(a.dateTo) : '');
+      var mn = a.archived ? [['resAd', 'Восстановить'], ['delAd', 'Удалить навсегда', 'dg']] : [['editAd', 'Редактировать'], ['arcAd', 'В архив']];
+      return '<div class="cd rw"><div style="min-width:0"><b>' + esc(a.name) + '</b><div class="mu">' + esc([per, a.channel, a.seller].filter(Boolean).join(' · ')) + '</div>' +
+        (a.note ? '<div class="mu">' + esc(a.note) + '</div>' : '') + '</div><div class="rw g8"><b>' + money(a.amount) + '</b>' + menu(mn, a.id) + '</div></div>';
+    }).join('') : '<p class="mu">' + (S.aa ? 'В архиве пусто.' : 'Записей пока нет. Нажмите «Новая запись».') + '</p>');
+}
+function aDone(j) { S.ads = j.items; render(); }
+function adForm(a) {
+  var d = document.createElement('dialog'), saving = false;
+  d.className = 'cf';
+  var v = function (k) { return esc(a && a[k] != null && a[k] !== '' ? a[k] : ''); };
+  d.innerHTML = '<form method="dialog" novalidate><h3>' + (a ? 'Редактировать запись' : 'Новая запись о рекламе') + '</h3>' +
+    '<label>Описание рекламы *</label><input name="nm" placeholder="Например: сторис с кольцами" autocomplete="off" value="' + v('name') + '">' +
+    '<div class="cg2"><div><label>Потрачено, грн *</label><input name="am" type="number" inputmode="decimal" step="any" min="0" placeholder="Введите сумму" value="' + v('amount') + '"></div>' +
+    '<div><label>Канал</label><select name="ch"><option value="">Не выбрано</option>' + opts(dn('source', a && a.channel).map(function (x) { return [x, x]; }), a && a.channel) + '</select></div></div>' +
+    '<div class="cg2"><div><label>Дата *</label><input name="df" type="date" value="' + (a ? v('date') : iso(new Date())) + '"></div><div><label>Дата окончания</label><input name="dt" type="date" value="' + v('dateTo') + '"></div></div>' +
+    '<label>Заметка</label><input name="nt" placeholder="Введите заметку (необязательно)" autocomplete="off" value="' + v('note') + '">' +
+    '<p class="mu" style="margin:0 0 8px">В отчетах расход относится к дате начала.</p><p class="er"></p>' +
+    '<div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">' + (a ? 'Сохранить' : 'Создать') + '</button></div></form>';
+  var f = d.querySelector('form'), er = d.querySelector('.er'), sb = f.querySelector('.pri'), cb = f.querySelector('[data-c]');
+  cb.onclick = function () { d.close(); };
+  d.addEventListener('cancel', function (e) { if (saving) e.preventDefault(); });
+  f.addEventListener('input', function (e) { e.target.classList.remove('bad'); });
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (saving) return;
+    var g = function (n) { return f.elements[n].value.trim(); }, bad = [];
+    if (!g('nm')) bad.push('nm');
+    if (g('am') === '' || !(Number(g('am').replace(',', '.')) >= 0)) bad.push('am');
+    if (!g('df')) bad.push('df');
+    if (bad.length) { bad.forEach(function (n) { f.elements[n].classList.add('bad'); }); er.textContent = 'Заполните выделенные поля'; return; }
+    saving = true; er.textContent = ''; sb.disabled = true; cb.disabled = true; S.btn = sb;
+    call('ads.save', {id: a ? a.id : '', name: g('nm'), amount: g('am'), channel: g('ch'), date: g('df'), dateTo: g('dt'), note: g('nt')}).then(function (j) { d.close(); aDone(j); },
+      function (err) { saving = false; sb.disabled = false; cb.disabled = false; er.textContent = err.message; });
+  });
+  d.addEventListener('close', function () { d.remove(); });
+  openD(d);
+}
+
 var D = null;
 var DOC = {receipt: 'Поступление', pricing: 'Ценообразование', writeoff: 'Списание', adjust: 'Корректировка'};
 var DOCS = {receipt: 'Поступления', pricing: 'Ценообразование', writeoff: 'Списания', adjust: 'Корректировки'};
@@ -991,6 +1316,9 @@ function pmatch(p, q) {
 }
 
 var IC = {
+  chart: '<path d="M5 20v-6"/><path d="M12 20v-12"/><path d="M19 20v-9"/><path d="M3 20h18"/>',
+  megaphone: '<path d="M18 8a3 3 0 0 1 0 6"/><path d="M10 8v11a1 1 0 0 1 -1 1h-1a1 1 0 0 1 -1 -1v-5"/><path d="M12 8h0l4.524 -3.77a.9 .9 0 0 1 1.476 .692v12.156a.9 .9 0 0 1 -1.476 .692l-4.524 -3.77h-8a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1h8z"/>',
+  percent: '<path d="M17 17m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M7 7m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M6 18l12 -12"/>',
   photo: '<path d="M15 8h.01"/><path d="M3 6a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v12a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3v-12z"/><path d="M3 16l5 -5c.928 -.893 2.072 -.893 3 0l5 5"/><path d="M14 14l1 -1c.928 -.893 2.072 -.893 3 0l3 3"/>',
   dots: '<path d="M5 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M19 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/>',
   edit: '<path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4"/><path d="M13.5 6.5l4 4"/>',
@@ -1569,6 +1897,7 @@ function infoPage() {
     kv('Проверка скрипта', '<a href="' + esc(url()) + '?check=1" target="_blank" rel="noopener">открыть ?check=1</a>') +
     kv('Часовой пояс скрипта', esc(i.tz)) + kv('Срок сессии', i.sessionDays + ' дн.') +
     '<div class="rw g8" style="justify-content:flex-start;margin-top:8px"><button class="ghost" data-a="copyApi">Скопировать ссылку</button><button class="ghost" data-a="copyInfo">Скопировать диагностику</button></div></div>' +
+    '<div class="cd"><h3>Резервные копии</h3>' + (i.backup && i.backup.ok ? kv('Копий в Google Диске', i.backup.count + ' (хранятся последние ' + i.backup.keep + ')') + kv('Последняя копия', i.backup.last ? fdt(i.backup.last) : 'нет') + kv('Ежедневно около 03:00', i.backup.daily ? 'включено ✓' : '<b style="color:var(--dg)">не включено: запустите setupBackups в Apps Script</b>') : '<p class="er">' + esc(i.backup ? i.backup.error : 'Нет данных') + '</p>') + '<div class="rw g8" style="justify-content:flex-start;margin-top:8px"><button class="ghost" data-a="backupNow">Создать копию сейчас</button></div></div>' +
     '<div class="cd"><h3>Строк в листах</h3>' + counts + '</div>' +
     '<div class="cd"><h3>Для разработчика</h3><ul>' +
     '<li>После правки Code.gs: Развернуть → Управление развертываниями → карандаш → Версия: Новая версия → Развернуть. Ссылка /exec не меняется.</li>' +
@@ -1739,7 +2068,7 @@ var A = {
     var el = document.createElement('dialog');
     el.id = 'ovdlg'; el.className = 'md';
     el.innerHTML = '<h3>Заказ №' + o.num + ' (просмотр)</h3><div class="vb">' + ordHtml(o) + '</div>' +
-      '<div class="rw" style="justify-content:space-between"><button class="ghost dg" data-a="delOrd" data-id="' + esc(o.id) + '">Удалить</button><button class="ghost" data-c>Закрыть</button></div>';
+      '<div class="rw" style="justify-content:space-between"><button class="ghost dg" data-a="delOrd" data-id="' + esc(o.id) + '">Удалить</button>' + (o.status === 'done' && oRetLeft(o) > 0 ? '<button class="ghost" data-a="retOrd" data-id="' + esc(o.id) + '">Оформить возврат</button>' : '') + '<button class="ghost" data-c>Закрыть</button></div>';
     el.querySelector('[data-c]').onclick = function () { el.close(); };
     el.addEventListener('close', function () { el.remove(); });
     openD(el);
@@ -1786,7 +2115,7 @@ var A = {
   },
   newOrd: function () {
     O = {id: '', num: 0, cid: '', cq: '', src: '', pay: '', del: '', addr: '', addrAuto: '', cm: '', lines: [], q: '', pid: '', vid: '', qty: '',
-      autoOff: false, autoPct: '', man: null};
+      autoOff: false, autoPct: '', man: null, off: []};
     oDlg();
   },
   editOrd: function (d) {
@@ -1795,7 +2124,7 @@ var A = {
     var cl = client(o.clientId);
     O = {id: o.id, num: o.num, cid: cl ? cl.id : '', cq: cl ? cl.name : o.clientName, src: o.source, pay: o.payment, del: o.delivery, addr: o.address || '', addrAuto: '',
       cm: o.comment, q: '', pid: '', vid: '', qty: '', autoOff: o.autoOff, autoPct: (!o.autoOff && o.autoPct > 0) ? String(o.autoPct) : '',
-      man: o.manual ? {kind: o.manual.kind, value: String(o.manual.value), reason: o.manual.reason} : null,
+      man: o.manual ? {kind: o.manual.kind, value: String(o.manual.value), reason: o.manual.reason} : null, off: (o.offKeys || []).slice(),
       lines: o.lines.map(function (l) { return {pid: l.productId, vid: l.varId, qty: String(l.qty)}; })};
     oDlg();
   },
@@ -1806,10 +2135,10 @@ var A = {
   },
   oCPick: function (d) {
     var c = client(d.id); if (!c) return;
-    O.cid = c.id; O.cq = c.name; O.autoOff = false; O.autoPct = '';
+    O.cid = c.id; O.cq = c.name; O.autoOff = false; O.autoPct = ''; O.off = [];
     oAddrFill(c); oRedraw();
   },
-  oClrC: function () { O.cid = ''; O.cq = ''; O.autoOff = false; O.autoPct = ''; oAddrFill(null); oRedraw(); },
+  oClrC: function () { O.cid = ''; O.cq = ''; O.autoOff = false; O.autoPct = ''; O.off = []; oAddrFill(null); oRedraw(); },
   oInfo: function () { var c = client(O.cid); if (c) view('Информация о клиенте', cinfo(c)); },
   oAdd: function () {
     var p = prod(O.pid), er = document.getElementById('oper'), q = Number(O.qty);
@@ -1848,7 +2177,7 @@ var A = {
   oNewC: function () {
     clientForm(null, function (j) {
       var c = j.id && client(j.id);
-      if (O && c) { O.cid = c.id; O.cq = c.name; O.autoOff = false; O.autoPct = ''; oAddrFill(c); oRedraw(); }
+      if (O && c) { O.cid = c.id; O.cq = c.name; O.autoOff = false; O.autoPct = ''; O.off = []; oAddrFill(c); oRedraw(); }
     });
   },
   oClose: function () { if (O && O.saving) return; var el = document.getElementById('odlg'); if (el) el.close(); },
@@ -1857,12 +2186,65 @@ var A = {
     if (O.saving) return;
     var mine = O; mine.saving = true;
     call('orders.save', {id: O.id, clientId: O.cid, source: O.src, payment: O.pay, delivery: O.del, address: O.addr, comment: O.cm, autoOff: O.autoOff,
-      autoPct: O.autoPct, manual: O.man ? {kind: O.man.kind, value: O.man.value, reason: O.man.reason} : null,
+      autoPct: O.autoPct, offKeys: O.off, manual: O.man ? {kind: O.man.kind, value: O.man.value, reason: O.man.reason} : null,
       lines: O.lines.map(function (l) { return {varId: l.vid, qty: l.qty}; })}).then(function (j) {
       mine.saving = false;
       var el = document.getElementById('odlg'); if (el) el.close();
       ordDone(j); toast('Заказ сохранен');
     }).catch(function (e) { mine.saving = false; var x = document.getElementById('oer'); if (x) x.textContent = e.message; });
+  },
+  oOff: function (d) {
+    var i = O.off.indexOf(d.k);
+    if (i >= 0) O.off.splice(i, 1); else O.off.push(d.k);
+    oRedraw();
+  },
+  pArc: function () { S.pa = S.pa ? 0 : 1; render(); },
+  newPromo: function () { promoForm(null); },
+  editPromo: function (d) { var p = S.promoAll.filter(function (x) { return x.id === d.id; })[0]; if (p) promoForm(p); },
+  togPromo: function (d) { call('promos.toggle', {id: d.id}).then(pDone).catch(function (e) { toast(e.message); }); },
+  arcPromo: function (d) { call('promos.archive', {id: d.id}).then(pDone).catch(function (e) { toast(e.message); }); },
+  resPromo: function (d) { call('promos.restore', {id: d.id}).then(pDone).catch(function (e) { toast(e.message); }); },
+  delPromo: function (d) {
+    var p = S.promoAll.filter(function (x) { return x.id === d.id; })[0]; if (!p) return;
+    confirmDel('Акция «' + esc(p.name) + '» будет удалена навсегда. Это действие нельзя отменить.', function () {
+      return call('promos.delete', {id: p.id}).then(pDone);
+    });
+  },
+  revC: function (d) {
+    var c = client(d.id); if (!c) return;
+    call('clients.review', {id: c.id, value: !c.review}).then(function (j) { S.clients = j.items; S.reviewAmt = j.reviewAmt; render(); }).catch(function (e) { toast(e.message); });
+  },
+  retOrd: function (d) { var o = ord(d.id); if (o) retDlg(o); },
+  rpre: function (d) {
+    if (d.k === 'range') { S.rp.k = 'range'; render(); return; }
+    rpSet(d.k); S.ld.reports = 0; S.ts.reports = 0; render(); load();
+  },
+  rpGo: function () {
+    var f = document.getElementById('rpf').value, t = document.getElementById('rpt').value;
+    if (!f || !t) return toast('Укажите обе даты');
+    if (t < f) return toast('Дата окончания раньше даты начала');
+    S.rp = {k: 'range', from: f, to: t}; S.ld.reports = 0; S.ts.reports = 0; render(); load();
+  },
+  rtab: function (d) { S.rv = d.k; render(); },
+  rsort: function (d) { S.rt = d.k; render(); },
+  csv: function () {
+    var t = repTable(S.rv); if (!t || !t.rows.length) return;
+    var nm = RTABS.filter(function (x) { return x[0] === S.rv; })[0][1];
+    csvDownload('Отчет ' + nm + ' ' + S.rp.from + ' — ' + S.rp.to, t.cols.map(function (c) { return c[0]; }), t.rows);
+  },
+  aArc: function () { S.aa = S.aa ? 0 : 1; render(); },
+  newAd: function () { adForm(null); },
+  editAd: function (d) { var a = S.ads.filter(function (x) { return x.id === d.id; })[0]; if (a) adForm(a); },
+  arcAd: function (d) { call('ads.archive', {id: d.id}).then(aDone).catch(function (e) { toast(e.message); }); },
+  resAd: function (d) { call('ads.restore', {id: d.id}).then(aDone).catch(function (e) { toast(e.message); }); },
+  delAd: function (d) {
+    var a = S.ads.filter(function (x) { return x.id === d.id; })[0]; if (!a) return;
+    confirmDel('Запись «' + esc(a.name) + '» будет удалена навсегда. Это действие нельзя отменить.', function () {
+      return call('ads.delete', {id: a.id}).then(aDone);
+    });
+  },
+  backupNow: function () {
+    call('backup.now').then(function (j) { S.info.backup = j.backup; toast('Копия создана: ' + j.name); render(); }).catch(function (e) { toast(e.message); });
   },
   df: function (d) { S.df = d.k; render(); },
   newDoc: function (d) {
