@@ -464,6 +464,27 @@ nav .mb:active{transform:scale(.92)}
 @media(max-width:799px){
 dialog.cf textarea{height:44px;min-height:0;resize:none;overflow-y:auto}
 }
+
+/* ===== версия 0.5.3 ===== */
+.ocb{display:block;width:fit-content;max-width:100%;text-align:left;padding:6px 12px;border:1px solid var(--bd);border-radius:10px;background:none;overflow:hidden}
+.ocb b{display:block;font-size:15px}
+.or .dn .ocb small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pst{margin-left:14px;color:var(--mu)}
+button.rvok{padding:0;cursor:pointer}
+.pfx>input{padding-left:12px}
+.pfx>input:focus,.pfx>input:not(:placeholder-shown){padding-left:30px}
+.pfx>span{display:none}
+.pfx>input:focus~span,.pfx>input:not(:placeholder-shown)~span{display:flex}
+.rgrp{border-top:1px solid var(--bd);padding-top:12px;margin-top:16px}
+.rgs>.rgrp:first-child{border-top:0;padding-top:0;margin-top:10px}
+.rgh{margin:0 0 4px;font-size:16px}
+.rgrp .rg{margin-top:6px}
+@keyframes moreIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes moreOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(14px) scale(.97)}}
+@media(max-width:799px){
+.more{animation:moreIn .2s ease both;transform-origin:bottom right}
+.more.out{animation:moreOut .14s ease both}
+}
 </style>
 </head>
 <body>
@@ -474,7 +495,7 @@ dialog.cf textarea{height:44px;min-height:0;resize:none;overflow-y:auto}
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
 var NEED = 11; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var VER = 'ver0.5.2'; // 0 = бета, 5 = этап разработки, 1 = номер правки
+var VER = 'ver0.5.3'; // 0 = бета, 5 = этап разработки, 1 = номер правки
 var BUILD = '2026-10-08';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
@@ -716,8 +737,7 @@ function cinfo(c) {
   var kv = function (k, v) { return '<div class="kv"><span class="mu">' + k + '</span><span>' + v + '</span></div>'; };
   var link = !c.contact ? '—' : /^https?:\/\//i.test(c.contact) ? '<a href="' + esc(c.contact) + '" target="_blank" rel="noopener">' + esc(c.contact) + '</a>' : esc(c.contact);
   var next = (S.loy || []).filter(function (t) { return t[0] > c.n; }).sort(function (a, b) { return a[0] - b[0]; })[0];
-  return '<h4 class="ci-h">' + esc(cfio(c)) + '</h4>' +
-    kv('Клиент', '№' + c.num) + kv('Телефон', c.phone ? esc(c.phone) : '—') + kv('Адрес доставки', c.address ? esc(c.address) : '—') +
+  return kv('Клиент', esc(cfio(c)) + '<span class="mu" style="display:block">№' + c.num + '</span>') + kv('Телефон', c.phone ? esc(c.phone) : '—') + kv('Адрес доставки', c.address ? esc(c.address) : '—') +
     kv('Соцсеть', link) + kv('Статус', c.pct > 0 ? '<span class="gdisc">Постоянный клиент, скидка ' + c.pct + '%</span>' : 'Обычный клиент') +
     kv('Скидка за отзыв', c.reviewOk ? '<span class="gdisc">доступна, −' + money(S.reviewAmt) + '</span>' : c.review ? 'уже использована' : 'нет') +
     kv('Заказов', c.n) + kv('Сумма заказов', money(c.sum)) +
@@ -741,8 +761,9 @@ function clist() {
         '<div class="dc co"><span class="sl">Заказов: </span>' + c.n + '</div>' +
         '<div class="dc cs"><span class="sl">Сумма: </span>' + money(c.sum) + '</div>' +
         '<div class="dc cp">' + (c.phone ? esc(c.phone) : '—') + '</div>' +
-        '<div class="dc cv"><span class="mu">Отзыв в стори:</span>' + (c.review ? '<span class="rvok" title="Отзыв оставлен">' + ico('check') + '</span>' : '') +
-          '<button class="ghost ic" data-a="revAsk" data-id="' + esc(c.id) + '" aria-label="' + (c.review ? 'Снять отметку об отзыве' : 'Отметить отзыв') + '">' + ico('dots') + '</button></div>' +
+        '<div class="dc cv"><span class="mu">Отзыв в стори:</span>' + (c.review
+          ? '<button class="rvok" data-a="revAsk" data-id="' + esc(c.id) + '" title="Отзыв оставлен (нажмите, чтобы снять отметку)" aria-label="Снять отметку об отзыве">' + ico('check') + '</button>'
+          : '<button class="ghost ic" data-a="revAsk" data-id="' + esc(c.id) + '" aria-label="Отметить отзыв">' + ico('dots') + '</button>') + '</div>' +
         '<div class="ce">' + op + '</div></div>';
     }).join('');
 }
@@ -761,6 +782,14 @@ function phRest(v) {
   else if (d.charAt(0) === '0') d = d.slice(1);
   return d.slice(0, 9);
 }
+function phFmt(r) {
+  var f = '+38 (0' + r.slice(0, 2);
+  if (r.length > 2) f += ') ' + r.slice(2, 5);
+  if (r.length > 5) f += '-' + r.slice(5, 7);
+  if (r.length > 7) f += '-' + r.slice(7, 9);
+  return f;
+}
+var PHL = 6; // длина неудаляемой части «+38 (0»
 function clientForm(c, done) {
   var d = document.createElement('dialog'), saving = false;
   d.className = 'cf';
@@ -769,7 +798,7 @@ function clientForm(c, done) {
     '<div class="cg"><div><label>Фамилия *</label><input name="ln" placeholder="Введите фамилию" autocomplete="off" value="' + v('lastName') + '"></div>' +
     '<div><label>Имя *</label><input name="fn" placeholder="Введите имя" autocomplete="off" value="' + esc(c ? (c.firstName || c.name) : '') + '"></div>' +
     '<div><label>Отчество</label><input name="mn" placeholder="Необязательно" autocomplete="off" value="' + v('middleName') + '"></div></div>' +
-    '<div class="cg2"><div><label>Телефон *</label><input name="ph" type="tel" inputmode="tel" autocomplete="off" maxlength="13" style="margin-bottom:4px" value="+380' + phRest(c && c.phone) + '"><p class="mu phc" data-phc style="margin:0 0 10px"></p></div>' +
+    '<div class="cg2"><div><label>Телефон *</label><input name="ph" type="tel" inputmode="tel" autocomplete="off" style="margin-bottom:4px" value="' + phFmt(phRest(c && c.phone)) + '"><p class="mu phc" data-phc style="margin:0 0 10px"></p></div>' +
     '<div><label>Ссылка на соцсеть</label><input name="ct" placeholder="Например: https://instagram.com/nick" autocomplete="off" value="' + v('contact') + '"></div></div>' +
     '<label>Адрес доставки</label><input name="ad" placeholder="Город, отделение или адрес" autocomplete="off" value="' + v('address') + '">' +
     '<label>Заметка</label><textarea name="nt" rows="3" placeholder="Введите заметку">' + v('note') + '</textarea>' +
@@ -780,18 +809,27 @@ function clientForm(c, done) {
   f.addEventListener('input', function (e) { e.target.classList.remove('bad'); });
   var ph = f.elements.ph, phc = f.querySelector('[data-phc]');
   var phSync = function () {
-    var r = phRest(ph.value), nv = '+380' + r;
-    if (ph.value !== nv) { ph.value = nv; try { ph.setSelectionRange(nv.length, nv.length); } catch (x) {} }
+    var act = document.activeElement === ph, cnt = ph.value.slice(0, ph.selectionStart).replace(/\D/g, '').length;
+    var r = phRest(ph.value), nv = phFmt(r);
+    if (ph.value !== nv) {
+      ph.value = nv;
+      if (act) {
+        var want = Math.max(3, cnt), i = 0, seen = 0;
+        if (want >= 3 + r.length) i = nv.length;
+        else while (i < nv.length && seen < want) { if (/\d/.test(nv.charAt(i))) seen++; i++; }
+        i = Math.max(PHL, i);
+        try { ph.setSelectionRange(i, i); } catch (x) {}
+      }
+    }
     phc.textContent = r.length === 9 ? 'Номер введен полностью' : 'Введено цифр: ' + r.length + ' из 9';
     phc.style.color = r.length === 9 ? 'var(--gt)' : '';
   };
   ph.addEventListener('input', phSync);
-  ph.addEventListener('focus', function () { setTimeout(function () { if (ph.selectionStart < 4) ph.setSelectionRange(ph.value.length, ph.value.length); }, 0); });
+  ph.addEventListener('focus', function () { setTimeout(function () { if (ph.selectionStart < PHL) ph.setSelectionRange(ph.value.length, ph.value.length); }, 0); });
   ph.addEventListener('keydown', function (e) {
-    var a = ph.selectionStart, b = ph.selectionEnd;
-    if (e.key === 'Backspace' && b <= 4) e.preventDefault();
-    else if (e.key === 'Delete' && b <= 4) e.preventDefault();
-    else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && b <= 4) ph.setSelectionRange(ph.value.length, ph.value.length);
+    var b = ph.selectionEnd;
+    if ((e.key === 'Backspace' || e.key === 'Delete') && b <= PHL) e.preventDefault();
+    else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && b <= PHL) ph.setSelectionRange(ph.value.length, ph.value.length);
   });
   phSync();
   f.addEventListener('submit', function (e) {
@@ -803,11 +841,11 @@ function clientForm(c, done) {
     if (phRest(g('ph')).length !== 9) bad.push('ph');
     if (bad.length) {
       bad.forEach(function (n) { f.elements[n].classList.add('bad'); });
-      er.textContent = (bad.length === 1 && bad[0] === 'ph') ? 'Номер телефона: после +380 нужно ввести 9 цифр (сейчас ' + phRest(g('ph')).length + ')' : 'Заполните выделенные поля';
+      er.textContent = (bad.length === 1 && bad[0] === 'ph') ? 'Номер телефона: после +38 (0 нужно ввести 9 цифр (сейчас ' + phRest(g('ph')).length + ')' : 'Заполните выделенные поля';
       return;
     }
     saving = true; er.textContent = ''; sb.disabled = true; cb.disabled = true; S.btn = sb;
-    call('clients.save', {id: c ? c.id : '', lastName: g('ln'), firstName: g('fn'), middleName: g('mn'), phone: '+380' + phRest(g('ph')),
+    call('clients.save', {id: c ? c.id : '', lastName: g('ln'), firstName: g('fn'), middleName: g('mn'), phone: phFmt(phRest(g('ph'))),
       contact: g('ct'), address: g('ad'), note: g('nt')}).then(function (j) {
       d.close(); S.clients = j.items; if (done) done(j); render();
     }, function (err) { saving = false; sb.disabled = false; cb.disabled = false; er.textContent = err.message; });
@@ -855,13 +893,13 @@ function indHtml(o) {
 }
 function payBtn(o) {
   if (!payNeed(o) || o.status === 'cancelled') return '';
-  return o.payOk ? '<button class="okb pbn" data-a="payOrd" data-id="' + esc(o.id) + '">Оплачено</button>'
-    : '<button class="dgb pbn" data-a="payOrd" data-id="' + esc(o.id) + '">Не оплачено</button>';
+  return '<span class="pst">Статус оплаты:</span>' + (o.payOk ? '<button class="okb pbn" data-a="payOrd" data-id="' + esc(o.id) + '">Оплачено</button>'
+    : '<button class="dgb pbn" data-a="payOrd" data-id="' + esc(o.id) + '">Не оплачено</button>');
 }
 function ocHtml(o) {
   var id = esc(o.id), st = stMenu(o), mn = oMenu(o), ind = indHtml(o);
   return '<div class="oc' + (S.oo[o.id] ? ' open' : '') + '" data-id="' + id + '"><div class="or">' +
-    '<div class="dc dn"><button class="lk" data-a="openOrd" data-id="' + id + '"><b>№' + o.num + '</b></button><small>' + fdt(o.created) + (ocName(o) ? ' · ' + esc(ocName(o)) : '') + (o.returns && o.returns.length ? ' · есть возврат' : '') + '</small></div>' +
+    '<div class="dc dn"><button class="ocb" data-a="openOrd" data-id="' + id + '" title="Открыть просмотр заказа"><b>№' + o.num + '</b><small>' + fdt(o.created) + (ocName(o) ? ' · ' + esc(ocName(o)) : '') + (o.returns && o.returns.length ? ' · есть возврат' : '') + '</small></button></div>' +
     '<div class="dc ocp"><button class="lk" data-a="openOrd" data-id="' + id + '">' + o.lines.length + ' поз.</button></div>' +
     '<div class="dc dm ocs">' + money(o.total) + '</div>' +
     '<div class="dc du ocu">' + esc(o.seller || '—') + '</div>' +
@@ -971,12 +1009,25 @@ function oAddrFill(cl) {
   var cur = oAddrStr();
   if (!cur || cur === O.addrAuto) { oAddrSet(cl ? cl.address || '' : ''); O.addrAuto = oAddrStr(); }
 }
+// после сохранения заказа: адрес клиента обновляется; если он отличается от прежнего, сначала спрашиваем
+function askAddr(cid, addr, prev) {
+  var cl = cid && client(cid);
+  if (!cl || !addr || addr === (cl.address || '')) return;
+  if (prev !== null && addr === prev) return;
+  var save = function () {
+    return call('clients.save', {id: cl.id, lastName: cl.lastName, firstName: cl.firstName || cl.name, middleName: cl.middleName, phone: cl.phone,
+      contact: cl.contact, address: addr, note: cl.note}).then(function (j) { S.clients = j.items; render(); toast('Адрес клиента обновлен'); });
+  };
+  if (!cl.address) { S.btn = null; save().catch(function (e) { toast(e.message); }); return; }
+  yesNo('Сменить адрес клиента?', 'Адрес в заказе отличается от адреса в карточке клиента «' + esc(cl.name) + '».<br>Было: <b>' + esc(cl.address) +
+    '</b><br>Стало: <b>' + esc(addr) + '</b><br>Сменить адрес в карточке на новый?', save);
+}
 function oAddrHtml() {
   if (!oMail()) return '';
   var cb = '<label class="chk"><input type="checkbox" data-o="cour"' + (O.cour ? ' checked' : '') + '> Курьер</label>';
   if (O.cour) return '<label>Адрес доставки</label><input data-o="addr" placeholder="Введите адрес доставки" autocomplete="off" value="' + esc(O.addr) + '">' + cb;
   return '<div class="two"><div><label>Город/село</label><input data-o="city" placeholder="Введите город или село" autocomplete="off" value="' + esc(O.city) + '"></div>' +
-    '<div><label>Номер отделения/почтомата</label><div class="pfx"><span>№</span><input data-o="br" inputmode="numeric" maxlength="6" placeholder="Введите номер" autocomplete="off" value="' + esc(O.br) + '"></div></div></div>' + cb;
+    '<div><label>Номер отделения/почтомата</label><div class="pfx"><input data-o="br" inputmode="numeric" maxlength="6" placeholder="Введите номер" autocomplete="off" value="' + esc(O.br) + '"><span>№</span></div></div></div>' + cb;
 }
 function oSug() {
   var q = O.q.trim();
@@ -1387,12 +1438,21 @@ function csvDownload(name, head, rows) {
   setTimeout(function () { URL.revokeObjectURL(u); }, 2000);
 }
 function sumHtml() {
-  var s = S.rep.sum, c = function (l, v, cls) { return '<div class="rc ' + (cls || '') + '"><p class="mu">' + l + '</p><b>' + v + '</b></div>'; };
-  return '<div class="rg">' + c('Заказов', s.orders) + c('Выручка', money(s.revenue)) + c('Скидки', money(s.discounts)) + c('Себестоимость', money(s.cost)) +
-    c('Возвраты', money(s.refunds)) + c('Прибыль', money(s.profit), s.profit < 0 ? 'bad' : 'good') + c('Реклама', money(s.ad)) +
-    c('Прибыль после рекламы', money(s.profitAfterAd), s.profitAfterAd < 0 ? 'bad' : 'good') + c('Закупки', money(s.purchases)) + c('Списания', money(s.writeoff)) + '</div>' +
-    '<p class="mu" style="margin:12px 0 0">Выручка: завершенные заказы за период с учетом скидок. Возвраты вычитаются в день возврата. Себестоимость берется по партиям на момент завершения заказа. ' +
-    'Прибыль = выручка − возвраты − себестоимость (себестоимость товара, вернувшегося на склад, возвращается). Реклама, закупки и списания в прибыль заказов не входят.</p>';
+  var R = S.rep, s = R.sum, c = function (l, v, cls) { return '<div class="rc ' + (cls || '') + '"><p class="mu">' + l + '</p><b>' + v + '</b></div>'; };
+  var grp = function (t, body) { return '<div class="rgrp"><h3 class="rgh">' + t + '</h3>' + body + '</div>'; };
+  var top = R.products.filter(function (p) { return p.qty > 0; }).sort(function (a, b) { return b.qty - a.qty || b.revenue - a.revenue || a.name.localeCompare(b.name, 'ru'); }).slice(0, 10);
+  var topH = top.length ? top.map(function (p, i) {
+    return '<div class="kv"><span><span class="mu">' + (i + 1) + '.</span> ' + esc(p.name) + '</span><span>' + p.qty + ' шт · ' + money(p.revenue) + '</span></div>';
+  }).join('') : '<p class="mu" style="margin:0">За период продаж не было.</p>';
+  var sq = s.stockQty == null ? '—' : s.stockQty + ' шт', sc = s.stockCost == null ? '—' : money(s.stockCost);
+  return '<div class="rgs">' +
+    grp('Продажи', '<div class="rg">' + c('Заказов', s.orders) + c('Выручка', money(s.revenue)) + c('Скидки', money(s.discounts)) + c('Прибыль', money(s.profit), s.profit < 0 ? 'bad' : 'good') + '</div>') +
+    grp('Популярные товары', topH) +
+    grp('Склад', '<div class="rg">' + c('Товаров на складе', sq) + c('Себестоимость склада', sc) + c('Закупки', money(s.purchases)) + '</div>') +
+    grp('Реклама', '<div class="rg">' + c('Потрачено на рекламу', money(s.ad)) + c('Прибыль после рекламы', money(s.profitAfterAd), s.profitAfterAd < 0 ? 'bad' : 'good') + '</div>') +
+    grp('Возвраты / списания', '<div class="rg">' + c('Возвраты от клиентов', money(s.refunds)) + c('Списания со склада', money(s.writeoff)) + '</div>') + '</div>' +
+    '<p class="mu" style="margin:12px 0 0">Выручка: завершенные заказы за период с учетом скидок. Возвраты вычитаются в день возврата. Прибыль = выручка − возвраты − себестоимость проданного (себестоимость товара, вернувшегося на склад, возвращается). ' +
+    'Реклама, закупки и списания в прибыль заказов не входят. Популярные товары: по числу проданных штук за период. Количество и себестоимость склада показаны на сегодня и от периода не зависят.</p>';
 }
 function reportsPage() {
   if (!S.rp) rpSet('month');
@@ -2206,7 +2266,11 @@ var A = {
   },
   nav: function (d) { S.btn = null; S.page = d.p; S.more = false; S.fx = 1; render(); load(); },
   reload: function () { S.btn = null; S.lerr = {}; render(); load(); },
-  more: function () { S.more = !S.more; render(); },
+  more: function () {
+    S.btn = null;
+    if (S.more) return closeMore();
+    S.more = true; render();
+  },
   myPw: function () {
     ask('Сменить пароль', [{l: 'Новый пароль', t: 'password'}], 'Сохранить', function (v) {
       return call('sellers.password', {id: S.me.id, password: v[0]}).then(function () { toast('Пароль изменен'); });
@@ -2431,12 +2495,14 @@ var A = {
     var er = document.getElementById('oer'); er.textContent = '';
     if (O.saving) return;
     var mine = O; mine.saving = true;
+    var sAddr = oAddrStr(), sCid = mine.cid, sPrev = mine.id && ord(mine.id) ? (ord(mine.id).address || '') : null;
     call('orders.save', {id: O.id, clientId: O.cid, source: O.src, payment: O.pay, delivery: O.del, address: oAddrStr(), comment: O.cm, autoOff: O.autoOff,
       autoPct: O.autoPct, offKeys: O.off, manual: O.man ? {kind: O.man.kind, value: O.man.value, reason: O.man.reason} : null,
       lines: O.lines.map(function (l) { return {varId: l.vid, qty: l.qty}; })}).then(function (j) {
       mine.saving = false;
       var el = document.getElementById('odlg'); if (el) el.close();
       ordDone(j); toast('Заказ сохранен');
+      askAddr(sCid, sAddr, sPrev);
     }).catch(function (e) { mine.saving = false; var x = document.getElementById('oer'); if (x) x.textContent = e.message; });
   },
   oOff: function (d) {
@@ -2686,6 +2752,12 @@ var A = {
   copyInfo: function () { copy(diag(), 'Диагностика скопирована'); }
 };
 
+function closeMore() {
+  var m = document.querySelector('.more');
+  if (!m) { S.more = false; return render(); }
+  m.classList.add('out');
+  setTimeout(function () { S.more = false; render(); }, 140);
+}
 function closeMenus(e) {
   document.querySelectorAll('details.menu[open]').forEach(function (m) { if (!m.contains(e.target)) m.open = false; });
 }
@@ -2693,7 +2765,7 @@ document.addEventListener('pointerdown', closeMenus, true);
 document.addEventListener('touchstart', closeMenus, {capture: true, passive: true});
 document.addEventListener('click', function (e) {
   document.querySelectorAll('details.menu[open]').forEach(function (m) { if (!m.contains(e.target)) m.open = false; });
-  if (S.more && !e.target.closest('.more') && !e.target.closest('[data-a="more"]')) { S.more = false; render(); }
+  if (S.more && !e.target.closest('.more') && !e.target.closest('[data-a="more"]')) closeMore();
   if (D && D.rcOpen && !e.target.closest('.rcbox')) { D.rcOpen = false; var pr = document.getElementById('prc'); if (pr) pr.innerHTML = ''; }
   var b = e.target.closest('[data-a]');
   if (b && A[b.dataset.a]) {
