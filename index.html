@@ -281,7 +281,7 @@ input[readonly]{background:var(--bg);color:var(--mu);cursor:default}
 button.lk{border:0;background:none;padding:0;text-align:left;color:inherit;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;font-size:15px}
 button.lk:not(:disabled):hover,button.lk:active{background:none;border-color:transparent;text-decoration:underline}
 /* клиенты: сегменты */
-.cr{display:grid;grid-template-columns:90px minmax(0,1.6fr) 110px 160px minmax(0,1.2fr) 46px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:8px 6px 8px 0}
+.cr{display:grid;grid-template-columns:90px minmax(0,1.6fr) 110px 160px minmax(0,1.2fr) 200px 46px;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:10px;margin-top:8px;padding:8px 6px 8px 0}
 .cr.hd0{background:none;border:0;margin-top:12px;padding-top:0;padding-bottom:0}
 .cr.hd0 .dc{font-size:12px;color:var(--mu);border-left-color:transparent}
 .cr .cn{font-weight:600;color:var(--mu)}
@@ -396,17 +396,66 @@ dialog.cf{width:min(94vw,780px)}
 .rpb{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-top:10px}
 .rpb>div{min-width:140px;flex:1}
 .rpb>button{margin-bottom:10px}
+
+/* ===== версия 11 ===== */
+nav button{display:flex;align-items:center;gap:10px}
+nav .ni{display:flex;align-items:center;justify-content:center;flex:none}
+nav .ni svg{width:20px;height:20px;stroke-width:1.75}
+#gl{position:fixed;inset:0;margin:0;width:100%;height:100%;max-width:none;max-height:none;padding:0;border:0;border-radius:0;box-shadow:none;background:rgba(0,0,0,.3);z-index:90;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:visible;color:var(--tx)}
+#gl .glc{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:28px 38px;display:flex;flex-direction:column;align-items:center;box-shadow:0 12px 40px rgba(0,0,0,.28);max-width:84vw;min-width:240px;text-align:center}
+#gl i{display:block;width:68px;height:68px;border:6px solid var(--acbg);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite}
+#gl b{font-size:19px;font-weight:600;margin-top:18px}
+#gl span{font-size:14px;color:var(--mu);margin-top:6px;min-height:1.4em}
+.zm{width:min(94vw,560px)}
+.zimg{display:block;width:100%;max-height:70vh;object-fit:contain;border-radius:10px;background:var(--bg);margin-bottom:8px}
+.pc-photo[data-a]{cursor:pointer}
+.fsm{display:none}
+.mk{display:inline-flex;vertical-align:-2px}
+.mk svg{width:13px;height:13px;stroke-width:2.6}
+.mk.ok{color:var(--gt)}.mk.no{color:var(--dt)}
+.ind{display:inline-flex;flex-direction:column;gap:1px;font-size:12px;line-height:1.3;color:var(--mu);margin-right:12px;white-space:nowrap}
+.ii.pay{display:none}
+@media(min-width:800px){.ofoot .std{display:flex;align-items:center}}
+.pbn{padding:2px 10px;font-size:13px;margin-left:8px;border-radius:7px}
+.cv{display:flex;align-items:center;gap:8px;white-space:nowrap;font-size:13px}
+.cv .ic{width:30px;height:30px}
+.cr.hd0 .cv{font-size:12px}
+.rvok{display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:8px;background:var(--gb);color:var(--gt);border:1px solid var(--gt)}
+.rvok svg{width:16px;height:16px}
+@media(max-width:799px){
+nav{padding:5px 8px calc(5px + env(safe-area-inset-bottom));gap:4px}
+nav button{flex-direction:column;justify-content:center;gap:2px;padding:5px 2px;min-height:46px;border-radius:10px;font-size:inherit}
+nav .ni svg{width:21px;height:21px;stroke-width:1.4}
+nav .nt{display:block;font-size:10px;line-height:1.1;font-weight:400;color:var(--mu)}
+nav button.on .nt{color:var(--ac);font-weight:600}
+nav .mb{flex:0 0 54px;padding:5px 2px}
+nav .mb.on{background:var(--acbg);color:var(--ac)}
+nav .mb:active{transform:scale(.92)}
+.more{bottom:66px}
+.more .ni svg{stroke-width:1.5}
+.wrap{padding-bottom:92px}
+#toast{bottom:84px}
+.or .ocm{display:flex;align-items:center;grid-area:m;justify-self:end}
+.ii.pay{display:block}
+.ind{margin-right:10px}
+.fsm{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:6px 0 2px;font-size:13px;color:var(--mu)}
+.fsm b{color:var(--tx);font-weight:500}
+.fsm button{flex:none;padding:4px 12px;font-size:13px}
+.cr{grid-template-areas:"m n e" "p p p" "o s s" "v v v"}
+.cr .cv{grid-area:v;padding-top:2px}
+.pbn{margin-left:6px}
+}
 </style>
 </head>
 <body>
 <div id="app"></div>
-<div id="gl" hidden><i></i><span>Загрузка…</span></div>
+<div id="gl" popover="manual" hidden><div class="glc"><i></i><b>Загрузка...</b><span id="glp"></span></div></div>
 <div id="toast" role="status"></div>
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
-var NEED = 10; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var VER = 'ver0.5.0'; // 0 = бета, 5 = этап разработки, 0 = номер правки
-var BUILD = '2026-10-09';
+var NEED = 11; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
+var VER = 'ver0.5.1'; // 0 = бета, 5 = этап разработки, 1 = номер правки
+var BUILD = '2026-10-08';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
 var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category',
@@ -433,11 +482,34 @@ function toast(m) {
   clearTimeout(toast.t);
   toast.t = setTimeout(function () { t.className = ''; }, 3200);
 }
-// индикатор загрузки сверху справа: горит, пока идет хотя бы один запрос
+// экран загрузки по центру: большой круг, «Загрузка...» и случайная шутка; появляется, если запрос идет дольше четверти секунды
+var LOADMSG = ['Считаем фантики', 'Рисуем руны', 'Полируем серебро до блеска', 'Пересчитываем колечки', 'Будим складского кота', 'Ищем второй носок',
+  'Расплетаем цепочки', 'Кормим хомяка в колесе', 'Раскладываем кулоны по полочкам', 'Греем сервер ладошками', 'Договариваемся с Гуглом',
+  'Сдуваем пыль с таблицы', 'Завариваем кофе для скрипта', 'Натираем камни до сияния', 'Спрашиваем у совы', 'Строим башню из коробок',
+  'Взвешиваем облака', 'Гладим цифры по шерсти', 'Считаем звезды на кулонах', 'Ловим убежавшие нолики'];
+function glPhrase() {
+  var e = document.getElementById('glp'); if (!e) return;
+  var m, n = 0;
+  do { m = LOADMSG[Math.floor(Math.random() * LOADMSG.length)]; } while (m === glPhrase.last && n++ < 5);
+  glPhrase.last = m; e.textContent = m + '…';
+}
 function busy(n) {
+  var was = S.busy;
   S.busy = Math.max(0, S.busy + n);
-  var g = document.getElementById('gl');
-  if (g) g.hidden = !S.busy;
+  var g = document.getElementById('gl'); if (!g) return;
+  if (S.busy && !was) {
+    clearTimeout(S.bt); clearInterval(S.bi);
+    S.bt = setTimeout(function () {
+      if (!S.busy) return;
+      glPhrase(); g.hidden = false;
+      try { if (g.showPopover) g.showPopover(); } catch (e) {}
+      S.bi = setInterval(glPhrase, 2600);
+    }, 250);
+  } else if (!S.busy) {
+    clearTimeout(S.bt); clearInterval(S.bi);
+    try { if (g.hidePopover) g.hidePopover(); } catch (e) {}
+    g.hidden = true;
+  }
 }
 
 async function call(a, d, silent) {
@@ -580,7 +652,7 @@ function page() {
 }
 
 // ---------- клиенты ----------
-var OST = {new: 'Новый', paid: 'Оплачен', sent: 'Отправлен', done: 'Завершен', cancelled: 'Отменен'};
+var OST = {new: 'Новый', paid: 'Собран', sent: 'Отправлен', done: 'Завершен', cancelled: 'Отменен'};
 var OCL = {new: 'bdg bl', paid: 'bdg low', sent: 'bdg pu', done: 'bdg ok', cancelled: 'bdg no'};
 function byName(a, b) { return String(a.name).localeCompare(String(b.name), 'ru'); }
 function ostat(s) { return '<span class="' + OCL[s] + '">' + OST[s] + '</span>'; }
@@ -620,7 +692,7 @@ function clist() {
       (c.name + ' ' + c.phone + ' ' + c.contact).toLowerCase().indexOf(ql) >= 0);
   }).sort(byName);
   if (!items.length) return '<p class="mu">' + (S.clients.length ? 'Ничего не найдено.' : 'Клиентов пока нет. Нажмите «Новый клиент».') + '</p>';
-  return '<div class="cr hd0"><div class="dc">Клиент</div><div class="dc">Имя, фамилия</div><div class="dc">Заказов</div><div class="dc">Сумма заказов</div><div class="dc">Телефон</div><div></div></div>' +
+  return '<div class="cr hd0"><div class="dc">Клиент</div><div class="dc">Имя, фамилия</div><div class="dc">Заказов</div><div class="dc">Сумма заказов</div><div class="dc">Телефон</div><div class="dc">Отзыв</div><div></div></div>' +
     items.map(function (c) {
       var op = menu(c.archived ? [['resC', 'Восстановить'], ['delC', 'Удалить навсегда', 'dg']] : [['editC', 'Редактировать'], ['revC', c.review ? 'Снять отметку об отзыве' : 'Отметить: оставил отзыв'], ['arcC', 'В архив']], c.id);
       return '<div class="cr' + (c.archived ? ' arc' : '') + '">' +
@@ -629,6 +701,9 @@ function clist() {
         '<div class="dc co"><span class="sl">Заказов: </span>' + c.n + '</div>' +
         '<div class="dc cs"><span class="sl">Сумма: </span>' + money(c.sum) + '</div>' +
         '<div class="dc cp">' + (c.phone ? esc(c.phone) : '—') + '</div>' +
+        '<div class="dc cv"><span class="mu">Отзыв в стори:</span>' + (c.review
+          ? '<span class="rvok" title="Отзыв оставлен">' + ico('check') + '</span>'
+          : '<button class="ghost ic" data-a="revAsk" data-id="' + esc(c.id) + '" aria-label="Отметить отзыв">' + ico('dots') + '</button>') + '</div>' +
         '<div class="ce">' + op + '</div></div>';
     }).join('');
 }
@@ -709,18 +784,29 @@ function ocName(o) {
   var c = client(o.clientId);
   return c ? [c.firstName, c.lastName].filter(Boolean).join(' ') || c.name : (o.clientName || '');
 }
+function payNeed(o) { return /карт|перевод/i.test(o.payment || ''); }
+function mk(ok) { return '<span class="mk ' + (ok ? 'ok' : 'no') + '">' + ico(ok ? 'check' : 'x') + '</span>'; }
+// маленькие отметки рядом со статусом: есть ли ТТН и получена ли оплата (оплата видна на телефоне и только для карты/перевода)
+function indHtml(o) {
+  return '<span class="ind"><span class="ii">ТТН ' + mk(!!o.ttn) + '</span>' + (payNeed(o) ? '<span class="ii pay">Оплата ' + mk(o.payOk) + '</span>' : '') + '</span>';
+}
+function payBtn(o) {
+  if (!payNeed(o) || o.status === 'cancelled') return '';
+  return o.payOk ? '<button class="okb pbn" data-a="payOrd" data-id="' + esc(o.id) + '">Оплачено</button>'
+    : '<button class="dgb pbn" data-a="payOrd" data-id="' + esc(o.id) + '">Не оплачено</button>';
+}
 function ocHtml(o) {
-  var id = esc(o.id), st = stMenu(o), mn = oMenu(o);
+  var id = esc(o.id), st = stMenu(o), mn = oMenu(o), ind = indHtml(o);
   return '<div class="oc' + (S.oo[o.id] ? ' open' : '') + '" data-id="' + id + '"><div class="or">' +
     '<div class="dc dn"><button class="lk" data-a="openOrd" data-id="' + id + '"><b>№' + o.num + '</b></button><small>' + fdt(o.created) + (ocName(o) ? ' · ' + esc(ocName(o)) : '') + (o.returns && o.returns.length ? ' · есть возврат' : '') + '</small></div>' +
     '<div class="dc ocp"><button class="lk" data-a="openOrd" data-id="' + id + '">' + o.lines.length + ' поз.</button></div>' +
     '<div class="dc dm ocs">' + money(o.total) + '</div>' +
     '<div class="dc du ocu">' + esc(o.seller || '—') + '</div>' +
-    '<div class="oce">' + mn + '</div><div class="ocm">' + st + '</div></div>' +
+    '<div class="oce">' + mn + '</div><div class="ocm">' + ind + st + '</div></div>' +
     '<button class="otg ghost" data-a="oTog" data-id="' + id + '"><span class="t1">Подробнее</span><span class="t2">Свернуть</span>' + ico('chevron-down') + '</button>' +
     '<div class="omore"><div class="ofoot">' + ttnHtml(o) +
-    '<span class="of mu">Доставка: <b>' + (o.delivery ? esc(o.delivery) : '—') + '</b></span><span class="of mu">Оплата: <b>' + (o.payment ? esc(o.payment) : '—') + '</b></span>' +
-    '<div class="std">' + st + '</div></div>' +
+    '<span class="of mu">Доставка: <b>' + (o.delivery ? esc(o.delivery) : '—') + '</b></span><span class="of mu">Оплата: <b>' + (o.payment ? esc(o.payment) : '—') + '</b>' + payBtn(o) + '</span>' +
+    '<div class="std">' + ind + st + '</div></div>' +
     '<div class="omob"><span class="mu">Создал: <b>' + esc(o.seller || '—') + '</b></span>' + mn + '</div></div></div>';
 }
 function olist() {
@@ -744,7 +830,7 @@ function ordersPage() {
 function ordHtml(o) {
   var meta = '<div class="dmeta"><span>Дата: ' + fdt(o.created) + '</span><span>Статус: ' + OST[o.status] + '</span><span>Создал: ' + esc(o.seller) + '</span>' +
     (o.clientName ? '<span>Клиент: ' + esc(o.clientName) + '</span>' : '') + (o.source ? '<span>Источник: ' + esc(o.source) + '</span>' : '') +
-    (o.payment ? '<span>Оплата: ' + esc(o.payment) + '</span>' : '') + (o.delivery ? '<span>Доставка: ' + esc(o.delivery) + '</span>' : '') + (o.address ? '<span>Адрес: ' + esc(o.address) + '</span>' : '') +
+    (o.payment ? '<span>Оплата: ' + esc(o.payment) + (payNeed(o) ? (o.payOk ? ' (оплачено)' : ' (не оплачено)') : '') + '</span>' : '') + (o.delivery ? '<span>Доставка: ' + esc(o.delivery) + '</span>' : '') + (o.address ? '<span>Адрес: ' + esc(o.address) + '</span>' : '') +
     (o.ttn ? '<span>ТТН: ' + esc(o.ttn) + '</span>' : '') + '</div>';
   var tbl = '<tr><th>Наименование</th><th class="r">Кол-во</th><th class="r">Цена</th><th class="r">Сумма</th></tr>' + o.lines.map(function (l) {
     return '<tr><td>' + esc(l.label) + '</td><td class="r">' + l.qty + ' шт</td><td class="r">' + money(l.price) + '</td><td class="r">' + money(l.qty * l.price) + '</td></tr>';
@@ -1381,7 +1467,7 @@ function cardHtml(p) {
   var mn = p.archived
     ? [['resP', 'Восстановить'], ['delP', 'Удалить навсегда', 'dg']]
     : [['editP', 'Редактировать'], ['minP', 'Изменить минимальный остаток']].concat(single ? [] : [['varsP', 'Изменить вариации']], [['arcP', 'В архив']]);
-  var photo = '<div class="pc-photo"' + (p.archived ? '' : ' role="button" tabindex="0" aria-label="Редактировать товар" data-a="editP" data-id="' + esc(p.id) + '"') + '>' +
+  var photo = '<div class="pc-photo"' + (p.archived && !p.photo ? '' : ' role="button" tabindex="0" aria-label="' + (p.photo ? 'Увеличить фото' : 'Редактировать товар') + '" data-a="' + (p.photo ? 'zoomP' : 'editP') + '" data-id="' + esc(p.id) + '"') + '>' +
     (p.photo ? '<img src="' + esc(p.photo) + '" alt="">' : ico('photo')) + '</div>';
   var head = photo + '<div class="pc-main"><p class="pc-name" title="' + esc(p.name) + '">' + esc(p.name) + '</p>' +
     (meta ? '<p class="pc-meta">' + esc(meta) + '</p>' : '') + '</div>';
@@ -1419,10 +1505,24 @@ function filtOn() { return S.sort !== 'name' || S.tab === 'no' || S.tab === 'low
 function syncReset() { document.querySelectorAll('[data-a="resetF"]').forEach(function (b) { b.disabled = !filtOn(); }); }
 var STATS = [['all', 'Все'], ['no', 'Нет в наличии'], ['low', 'Заканчивается']];
 
+function catNames() {
+  var list = dn('category');
+  S.products.forEach(function (p) { if (p.category && list.indexOf(p.category) < 0) list.push(p.category); });
+  return list;
+}
+// на телефоне под кнопкой «Фильтр»: что выбрано и «Сбросить»
+function filtSummary() {
+  if (!filtOn()) return '';
+  var parts = [];
+  if (S.tab === 'no') parts.push('Нет в наличии'); else if (S.tab === 'low') parts.push('Заканчивается');
+  if (S.cat) parts.push(S.cat);
+  if (S.sort !== 'name') parts.push((SORTS.filter(function (x) { return x[0] === S.sort; })[0] || [])[1]);
+  return '<div class="fsm"><span>Выбрано: <b>' + esc(parts.join(' · ')) + '</b></span><button class="ghost dg" data-a="resetF">Сбросить</button></div>';
+}
 function catsHtml() {
   var list = dn('category');
   S.products.forEach(function (p) { if (p.category && list.indexOf(p.category) < 0) list.push(p.category); });
-  return '<div class="chips cats"><button class="' + (S.cat ? '' : 'on') + '" data-a="cat" data-k="">Все категории</button>' + list.map(function (c) {
+  return '<div class="chips cats fl-d"><button class="' + (S.cat ? '' : 'on') + '" data-a="cat" data-k="">Все категории</button>' + list.map(function (c) {
     return '<button class="' + (S.cat === c ? 'on' : '') + '" data-a="cat" data-k="' + esc(c) + '">' + esc(c) + '</button>';
   }).join('') + '</div>';
 }
@@ -1436,7 +1536,7 @@ function productsPage() {
     '<input id="q" placeholder="Введите название или артикул для поиска" value="' + esc(S.q) + '" style="margin-top:10px">' +
     '<div class="fl-d"><select id="srt" aria-label="Сортировка">' + opts(SORTS, S.sort) + '</select>' +
     '<div class="chips" style="margin-top:0">' + stat + '<button class="ghost dg rt" data-a="resetF"' + (filtOn() ? '' : ' disabled') + '>Сбросить</button></div></div>' +
-    '<div class="mf"><button data-a="filt">Фильтр' + (filtOn() ? ' ●' : '') + '</button></div>' +
+    '<div class="mf"><button data-a="filt">Фильтр' + (filtOn() ? ' ●' : '') + '</button></div>' + filtSummary() +
     catsHtml() +
     '<div id="plist">' + plist() + '</div>';
 }
@@ -1716,9 +1816,9 @@ function prodForm(p, done, pre, draft) {
       opts(dn('vartype').map(function (x) { return [x, x]; }), vtCur) + '</select></div>' +
       '<div class="fd" id="pvbox"' + (vtCur ? '' : ' hidden') + '><label>Значения вариаций *</label><input name="pvals" placeholder="Например: 16, 17, 18" value="' + esc(dv('pvals', '')) + '" autocomplete="off"></div>' +
       (edit ? '<p class="mu sp" style="margin:-2px 0 10px">Чтобы разбить товар на вариации, выберите тип и укажите значения. Остаток товара при этом должен быть 0.</p>' : '')) +
-    (edit ? '<div class="fd sp"><label>Фото</label><div class="rw" style="justify-content:flex-start;gap:12px;margin:0 0 10px"><div class="pc-photo" id="pph">' +
+    ('<div class="fd sp"><label>Фото' + (edit ? '' : ' (необязательно)') + '</label><div class="rw" style="justify-content:flex-start;gap:12px;margin:0 0 10px"><div class="pc-photo" id="pph">' +
       (curPhoto ? '<img src="' + esc(curPhoto) + '" alt="">' : ico('photo')) + '</div><div><button type="button" class="ghost" data-pick>Выбрать фото</button> ' +
-      '<button type="button" class="ghost dg" data-nop>Удалить фото</button></div></div><input type="file" accept="image/*" id="pfile" hidden></div>' : '') +
+      '<button type="button" class="ghost dg" data-nop>Удалить фото</button></div></div><input type="file" accept="image/*" id="pfile" hidden></div>') +
     '</div><p class="er">' + esc(draft && draft.err || '') + '</p><div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="pri">' + (edit ? 'Сохранить' : 'Создать') + '</button></div></form>';
   var f = d.querySelector('form'), er = d.querySelector('.er');
   d.querySelector('[data-c]').onclick = function () { d.close(); };
@@ -1728,7 +1828,7 @@ function prodForm(p, done, pre, draft) {
   d.addEventListener('cancel', function (e) { if (saving) e.preventDefault(); });
   var vt = f.elements.pvt;
   if (vt) vt.addEventListener('change', function () { d.querySelector('#pvbox').hidden = !vt.value; });
-  if (edit) {
+  {
     var fi = d.querySelector('#pfile'), ph = d.querySelector('#pph');
     d.querySelector('[data-pick]').onclick = function () { fi.click(); };
     d.querySelector('[data-nop]').onclick = function () { photo = ''; ph.innerHTML = ico('photo'); };
@@ -1755,7 +1855,7 @@ function prodForm(p, done, pre, draft) {
     }
     var data = {name: g('pname'), sku: g('psku'), category: g('pcat'), material: g('pmat')};
     if (edit) data.id = p.id; else data.min = g('pmin');
-    if (edit && photo !== undefined) data.photo = photo;
+    if (photo !== undefined && (edit || photo)) data.photo = photo;
     if (vt) { data.vartype = g('pvt'); data.values = g('pvals'); }
     var snap = {f: {}, photo: photo};
     Array.prototype.forEach.call(f.elements, function (el) { if (el.name) snap.f[el.name] = el.value; });
@@ -1806,6 +1906,19 @@ function delGate(o) {
       if (/пароль/i.test(err.message)) { pw.value = ''; pw.classList.add('bad'); pw.focus(); }
     });
   });
+  d.addEventListener('close', function () { d.remove(); });
+  openD(d);
+}
+// вопрос с кнопками «Нет» и «Да»
+function yesNo(title, text, cb) {
+  var d = document.createElement('dialog');
+  d.innerHTML = '<h3>' + esc(title) + '</h3><p style="margin:0 0 10px">' + text + '</p><p class="er"></p>' +
+    '<div class="rw"><button type="button" class="ghost" data-c>Нет</button><button type="button" class="okb" data-ok>Да</button></div>';
+  d.querySelector('[data-c]').onclick = function () { d.close(); };
+  d.querySelector('[data-ok]').onclick = function () {
+    var b = this; b.disabled = true; S.btn = b;
+    cb().then(function () { d.close(); }).catch(function (e) { b.disabled = false; d.querySelector('.er').textContent = e.message; });
+  };
   d.addEventListener('close', function () { d.remove(); });
   openD(d);
 }
@@ -1878,6 +1991,9 @@ function filtDlg() {
       '<label>Показывать</label><div class="chips" style="margin-top:0">' + STATS.map(function (c) {
         return '<button class="' + (S.tab === c[0] ? 'on' : '') + '" data-a="ftab" data-v="' + c[0] + '">' + c[1] + '</button>';
       }).join('') + '</div>' +
+      '<label>Категория</label><div class="chips" style="margin-top:0"><button class="' + (S.cat ? '' : 'on') + '" data-a="fcat" data-k="">Все категории</button>' + catNames().map(function (c) {
+        return '<button class="' + (S.cat === c ? 'on' : '') + '" data-a="fcat" data-k="' + esc(c) + '">' + esc(c) + '</button>';
+      }).join('') + '</div>' +
       '<div class="rw" style="margin-top:14px;justify-content:space-between"><button class="ghost dg" data-a="resetF"' + (filtOn() ? '' : ' disabled') + '>Сбросить</button><button class="pri" data-c>Готово</button></div>';
     d.querySelector('[data-c]').onclick = function () { d.close(); };
   };
@@ -1935,7 +2051,7 @@ function render() {
     h = '<div class="top"><div class="rw g8" style="justify-content:flex-start"><b>Hoolshop StockUp</b><span class="mu">' + VER + '</span></div><div class="rw g8"><button class="ghost ic" data-a="theme" aria-label="Сменить тему" title="Сменить тему">' + ico(themeNow() === 'dark' ? 'sun' : 'moon') + '</button><span class="sess">Текущий сеанс:</span><details class="menu"><summary>' + esc(S.me.name) + ' ▾</summary><div><button data-a="myPw">Сменить пароль</button><button class="dg" data-a="logout">Выйти</button></div></details></div></div>' +
       '<div class="wrap"><nav>' + NAV.map(function (n) {
         return '<button class="' + (S.page === n[0] ? 'on' : '') + (n[2] ? ' xt' : '') + '" data-a="nav" data-p="' + n[0] + '" aria-label="' + n[1] + '" title="' + n[1] + '"><span class="ni">' + ico(n[3]) + '</span><span class="nt">' + n[1] + '</span></button>';
-      }).join('') + '<button class="mb ' + (extra.some(function (n) { return n[0] === S.page; }) ? 'on' : '') + '" data-a="more" aria-label="Еще разделы" title="Еще"><span class="ni">' + ico('dots') + '</span></button></nav>' +
+      }).join('') + '<button class="mb ' + (S.more || extra.some(function (n) { return n[0] === S.page; }) ? 'on' : '') + '" data-a="more" aria-label="Еще разделы" title="Еще" aria-expanded="' + (S.more ? 'true' : 'false') + '"><span class="ni">' + ico('dots') + '</span><span class="nt">Еще</span></button></nav>' +
       '<main' + (S.fx ? ' class="fx"' : '') + '>' + page() + '</main></div>' +
       (S.more ? '<div class="more">' + extra.map(function (n) {
         return '<button class="' + (S.page === n[0] ? 'on' : '') + '" data-a="nav" data-p="' + n[0] + '"><span class="ni">' + ico(n[3]) + '</span><span class="nt">' + n[1] + '</span></button>';
@@ -2032,9 +2148,20 @@ var A = {
     S.cat = '';
     render(); if (S.fd) S.fd.paint();
   },
+  fcat: function (d) { S.cat = S.cat === d.k ? '' : d.k; render(); if (S.fd) S.fd.paint(); },
   cat: function (d) { S.cat = S.cat === d.k ? '' : d.k; render(); },
   filt: function () { filtDlg(); },
   newP: function () { prodForm(null, productsDone); },
+  zoomP: function (d) {
+    var p = prod(d.id); if (!p || !p.photo) return;
+    S.btn = null;
+    var el = document.createElement('dialog');
+    el.className = 'zm';
+    el.innerHTML = '<h3>' + esc(p.name) + '</h3><img class="zimg" src="' + esc(p.photo) + '" alt=""><div class="rw"><button class="pri" data-c>Закрыть</button></div>';
+    el.querySelector('[data-c]').onclick = function () { el.close(); };
+    el.addEventListener('close', function () { el.remove(); });
+    openD(el);
+  },
   editP: function (d) { var p = prod(d.id); if (p) prodForm(p, productsDone); },
   minP: function (d) {
     var p = prod(d.id);
@@ -2210,9 +2337,25 @@ var A = {
       return call('promos.delete', {id: p.id}).then(pDone);
     });
   },
+  revAsk: function (d) {
+    var c = client(d.id); if (!c) return;
+    S.btn = null;
+    yesNo('Отзыв оставлен?', 'Клиент «' + esc(c.name) + '» оставил отзыв в сторис?', function () {
+      return call('clients.review', {id: c.id, value: true}).then(function (j) { S.clients = j.items; S.reviewAmt = j.reviewAmt; render(); toast('Отзыв отмечен'); });
+    });
+  },
   revC: function (d) {
     var c = client(d.id); if (!c) return;
     call('clients.review', {id: c.id, value: !c.review}).then(function (j) { S.clients = j.items; S.reviewAmt = j.reviewAmt; render(); }).catch(function (e) { toast(e.message); });
+  },
+  payOrd: function (d) {
+    var o = ord(d.id); if (!o) return;
+    var on = !o.payOk;
+    var go = function () {
+      return call('orders.pay', {id: o.id, value: on}).then(function (j) { o.payOk = j.payOk; ordRepaint(); toast(j.payOk ? 'Заказ отмечен как оплаченный' : 'Отметка об оплате снята'); });
+    };
+    if (on) confirmAct('Подтвердить оплату?', 'Заказ №' + o.num + ': ' + esc(o.payment) + ', ' + money(o.total) + '. Отмечайте заказ оплаченным только после того, как деньги поступили. Подтверждаете оплату?', 'Да, оплачено', 'ok', go);
+    else confirmAct('Снять отметку об оплате?', 'Заказ №' + o.num + ' снова будет считаться неоплаченным.', 'Снять отметку', 'dg', go);
   },
   retOrd: function (d) { var o = ord(d.id); if (o) retDlg(o); },
   rpre: function (d) {
