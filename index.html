@@ -662,7 +662,7 @@ main>.rw:first-child{min-height:42px}
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
 var NEED = 12; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var VER = 'ver0.6.4'; // 0 = бета, 5 = этап разработки, 1 = номер правки
+var VER = 'ver0.6.5'; // 0 = бета, 5 = этап разработки, 1 = номер правки
 var BUILD = '2026-10-10';
 var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
@@ -1925,16 +1925,6 @@ function retHtml(o) {
       r.lines.map(function (l) { return '<div class="mu">' + esc(l.label) + ' × ' + l.qty + ' шт · ' + money(l.unit) + '</div>'; }).join('') + '</div>';
   }).join('');
 }
-function exchangeFor(o) {
-  var c = client(o.clientId);
-  A.newOrd();
-  if (!O) return;
-  if (c) { O.cid = c.id; O.cq = c.name; O.autoOff = false; O.autoPct = ''; O.autoKind = ''; oAddrFill(c); }
-  O.src = o.source; O.pay = o.payment; O.del = o.delivery;
-  if (!oAddrStr()) oAddrSet(o.address);
-  O.cm = 'Обмен по заказу №' + o.num;
-  oRedraw();
-}
 function retDlg(o) {
   var d = document.createElement('dialog'), saving = false, back = {};
   d.className = 'md';
@@ -1949,20 +1939,19 @@ function retDlg(o) {
     '<label>Что сделать с товаром</label><select name="ac"><option value="stock">Вернуть на склад</option><option value="writeoff">Списать (брак)</option></select>' +
     '<label>Комментарий</label><input name="cm" placeholder="Комментарий (необязательно)" autocomplete="off">' +
     '<p class="mu" style="margin:0 0 8px">Сумма возврата считается по цене товара с учетом скидок заказа.</p><p class="er"></p>' +
-    '<div class="rw" style="flex-wrap:wrap;gap:8px"><button type="button" class="ghost" data-c>Отмена</button><span class="rw g8"><button type="submit" class="ghost" data-x="1">Возврат и обмен</button><button type="submit" class="pri">Оформить возврат</button></span></div></form>';
+    '<div class="rw" style="flex-wrap:wrap;gap:8px"><button type="button" class="ghost" data-c>Отмена</button><span class="rw g8"><button type="submit" class="pri">Оформить возврат</button></span></div></form>';
   var f = d.querySelector('form'), er = d.querySelector('.er'), cb = f.querySelector('[data-c]');
   cb.onclick = function () { d.close(); };
   d.addEventListener('cancel', function (e) { if (saving) e.preventDefault(); });
   f.addEventListener('submit', function (e) {
     e.preventDefault();
     if (saving) return;
-    var ex = !!(e.submitter && e.submitter.dataset && e.submitter.dataset.x), sb = e.submitter || f.querySelector('.pri');
+    var sb = e.submitter || f.querySelector('.pri');
     var lines = o.lines.map(function (l, i) { return {varId: l.varId, qty: f.elements['q' + i] ? f.elements['q' + i].value : ''}; });
     saving = true; er.textContent = ''; sb.disabled = true; cb.disabled = true; S.btn = sb;
     call('returns.save', {orderId: o.id, reason: f.elements.rs.value, toStock: f.elements.ac.value === 'stock', comment: f.elements.cm.value, lines: lines}).then(function (j) {
       d.close(); var m = document.getElementById('ovdlg'); if (m) m.close();
       ordDone(j); toast('Возврат оформлен');
-      if (ex) exchangeFor(o);
     }, function (err) { saving = false; sb.disabled = false; cb.disabled = false; er.textContent = err.message; });
   });
   d.addEventListener('close', function () { d.remove(); });
@@ -2283,12 +2272,12 @@ function productsPage() {
 // ---------- документы: список и просмотр ----------
 
 function docsPage() {
-  var chips = ['receipt', 'pricing', 'writeoff', 'adjust', 'return'].map(function (k) {
+  var chips = ['receipt', 'pricing', 'writeoff', 'adjust'].map(function (k) {
     return '<button class="' + (S.df === k ? 'on' : '') + '" data-a="df" data-k="' + k + '">' + DOCS[k] + '</button>';
   }).join('');
   var items = S.docs.filter(function (x) { return x.type === S.df; });
   var sec = {receipt: 'Поставщик', writeoff: 'Причина', pricing: 'Позиций', adjust: 'Позиций', 'return': 'Заказ'}[S.df];
-  return '<div class="rw"><h2>Документы</h2>' + (S.df === 'return' ? '' : '<button class="pri" data-a="newDoc" data-t="' + S.df + '" title="Создать: ' + DOC[S.df] + '">Создать</button>') + '</div><div class="chips">' + chips + '</div>' +
+  return '<div class="rw"><h2>Документы</h2>' + '<button class="pri" data-a="newDoc" data-t="' + S.df + '" title="Создать: ' + DOC[S.df] + '">Создать</button>' + '</div><div class="chips">' + chips + '</div>' +
     (items.length
       ? '<div class="dr hd0"><div class="dc">№</div><div class="dc">' + sec + '</div><div class="dc">Сумма</div><div class="dc">Создатель</div><div class="dc">Комментарий</div><div></div></div>' +
         items.map(function (x) {
