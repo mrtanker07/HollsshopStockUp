@@ -714,6 +714,10 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;min-width:0}
 .dib svg{display:block;width:20px;height:20px}
 .dib .dbt{display:none}
 }
+/* ===== версия 0.8.2 ===== */
+.phint.soon{background:var(--wb);border-color:var(--wt);color:var(--tx)}
+.phint.soon svg{color:var(--wt)}
+.phint.soon .pmore{background:var(--wt);color:var(--wb)}
 </style>
 </head>
 <body>
@@ -723,10 +727,10 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;min-width:0}
 <div id="toast" role="status"></div>
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
-var NEED = 17; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var VER = 'ver0.8.1'; // 0 = бета, 5 = этап разработки, 1 = номер правки
+var NEED = 18; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
+var VER = 'ver0.8.2'; // 0 = бета, 5 = этап разработки, 1 = номер правки
 var BUILD = '2026-10-13';
-var API = 'https://script.google.com/macros/s/AKfycbzabqP8lLPUwzKIJ8hdd5kOpCnWR0vPr0KZAnXaKM1J5iQJRN_JUQO9UAsqPRJPJZ0w/exec';
+var API = 'https://script.google.com/macros/s/AKfycbwE5xQhOrGGYkof2SA7BufObJC0nRHg-J0U4bDqtjQac9cbzXzKdLZlEmQKjJTu7GmF/exec';
 
 var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, reg: false, regOk: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category',
   home: null, loyCfg: null, loyStats: null, loyMonth: [], ld: {}, ts: {}, sig: {}, dl: {}, lerr: {}, fx: 0, products: [], docs: [], df: 'receipt', q: '', tab: 'all', cat: '', more: false, busy: 0, info: null,
@@ -1123,7 +1127,7 @@ function cinfo(c) {
   return kv('Клиент', esc(cfio(c)) + '<span class="mu" style="display:block">№' + c.num + '</span>') + kv('Телефон', c.phone ? esc(c.phone) : '—') + kv('Адрес доставки', c.address ? esc(c.address) : '—') +
     kv('Соцсеть', link) + kv('Статус', c.pct > 0 ? '<span class="gdisc">Постоянный клиент, скидка ' + dval(c.pct, c.loyKind) + '</span>' : 'Обычный клиент') +
     kv('Скидка за отзыв', c.reviewOk ? '<span class="gdisc">доступна, −' + dval(S.reviewAmt, S.reviewKind) + '</span>' : c.review ? 'уже использована' : 'нет') +
-    kv('Заказов', c.n) + kv('Сумма заказов', money(c.sum)) +
+    kv('Заказов', c.n) + kv('Сумма заказов', moneyI(c.sum)) +
     (next ? kv('До скидки ' + dval(next[1], next[2]), 'ещё ' + (next[0] - c.n) + ' ' + plural(next[0] - c.n, ['заказ', 'заказа', 'заказов'])) : '') +
     (c.note ? kv('Заметка', esc(c.note)) : '');
 }
@@ -1142,7 +1146,7 @@ function clist() {
         '<div class="dc cn">№' + c.num + '</div>' +
         '<div class="dc cm"><b title="' + esc(c.name) + '">' + esc(c.name) + '</b>' + (c.pct > 0 ? '<small class="cpt">Постоянный −' + dval(c.pct, c.loyKind) + '</small>' : '') + '</div>' +
         '<div class="dc co"><span class="sl">Заказов: </span>' + c.n + '</div>' +
-        '<div class="dc cs"><span class="sl">Сумма: </span>' + money(c.sum) + '</div>' +
+        '<div class="dc cs"><span class="sl">Сумма: </span>' + moneyI(c.sum) + '</div>' +
         '<div class="dc cp">' + (c.phone ? esc(c.phone) : '—') + '</div>' +
         '<div class="dc cv"><span class="mu">Отзыв в стори:</span>' + (c.review
           ? '<button class="rvok" data-a="revAsk" data-id="' + esc(c.id) + '" title="Отзыв оставлен (нажмите, чтобы снять отметку)" aria-label="Снять отметку об отзыве">' + ico('check') + '</button>'
@@ -1299,7 +1303,7 @@ function ocHtml(o) {
   return '<div class="oc' + (S.oo[o.id] ? ' open' : '') + '" data-id="' + id + '"><div class="or">' +
     '<div class="dc dn"><button class="ocb" data-a="openOrd" data-id="' + id + '" title="Открыть просмотр заказа"><b>№' + o.num + '</b><small>' + fdt(o.created) + (ocName(o) ? ' · ' + esc(ocName(o)) : '') + (o.returns && o.returns.length ? ' · есть возврат' : '') + '</small></button></div>' +
     '<div class="dc ocp"><button class="lk" data-a="openOrd" data-id="' + id + '">' + o.lines.length + ' поз.</button></div>' +
-    '<div class="dc dm ocs">' + money(o.total) + '</div>' +
+    '<div class="dc dm ocs">' + moneyI(o.total) + '</div>' +
     '<div class="dc du ocu">' + esc(o.seller || '—') + '</div>' +
     '<div class="oce">' + mn + '</div><div class="ocm">' + ind + st + '</div></div>' +
     '<button class="otg ghost" data-a="oTog" data-id="' + id + '"><span class="t1">Подробнее</span><span class="t2">Свернуть</span>' + ico('chevron-down') + '</button>' +
@@ -1336,14 +1340,14 @@ function ordHtml(o) {
     kv('Адрес', dash(o.address)) + kv('Оплата', o.payment ? esc(o.payment) + (payNeed(o) ? (o.payOk ? ' (оплачено)' : ' (не оплачено)') : '') : '—') +
     (o.source ? kv('Источник', esc(o.source)) : '') + (o.ttn ? kv('ТТН', esc(o.ttn)) : '') + '</div>';
   var tbl = '<tr><th>Наименование</th><th class="r">Кол-во</th><th class="r">Цена</th><th class="r">Сумма</th></tr>' + o.lines.map(function (l) {
-    return '<tr><td>' + esc(l.label) + '</td><td class="r">' + l.qty + ' шт</td><td class="r">' + money(l.price) + '</td><td class="r">' + money(l.qty * l.price) + '</td></tr>';
+    return '<tr><td>' + esc(l.label) + '</td><td class="r">' + l.qty + ' шт</td><td class="r">' + money(l.price) + '</td><td class="r">' + moneyI(l.qty * l.price) + '</td></tr>';
   }).join('');
   var rt = 'style="margin:4px 0 0;text-align:right"';
-  return meta + '<div class="tbw"><table class="tb">' + tbl + '</table></div><p class="mu" ' + rt + '>Сумма: ' + money(o.sub) + '</p>' +
-    (o.dAuto > 0 ? '<p class="mu" ' + rt + '>Постоянный клиент −' + dval(o.autoPct, o.autoKind) + ': −' + money(o.dAuto) + '</p>' : '') +
-    o.promos.map(function (p) { return '<p class="mu" ' + rt + '>' + esc(p.name) + ': −' + money(p.amount) + '</p>'; }).join('') +
-    (o.dMan > 0 ? '<p class="mu" ' + rt + '>Скидка (' + esc((o.manual || []).map(function (m) { return m.reason; }).join(', ')) + '): −' + money(o.dMan) + '</p>' : '') +
-    '<p class="tot">Итого: ' + money(o.total) + '</p>' + (o.comment ? '<p class="cmt">Комментарий: ' + esc(o.comment) + '</p>' : '') + retHtml(o);
+  return meta + '<div class="tbw"><table class="tb">' + tbl + '</table></div><p class="mu" ' + rt + '>Сумма: ' + moneyI(o.sub) + '</p>' +
+    (o.dAuto > 0 ? '<p class="mu" ' + rt + '>Постоянный клиент −' + dval(o.autoPct, o.autoKind) + ': −' + moneyI(o.dAuto) + '</p>' : '') +
+    o.promos.map(function (p) { return '<p class="mu" ' + rt + '>' + esc(p.name) + ': −' + moneyI(p.amount) + '</p>'; }).join('') +
+    (o.dMan > 0 ? '<p class="mu" ' + rt + '>Скидка (' + esc((o.manual || []).map(function (m) { return m.reason; }).join(', ')) + '): −' + moneyI(o.dMan) + '</p>' : '') +
+    '<p class="tot">Итого: ' + moneyI(o.total) + '</p>' + (o.comment ? '<p class="cmt">Комментарий: ' + esc(o.comment) + '</p>' : '') + retHtml(o);
 }
 // Перед отправкой нужны ТТН и (для карты/перевода) отметка об оплате; без них дальше не пропускаем. Самовывоз сюда не попадает.
 function sendDlg(o, chg, go) {
@@ -1351,7 +1355,7 @@ function sendDlg(o, chg, go) {
   d.innerHTML = '<form method="dialog" novalidate><h3>Отправить заказ №' + o.num + '?</h3><p style="margin:0 0 10px">' + esc(chg) + '</p>' +
     (needTtn ? '<p class="wt">ТТН не добавлен. Введите номер ТТН (' + len + ' цифр): без него заказ отправить нельзя.</p><input name="ttn" inputmode="numeric" maxlength="' + len + '" placeholder="ТТН, ' + len + ' цифр" autocomplete="off" aria-label="ТТН">' :
       '<p class="mu" style="margin:0 0 10px">ТТН: <b>' + esc(o.ttn) + '</b></p>') +
-    (needPay ? '<p class="wt" style="margin-top:10px">Оплата не отмечена (' + esc(o.payment) + ', ' + money(o.total) + '). Без отметки об оплате заказ отправить нельзя. Отмечайте только после того, как деньги поступили.</p>' +
+    (needPay ? '<p class="wt" style="margin-top:10px">Оплата не отмечена (' + esc(o.payment) + ', ' + moneyI(o.total) + '). Без отметки об оплате заказ отправить нельзя. Отмечайте только после того, как деньги поступили.</p>' +
       '<label class="chk"><input type="checkbox" name="pay"> Оплата получена</label>' : '') +
     '<p class="er"></p><div class="rw"><button type="button" class="ghost" data-c>Отмена</button><button type="submit" class="okb">Отправить</button></div></form>';
   var f = d.querySelector('form'), er = d.querySelector('.er'), sb = f.querySelector('.okb'), cb = f.querySelector('[data-c]'), saving = false;
@@ -1436,7 +1440,7 @@ function oGiftHit(gp) {
 function oGiftOf(pid) { return (O.gifts || []).filter(function (g) { return g.pid === pid; })[0]; }
 function oGiftPrice(g) {
   var l = O.lines.filter(function (x) { return x.vid === g.vid; })[0], p = l && prod(l.pid);
-  return p ? Number(p.price) || 0 : 0;
+  return p ? Math.round(Number(p.price) || 0) : 0;
 }
 function oGiftSum() { return (O.gifts || []).reduce(function (a, g) { return a + oGiftPrice(g); }, 0); }
 // подарок можно выбрать только из позиций, которые сейчас есть в таблице заказа
@@ -1444,10 +1448,10 @@ function oGiftFix() { (O.gifts || []).forEach(function (g) { if (g.vid && !O.lin
 function oCalc() {
   var e = oEng(), dA = 0, dP = 0, dM = 0, sub = e.sub;
   e.items.forEach(function (i) { if (i.applied) { if (i.key === 'loyal') dA += i.amount; else dP += i.amount; } });
-  dA = Math.min(dA, sub); dP = Math.min(dP + oGiftSum(), Math.max(0, sub - dA));
+  dA = Math.round(Math.min(dA, sub)); dP = Math.round(Math.min(dP + oGiftSum(), Math.max(0, sub - dA)));
   var left = Math.max(0, sub - dA - dP);
   (O.man || []).forEach(function (m) {
-    var v = Number(m.value), a = v > 0 ? (m.kind === 'pct' ? Math.round(sub * v) / 100 : v) : 0;
+    var v = Number(m.value), a = v > 0 ? Math.round(m.kind === 'pct' ? sub * v / 100 : v) : 0;
     a = Math.min(a, left); left -= a; dM += a;
   });
   return {sub: sub, dA: dA, dP: dP, dM: dM, total: sub - dA - dP - dM, items: e.items};
@@ -1561,6 +1565,7 @@ function oeAvText() {
   return v ? 'доступно ' + Math.max(0, oAvail(v, O.ei)) + ' шт' : '';
 }
 function moneyT(n) { return money(n).replace(' грн', '<span class="cu"> грн</span>'); }
+function moneyTI(n) { return moneyI(n).replace(' грн', '<span class="cu"> грн</span>'); }
 function oLines() {
   if (!O.lines.length) return '<p class="mu">Список пуст. Найдите товар выше и нажмите «Добавить».</p>';
   return '<div class="tbw"><table class="tb ot"><tr><th class="hm">№</th><th>Наименование</th><th class="hmv">Вариация</th><th class="r">Кол-во</th><th class="r">Цена</th><th class="r">Сумма</th><th></th></tr>' +
@@ -1572,13 +1577,13 @@ function oLines() {
         return '<tr class="oe"><td class="hm">' + (i + 1) + '</td><td>' + esc(p ? p.name : 'Товар удален') + '</td><td class="hmv">' +
           (p && needVar(p) ? '<select data-o="ev" aria-label="Вариация">' + opts(activeVars(p).map(function (x) { return [x.id, vname(x)]; }), O.eb.vid) + '</select>' : '—') + '</td>' +
           '<td class="r"><input class="eq" data-o="eq" type="number" inputmode="numeric" min="1" step="1" value="' + esc(O.eb.qty) + '" aria-label="Количество"><div class="mu" id="oeav">' + oeAvText() + '</div></td>' +
-          '<td class="r">' + moneyT(pr) + '</td><td class="r"><b>' + moneyT(q2 * pr) + '</b></td>' +
+          '<td class="r">' + moneyT(pr) + '</td><td class="r"><b>' + moneyTI(q2 * pr) + '</b></td>' +
           '<td class="r ta"><button type="button" class="okb ic" data-a="oLineOk" aria-label="Сохранить позицию">' + ico('check') + '</button>' +
           '<button type="button" class="ghost ic" data-a="oLineNo" aria-label="Отменить изменение">' + ico('x') + '</button></td></tr>';
       }
       var q = Number(l.qty) || 0;
       return '<tr><td class="hm">' + (i + 1) + '</td><td>' + esc(p ? p.name : 'Товар удален') + (vl ? '<small class="vm">' + esc(vl) + '</small>' : '') + '</td><td class="hmv">' + (vl ? esc(vl) : '—') + '</td>' +
-        '<td class="r">' + q + '<span class="cu"> шт</span></td><td class="r">' + moneyT(pr) + '</td><td class="r"><b>' + moneyT(q * pr) + '</b></td>' +
+        '<td class="r">' + q + '<span class="cu"> шт</span></td><td class="r">' + moneyT(pr) + '</td><td class="r"><b>' + moneyTI(q * pr) + '</b></td>' +
         '<td class="r ta"><button type="button" class="ghost dg ic" data-a="oDel" data-i="' + i + '" aria-label="Убрать позицию">' + ico('trash') + '</button>' +
         '<button type="button" class="ghost ic" data-a="oEditLine" data-i="' + i + '" aria-label="Изменить позицию">' + ico('edit') + '</button></td></tr>';
     }).join('') + '</table></div>';
@@ -1591,7 +1596,7 @@ function oDisc() {
     h += '<div class="ln dl"><div class="ln-main">' + (O.autoOff ? '<span class="mu"><s>Постоянный клиент</s> (снята)</span>' : 'Постоянный клиент' +
         (li && !li.applied ? '<div class="mu">' + esc(li.note) + '</div>' : '')) + '</div>' +
       (O.autoOff ? '' : '<div class="dp"><b title="Размер скидки задан заранее и в заказе не меняется">' + dval(oPct(), oKind()) + '</b></div>') +
-      '<div class="ln-n s" id="oaa">' + (O.autoOff ? '—' : '−' + money(c.dA)) + '</div>' +
+      '<div class="ln-n s" id="oaa">' + (O.autoOff ? '—' : '−' + moneyI(c.dA)) + '</div>' +
       '<button type="button" class="ghost ' + (O.autoOff ? '' : 'dg ') + 'ic" data-a="oAuto" aria-label="' + (O.autoOff ? 'Вернуть скидку' : 'Убрать скидку') + '">' + ico(O.autoOff ? 'check' : 'x') + '</button></div>';
   }
   // скидка за отзыв и акции: появляются сами, любую можно снять
@@ -1600,7 +1605,7 @@ function oDisc() {
     h += '<div class="ln dl"><div class="ln-main">' + (i.off ? '<span class="mu"><s>' + esc(i.name) + '</s> (снята)</span>' : esc(i.name) +
         (i.type === 'promo' && !i.stack ? '<div class="rednote">Эта акция не суммируется с другими скидками</div>' : '') +
         (!i.applied ? '<div class="' + (i.type === 'promo' ? 'rednote' : 'mu') + '">' + esc(i.note) + '</div>' : '')) + '</div>' +
-      '<div class="ln-n s">' + (i.applied ? '−' + money(i.amount) : '—') + '</div>' +
+      '<div class="ln-n s">' + (i.applied ? '−' + moneyI(i.amount) : '—') + '</div>' +
       (i.applied || i.off ? '<button type="button" class="ghost ' + (i.off ? '' : 'dg ') + 'ic" data-a="oOff" data-k="' + esc(i.key) + '" aria-label="' + (i.off ? 'Вернуть скидку' : 'Убрать скидку') + '">' + ico(i.off ? 'check' : 'x') + '</button>' : '') + '</div>';
   });
   // подарок появляется только если выбран в списке «Добавить скидку»; строку можно убрать
@@ -1609,7 +1614,7 @@ function oDisc() {
     h += '<div class="ln dl"><div class="ln-main">Подарок<div class="mu">' + (!O.lines.length ? 'Сначала добавьте товары в заказ' : 'Выберите товар из списка заказа: одна штука бесплатно') + '</div></div>' +
       '<div class="gsel"><select data-o="gift" data-i="' + i + '" aria-label="Товар в подарок"' + (O.lines.length ? '' : ' disabled') + '><option value="">Не выбран</option>' +
       O.lines.filter(function (l) { return taken.indexOf(l.vid) < 0; }).map(function (l) { return '<option value="' + esc(l.vid) + '"' + (g.vid === l.vid ? ' selected' : '') + '>' + esc(lineLabel(l)) + '</option>'; }).join('') + '</select></div>' +
-      '<div class="ln-n s">' + (g.vid ? '−' + money(oGiftPrice(g)) : '—') + '</div>' +
+      '<div class="ln-n s">' + (g.vid ? '−' + moneyI(oGiftPrice(g)) : '—') + '</div>' +
       '<button type="button" class="ghost dg ic" data-a="oGiftDel" data-i="' + i + '" aria-label="Убрать скидку">' + ico('x') + '</button></div>';
   });
   (O.man || []).forEach(function (m, i) {
@@ -1672,8 +1677,8 @@ function oBody() {
 function oTot() {
   var e = document.getElementById('otot'); if (!e) return;
   var c = oCalc(), aa = document.getElementById('oaa'), dd = c.dA + c.dP + c.dM;
-  e.innerHTML = '<p class="mu" style="margin:6px 0 0;text-align:right">Сумма: ' + money(c.sub) + (dd > 0 ? ' · Скидки: −' + money(dd) : '') + '</p><p class="tot">Итого: ' + money(c.total) + '</p>';
-  if (aa && !O.autoOff) aa.textContent = '−' + money(c.dA);
+  e.innerHTML = '<p class="mu" style="margin:6px 0 0;text-align:right">Сумма: ' + moneyI(c.sub) + (dd > 0 ? ' · Скидки: −' + moneyI(dd) : '') + '</p><p class="tot">Итого: ' + moneyI(c.total) + '</p>';
+  if (aa && !O.autoOff) aa.textContent = '−' + moneyI(c.dA);
 }
 function oRedraw() {
   var el = document.getElementById('odlg'); if (!el) return;
@@ -1780,7 +1785,7 @@ function promoHit(p, l) {
   return true;
 }
 function autoDisc(x) {
-  var r2 = function (v) { return Math.round(v * 100) / 100; }, sub = 0, items = [];
+  var r2 = function (v) { return Math.round(v); }, sub = 0, items = []; // суммы заказов округляются до целых
   x.lines.forEach(function (l) { sub += l.qty * l.price; });
   if (x.pct > 0 && sub > 0) {
     var lsum = x.pctKind === 'sum', lam = r2(lsum ? Math.min(x.pct, sub) : sub * x.pct / 100);
@@ -1872,7 +1877,7 @@ function promoHint(H) {
     lbl = pr.days > 0 ? 'Ближайшая акция' : 'Акция идет сейчас'; nm = pr.name;
   } else { lbl = 'Акции'; nm = hp[0].name; sub = hp.length > 1 ? 'Всего акций: ' + hp.length : 'Нажмите, чтобы посмотреть'; }
   var more = pr ? (H.more || 0) : Math.max(0, hp.length - 1);
-  return '<button type="button" class="phint" data-a="promoHint">' + ico('gift') + '<span class="pht"><small>' + lbl +
+  return '<button type="button" class="phint' + (pr && pr.days > 0 ? ' soon' : '') + '" data-a="promoHint">' + ico('gift') + '<span class="pht"><small>' + lbl +
     '</small><b>' + esc(nm) + '</b><small>' + sub + '</small></span>' + (more > 0 ? '<span class="pmore">Еще ' + more + '</span>' : '') + '</button>';
 }
 function promoInfoHtml(pr) {
@@ -1895,7 +1900,7 @@ function homePage() {
   return '<div class="rw"><h2>Главная</h2><span class="mu">' + fdate(H.date) + '</span></div>' +
     (H.backupOff ? '<div class="wt" style="margin-top:10px">Ежедневная резервная копия не включена. <button class="lk2" data-a="goto" data-p="info">Как включить</button></div>' : '') +
     '<div class="rg"><div class="rc"><p class="mu">Оформлено сегодня</p><b>' + t.made + '</b></div>' +
-    '<div class="rc"><p class="mu">Выручка сегодня</p><b>' + money(t.revenue) + '</b></div>' +
+    '<div class="rc"><p class="mu">Выручка сегодня</p><b>' + moneyI(t.revenue) + '</b></div>' +
     '<div class="rc ' + (t.profit < 0 ? 'bad' : t.profit > 0 ? 'good' : '') + '"><p class="mu">Прибыль сегодня</p><b>' + money(t.profit) + '</b></div></div>' +
     '<p class="mu" style="margin:6px 0 0;font-size:12px">Выручка и прибыль считаются по заказам, завершенным сегодня (' + t.done + ' шт.).</p>' +
     '<div class="qk"><button class="pri" data-a="qkOrd">Новый заказ</button><button class="ghost" data-a="qkDoc">Новое поступление</button>' + promoHint(H) + '</div>' +
@@ -1904,7 +1909,7 @@ function homePage() {
     '<h3 style="margin-top:18px">Последние заказы</h3>' +
     (H.recent.length ? H.recent.map(function (o) {
       return '<button class="hl" data-a="homeOrd" data-id="' + esc(o.id) + '"><span style="min-width:0"><span class="nm"><b>№' + o.num + '</b> · ' + esc(o.client || 'Без клиента') + '</span><small class="mu nm">' + fdt(o.created) + '</small></span>' +
-        '<span class="rw g8" style="flex:none"><b>' + money(o.total) + '</b>' + ostat(o.status) + '</span></button>';
+        '<span class="rw g8" style="flex:none"><b>' + moneyI(o.total) + '</b>' + ostat(o.status) + '</span></button>';
     }).join('') : '<p class="mu">Заказов пока нет.</p>') +
     '<h3 style="margin-top:18px">Топ товаров за месяц</h3>' +
     (H.top.length ? '<div class="cd">' + H.top.map(function (p) {
@@ -2343,6 +2348,8 @@ function opts(a, sel) {
   return a.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (o[0] === sel ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('');
 }
 function money(n) { return Number(n).toLocaleString(LOC(), {maximumFractionDigits: 2}) + ' грн'; }
+// суммы заказов: без копеек, округляются до целого
+function moneyI(n) { return Math.round(Number(n) || 0).toLocaleString(LOC(), {maximumFractionDigits: 0}) + ' грн'; }
 function fdt(s) { return new Date(s).toLocaleString(LOC(), {dateStyle: 'short', timeStyle: 'short'}); }
 
 // Поиск: каждое набранное слово должно быть НАЧАЛОМ какого-то слова в названии или артикуле
@@ -3514,7 +3521,7 @@ var A = {
     var go = function () {
       return call('orders.pay', {id: o.id, value: on}).then(function (j) { o.payOk = j.payOk; ordRepaint(); toast(j.payOk ? 'Заказ отмечен как оплаченный' : 'Отметка об оплате снята'); });
     };
-    if (on) confirmAct('Подтвердить оплату?', 'Заказ №' + o.num + ': ' + esc(o.payment) + ', ' + money(o.total) + '. Отмечайте заказ оплаченным только после того, как деньги поступили. Подтверждаете оплату?', 'Да, оплачено', 'ok', go);
+    if (on) confirmAct('Подтвердить оплату?', 'Заказ №' + o.num + ': ' + esc(o.payment) + ', ' + moneyI(o.total) + '. Отмечайте заказ оплаченным только после того, как деньги поступили. Подтверждаете оплату?', 'Да, оплачено', 'ok', go);
     else confirmAct('Снять отметку об оплате?', 'Заказ №' + o.num + ' снова будет считаться неоплаченным.', 'Снять отметку', 'dg', go);
   },
   retOrd: function (d) { var o = ord(d.id); if (o) retDlg(o); },
