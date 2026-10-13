@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hoolshop StockUp</title>
+<script>try{localStorage.getItem('x')}catch(e){var __m={};try{Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:function(k){return Object.prototype.hasOwnProperty.call(__m,k)?__m[k]:null},setItem:function(k,v){__m[k]=String(v)},removeItem:function(k){delete __m[k]},clear:function(){__m={}}}})}catch(e2){}}</script>
 <script>try{var __t=localStorage.getItem('theme');if(__t)document.documentElement.setAttribute('data-theme',__t)}catch(e){}</script>
 <style>
 :root{--bg:#f3f4f5;--card:#fff;--tx:#1b2024;--mu:#5f6872;--bd:#d9dde1;--ac:#0e6b5c;--acbg:#dff0ec;--dg:#b3261e;--on:#fff;--ach:#0a5649;--wb:#fdf0d3;--wt:#7a5200;--db:#fbe3e1;--dt:#b3261e;--gb:#d8f1df;--gt:#14632f;--bs:#b4bbc2;--mm:#8a929a;color-scheme:light}
@@ -728,9 +729,9 @@ input[type=date]::-webkit-date-and-time-value{text-align:left;min-width:0}
 <script>
 // Ссылка на скрипт Google (заканчивается на /exec). Вставьте сюда, чтобы не вводить на каждом устройстве.
 var NEED = 18; // ожидаемая версия скрипта (должна совпадать с VERSION в Code.gs)
-var VER = 'ver0.8.2'; // 0 = бета, 5 = этап разработки, 1 = номер правки
+var VER = 'ver1.0.0'; // 0 = бета, 5 = этап разработки, 1 = номер правки
 var BUILD = '2026-10-13';
-var API = 'https://script.google.com/macros/s/AKfycbzabqP8lLPUwzKIJ8hdd5kOpCnWR0vPr0KZAnXaKM1J5iQJRN_JUQO9UAsqPRJPJZ0w/exec';
+var API = 'https://script.google.com/macros/s/AKfycbxmoqJR_gG9xnz6S6If4YQ8HQhfErfATOwIDe0uGsLOfE2Os4M7a3Llr6u6vDn44ce8/exec';
 
 var S = {tk: localStorage.getItem('tk') || '', me: null, first: false, reg: false, regOk: false, view: '', err: '', page: 'home', sellers: [], dict: [], dt: 'category',
   home: null, loyCfg: null, loyStats: null, loyMonth: [], ld: {}, ts: {}, sig: {}, dl: {}, lerr: {}, fx: 0, products: [], docs: [], df: 'receipt', q: '', tab: 'all', cat: '', more: false, busy: 0, info: null,
@@ -767,6 +768,7 @@ Object.assign(UKD, {"На главную": "На головну", "Возвра�
 Object.assign(UKD, {"Не сохранено": "Не збережено", "Есть несохраненные изменения. Нажмите «Сохранить», чтобы они применились.": "Є незбережені зміни. Натисніть «Зберегти», щоб вони застосувалися.", "Есть несохраненные изменения": "Є незбережені зміни", "В справочниках есть изменения, которые еще не сохранены. Если выйти сейчас, они будут потеряны.": "У довідниках є зміни, які ще не збережено. Якщо вийти зараз, їх буде втрачено.", "Остаться": "Залишитися", "Выйти без сохранения": "Вийти без збереження", "Сохранить и выйти": "Зберегти і вийти", "Обновить справочники?": "Оновити довідники?", "Несохраненные изменения будут потеряны: список загрузится заново из общей базы.": "Незбережені зміни буде втрачено: список завантажиться заново зі спільної бази.", "Удалить запись?": "Видалити запис?", "» будет удалена после нажатия на «Сохранить».": "» буде видалено після натискання на «Зберегти».", "Скидка по умолчанию для «": "Знижка за замовчуванням для «", "больше 0 и не больше 100%": "більше 0 і не більше 100%", "Такая запись уже есть: «": "Такий запис уже є: «", "Статус можно сменить только на следующий этап": "Статус можна змінити лише на наступний етап", "Сменить статус?": "Змінити статус?", "Сменить статус": "Змінити статус", ". Вернуть прежний статус будет нельзя.": ". Повернути попередній статус буде не можна.", "Отправить заказ №": "Відправити замовлення №", "ТТН не добавлен. Введите номер ТТН (": "ТТН не додано. Введіть номер ТТН (", " цифр): без него заказ отправить нельзя.": " цифр): без нього замовлення відправити не можна.", "Оплата не отмечена (": "Оплату не позначено (", "). Без отметки об оплате заказ отправить нельзя. Отмечайте только после того, как деньги поступили.": "). Без позначки про оплату замовлення відправити не можна. Позначайте лише після того, як гроші надійшли.", "Оплата получена": "Оплату отримано", "Отметьте, что оплата получена": "Позначте, що оплату отримано", "Отправить": "Відправити", "Не указан ТТН: добавьте номер, чтобы отправить заказ": "Не вказано ТТН: додайте номер, щоб відправити замовлення", "Не отмечена оплата: отметьте оплату, чтобы отправить заказ": "Не позначено оплату: позначте оплату, щоб відправити замовлення", "Всего акций: ": "Усього акцій: ", "Нажмите, чтобы посмотреть": "Натисніть, щоб переглянути", "Акций для показа на главной пока нет": "Акцій для показу на головній поки немає", "Статистика": "Статистика", "Статистика склада": "Статистика складу", "Считаются остатки по всем товарам и вариациям, кроме архивных. Себестоимость — по ценам закупки партий.": "Враховуються залишки за всіма товарами та варіаціями, крім архівних. Собівартість — за цінами закупівлі партій.", "Выручка: завершенные заказы за период с учетом скидок; возвраты и списания в выручку не входят. Прибыль = выручка − возвраты (в день возврата) − себестоимость проданного (себестоимость товара, вернувшегося на склад, возвращается). ": "Виручка: завершені замовлення за період з урахуванням знижок; повернення та списання у виручку не входять. Прибуток = виручка − повернення (в день повернення) − собівартість проданого (собівартість товару, що повернувся на склад, повертається). ", "Регистрация": "Реєстрація", "Введите данные для новой учетной записи. Войти можно будет после того, как действующий пользователь включит ее на вкладке «Пользователи».": "Введіть дані для нового облікового запису. Увійти можна буде після того, як діючий користувач увімкне його на вкладці «Користувачі».", "Пароль (не короче 6 символов)": "Пароль (не коротше 6 символів)", "Повторите пароль": "Повторіть пароль", "Зарегистрироваться": "Зареєструватися", "Назад ко входу": "Назад до входу", "Пароли не совпадают": "Паролі не збігаються", "Заявка отправлена. Войти можно будет после того, как действующий пользователь включит вашу учетную запись.": "Заявку надіслано. Увійти можна буде після того, як діючий користувач увімкне ваш обліковий запис.", "Сначала создайте первого пользователя на странице входа": "Спочатку створіть першого користувача на сторінці входу", "Статус можно сменить только на следующий этап ": "Статус можна змінити лише на наступний етап "});
 Object.assign(UKD, {"Выберите товар в подарок или уберите строку «Подарок»": "Виберіть товар у подарунок або приберіть рядок «Подарунок»", "Подарок добавляется в заказ по желанию: одна штука выбранного товара из заказа бесплатно (скидка 100%). Чтобы добавить его, в заказе нажмите «Добавить скидку» и выберите пункт «Подарок».": "Подарунок додається до замовлення за бажанням: одна штука вибраного товару із замовлення безкоштовно (знижка 100%). Щоб додати його, у замовленні натисніть «Додати знижку» і виберіть пункт «Подарунок»."});
 Object.assign(UKD, {"Еще ": "Ще ", "Заказ не оформлен. Не заполнено: ": "Замовлення не оформлено. Не заповнено: ", "Не заполнено: ": "Не заповнено: ", "Заказ не оформлен: выберите товар в подарок или уберите строку «Подарок»": "Замовлення не оформлено: виберіть товар у подарунок або приберіть рядок «Подарунок»", "клиент": "клієнт", "источник": "джерело", "способ оплаты": "спосіб оплати", "способ доставки": "спосіб доставки", "адрес доставки": "адреса доставки", "город/село": "місто/село", "номер отделения/почтомата": "номер відділення/поштомата", "товары в заказе": "товари в замовленні", "причина и размер скидки": "причина та розмір знижки"});
+Object.assign(UKD, {"Данные обновлены": "Дані оновлено"});
 var CYR = /[А-Яа-яЁёІіЇїЄєҐґ]/, LTR = /[A-Za-zА-Яа-яЁёІіЇїЄєҐґ]/, TR = null;
 var TXT = new WeakMap(), ATTR = new WeakMap(), TRATTR = ['placeholder', 'title', 'aria-label', 'alt'];
 function reEsc(x) { return x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
@@ -950,6 +952,8 @@ async function call(a, d, silent, big) {
   try { return await call0(a, d); }
   finally { if (big) busy(-1); if (sm) mini(-1); if (el) el.classList.remove('ld'); }
 }
+// архив, восстановление, включение и выключение: большая анимация загрузки по центру
+function bcall(a, d) { S.btn = null; return call(a, d, false, true); }
 var RO = {status: 1, me: 1, 'sellers.list': 1, 'dict.list': 1, 'products.list': 1, 'docs.list': 1, 'docs.get': 1, 'clients.list': 1, 'orders.list': 1, 'stock.stats': 1, info: 1};
 function pause(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 // Скрипт Google иногда не отвечает с первого раза (холодный старт, перегрузка). Чтение безопасно повторить сразу, без участия пользователя.
@@ -964,10 +968,19 @@ async function call0(a, d) {
 }
 async function call1(a, d) {
   var r, j, bad = function (m) { var e = new Error(m); e.retry = true; return e; };
-  try {
-    r = await fetch(url(), {method: 'POST', body: JSON.stringify({action: a, token: S.tk, data: d || {}})});
-  } catch (e) { throw bad('Нет связи со скриптом. Проверьте ссылку и интернет.'); }
-  try { j = await r.json(); } catch (e) { throw bad('Скрипт ответил неожиданно. Проверьте, что он опубликован для всех.'); }
+  var body = JSON.stringify({action: a, token: S.tk, data: d || {}});
+  if (window.google && google.script && google.script.run) {
+    // страница открыта из самого Apps Script: вызываем функцию apiCall напрямую
+    var txt;
+    try { txt = await new Promise(function (res, rej) { google.script.run.withSuccessHandler(res).withFailureHandler(rej).apiCall(body); }); }
+    catch (e) { throw bad('Нет связи со скриптом. Проверьте ссылку и интернет.'); }
+    try { j = JSON.parse(txt); } catch (e) { throw bad('Скрипт ответил неожиданно. Проверьте, что он опубликован для всех.'); }
+  } else {
+    try {
+      r = await fetch(url(), {method: 'POST', body: body});
+    } catch (e) { throw bad('Нет связи со скриптом. Проверьте ссылку и интернет.'); }
+    try { j = await r.json(); } catch (e) { throw bad('Скрипт ответил неожиданно. Проверьте, что он опубликован для всех.'); }
+  }
   if (j.auth === false) { S.tk = ''; S.me = null; localStorage.removeItem('tk'); }
   if (!j.ok) throw new Error(j.error || 'Ошибка');
   return j;
@@ -1897,7 +1910,7 @@ function homePage() {
   var tiles = at('products', 'no', 'Нет в наличии', 'товаров', a.noStock || 0, 'r') + at('products', 'low', 'Заканчиваются', 'товаров', a.lowStock || 0, 'w') +
     at('orders', 'new', 'Новые заказы', 'ждут обработки', a.orders['new'] || 0, 'b') + at('orders', 'sent', 'Зависли 4+ дня', 'отправлены, но не завершены', a.stale || 0, 'p');
   var max = H.top.reduce(function (m, p) { return Math.max(m, p.qty); }, 0);
-  return '<div class="rw"><h2>Главная</h2><span class="mu">' + fdate(H.date) + '</span></div>' +
+  return '<div class="rw"><h2>Главная</h2><span class="rw g8"><span class="mu">' + fdate(H.date) + '</span><button type="button" class="ghost" data-a="refHome">Обновить</button></span></div>' +
     (H.backupOff ? '<div class="wt" style="margin-top:10px">Ежедневная резервная копия не включена. <button class="lk2" data-a="goto" data-p="info">Как включить</button></div>' : '') +
     '<div class="rg"><div class="rc"><p class="mu">Оформлено сегодня</p><b>' + t.made + '</b></div>' +
     '<div class="rc"><p class="mu">Выручка сегодня</p><b>' + moneyI(t.revenue) + '</b></div>' +
@@ -2924,7 +2937,7 @@ function varsForm(p) {
     var nm = esc(row.querySelector('input').defaultValue);
     er.textContent = '';
     var go = function () {
-      return call(arc ? 'vars.restore' : 'vars.disable', {id: id}).then(function (j) {
+      return bcall(arc ? 'vars.restore' : 'vars.disable', {id: id}).then(function (j) {
         S.products = j.items; S.dict = j.dict; render();
         var np = prod(p.id), nv = np && np.vars.filter(function (x) { return x.id === id; })[0];
         if (!nv) row.remove(); else vrowState(row, !!nv.archived);
@@ -3241,7 +3254,7 @@ var A = {
   },
   togSeller: function (d) {
     var s = seller(d.id);
-    call('sellers.update', {id: s.id, active: !s.active}).then(sellersDone).catch(function (e) { toast(e.message); });
+    bcall('sellers.update', {id: s.id, active: !s.active}).then(sellersDone).catch(function (e) { toast(e.message); });
   },
   tab: function (d) { S.tab = (d.v === 'arc' && S.tab === 'arc') ? 'all' : d.v; render(); },
   ftab: function (d) { S.tab = d.v; render(); if (S.fd) S.fd.paint(); },
@@ -3313,8 +3326,8 @@ var A = {
   newC: function () { clientForm(null); },
   editC: function (d) { var c = client(d.id); if (c) clientForm(c); },
   cArc: function () { S.ca = S.ca ? 0 : 1; render(); },
-  arcC: function (d) { call('clients.archive', {id: d.id}).then(function (j) { S.clients = j.items; render(); }).catch(function (e) { toast(e.message); }); },
-  resC: function (d) { call('clients.restore', {id: d.id}).then(function (j) { S.clients = j.items; render(); }).catch(function (e) { toast(e.message); }); },
+  arcC: function (d) { bcall('clients.archive', {id: d.id}).then(function (j) { S.clients = j.items; render(); }).catch(function (e) { toast(e.message); }); },
+  resC: function (d) { bcall('clients.restore', {id: d.id}).then(function (j) { S.clients = j.items; render(); }).catch(function (e) { toast(e.message); }); },
   delC: function (d) {
     var c = client(d.id);
     confirmDel('Клиент «' + esc(c.name) + '» будет удален навсегда. Это действие нельзя отменить.', function () {
@@ -3497,9 +3510,9 @@ var A = {
   newPromo: function () { promoForm(null); },
   newGift: function () { promoForm(null, true); },
   editPromo: function (d) { var p = S.promoAll.filter(function (x) { return x.id === d.id; })[0]; if (p) promoForm(p); },
-  togPromo: function (d) { call('promos.toggle', {id: d.id}).then(pDone).catch(function (e) { toast(e.message); }); },
-  arcPromo: function (d) { call('promos.archive', {id: d.id}).then(pDone).catch(function (e) { toast(e.message); }); },
-  resPromo: function (d) { call('promos.restore', {id: d.id}).then(pDone).catch(function (e) { toast(e.message); }); },
+  togPromo: function (d) { bcall('promos.toggle', {id: d.id}).then(pDone).catch(function (e) { toast(e.message); }); },
+  arcPromo: function (d) { bcall('promos.archive', {id: d.id}).then(pDone).catch(function (e) { toast(e.message); }); },
+  resPromo: function (d) { bcall('promos.restore', {id: d.id}).then(pDone).catch(function (e) { toast(e.message); }); },
   delPromo: function (d) {
     var p = S.promoAll.filter(function (x) { return x.id === d.id; })[0]; if (!p) return;
     confirmDel('Акция «' + esc(p.name) + '» будет удалена навсегда. Это действие нельзя отменить.', function () {
@@ -3545,8 +3558,8 @@ var A = {
   aArc: function () { S.aa = S.aa ? 0 : 1; render(); },
   newAd: function () { adForm(null); },
   editAd: function (d) { var a = S.ads.filter(function (x) { return x.id === d.id; })[0]; if (a) adForm(a); },
-  arcAd: function (d) { call('ads.archive', {id: d.id}).then(aDone).catch(function (e) { toast(e.message); }); },
-  resAd: function (d) { call('ads.restore', {id: d.id}).then(aDone).catch(function (e) { toast(e.message); }); },
+  arcAd: function (d) { bcall('ads.archive', {id: d.id}).then(aDone).catch(function (e) { toast(e.message); }); },
+  resAd: function (d) { bcall('ads.restore', {id: d.id}).then(aDone).catch(function (e) { toast(e.message); }); },
   delAd: function (d) {
     var a = S.ads.filter(function (x) { return x.id === d.id; })[0]; if (!a) return;
     confirmDel('Запись «' + esc(a.name) + '» будет удалена навсегда. Это действие нельзя отменить.', function () {
@@ -3758,6 +3771,17 @@ var A = {
     document.querySelectorAll('[data-a="theme"]').forEach(function (b) { b.innerHTML = ico(t === 'dark' ? 'sun' : 'moon'); });
   },
   lang: function (d) { S.btn = null; document.querySelectorAll('details.menu[open]').forEach(function (m) { m.open = false; }); setLang(d.l === 'uk' ? 'uk' : 'ru'); },
+  // «Обновить» на главной: заново загружает главную и сбрасывает кэш всех разделов, чтобы везде были актуальные данные
+  refHome: function () {
+    var others = Object.keys(LOADS).filter(function (pg) { return pg !== 'home' && S.ld[LOADS[pg][1]]; });
+    S.ts = {}; S.sig = {};
+    call('home.get', null, false, true).then(function (j) {
+      S.home = j; if (j.plist && j.plist.length) S.plist = j.plist; S.ld.home = 1; S.ts.home = Date.now();
+      if (S.page === 'home') render();
+      others.forEach(function (pg) { load(pg); });
+      toast('Данные обновлены');
+    }).catch(function (e) { toast(e.message); });
+  },
   copyApi: function () { copy(url(), 'Ссылка скопирована'); },
   copyInfo: function () { copy(diag(), 'Диагностика скопирована'); }
 };
